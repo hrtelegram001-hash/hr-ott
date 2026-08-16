@@ -224,7 +224,7 @@
             background: var(--bg-card);
             border: 1px solid rgba(255,255,255,0.1);
             color: var(--text-muted);
-            padding: 10px 20px;
+            padding: 10px 16px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
@@ -277,11 +277,17 @@
 
         .server-btn.active .server-badge { background: rgba(255,255,255,0.3); }
 
-        .server-btn-note {
+        .server-number {
             font-size: 0.7rem;
-            color: rgba(255,255,255,0.6);
-            display: block;
-            margin-top: 2px;
+            background: rgba(229, 9, 20, 0.3);
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .server-btn.active .server-number {
+            background: rgba(255,255,255,0.3);
         }
 
         /* ── Player Container ── */
@@ -1247,7 +1253,7 @@
             const sourceConfig = [
                 {
                     id: 1,
-                    name: 'NxSha',
+                    displayName: 'Videasy',
                     badge: 'Primary',
                     note: 'Fastest server, HD with subtitles',
                     movie: (tmdbId) => `https://player.videasy.net/movie/${tmdbId}?color=F5C518&overlay=true`,
@@ -1255,7 +1261,7 @@
                 },
                 {
                     id: 2,
-                    name: 'VidSrc',
+                    displayName: 'Vidzee',
                     badge: 'Fast',
                     note: 'Fresh links, good for new releases',
                     movie: (tmdbId) => `https://player.vidzee.wtf/embed/movie/${tmdbId}`,
@@ -1263,7 +1269,7 @@
                 },
                 {
                     id: 3,
-                    name: 'VidBolt',
+                    displayName: 'Vidking',
                     badge: 'HD',
                     note: 'Remembers where you stopped and resumes',
                     movie: (tmdbId) => `https://www.vidking.net/embed/movie/${tmdbId}?color=F5C518&autoPlay=true`,
@@ -1271,7 +1277,7 @@
                 },
                 {
                     id: 4,
-                    name: 'VidSrc.sbs',
+                    displayName: 'VidSrc.sbs',
                     badge: 'Reliable',
                     note: 'Plays inside the page, no popups',
                     movie: (tmdbId) => `https://vidsrc.sbs/embed/movie/${tmdbId}`,
@@ -1279,7 +1285,7 @@
                 },
                 {
                     id: 5,
-                    name: 'VidSrc.wiki',
+                    displayName: 'VidSrc.wiki',
                     badge: 'Stable',
                     note: 'Reliable server, plays inside the page',
                     movie: (tmdbId) => `https://vidsrc.wiki/embed/movie/${tmdbId}`,
@@ -1287,7 +1293,7 @@
                 },
                 {
                     id: 6,
-                    name: 'VidFast',
+                    displayName: 'VidFast',
                     badge: 'Quick',
                     note: 'Fast server with auto next episode',
                     movie: (tmdbId) => `https://vidfast.vc/movie/${tmdbId}?autoPlay=true&theme=F5C518`,
@@ -1295,7 +1301,7 @@
                 },
                 {
                     id: 7,
-                    name: 'Garageband',
+                    displayName: 'Garageband',
                     badge: 'FullScreen',
                     note: 'Full screen embedded player',
                     movie: (tmdbId) => `https://proxy.garageband.rocks/embed/movie/${tmdbId}`,
@@ -1303,7 +1309,7 @@
                 },
                 {
                     id: 8,
-                    name: 'VidSrc-RU',
+                    displayName: 'VidSrc-RU',
                     badge: 'Mirror',
                     note: 'Full screen view with good uptime',
                     movie: (tmdbId) => `https://vidsrc-embed.ru/embed/movie?tmdb=${tmdbId}`,
@@ -1311,7 +1317,7 @@
                 },
                 {
                     id: 9,
-                    name: '2Embed',
+                    displayName: '2Embed',
                     badge: 'Popular',
                     note: 'Full screen view, popular choice',
                     movie: (tmdbId) => `https://www.2embed.cc/embed/${tmdbId}`,
@@ -1328,7 +1334,7 @@
                         : config.movie(id);
                     
                     playerSources[config.id] = {
-                        name: config.name,
+                        displayName: config.displayName,
                         badge: config.badge,
                         note: config.note,
                         url: url
@@ -1380,13 +1386,13 @@
                     clearTimeout(timeout);
                     loading.classList.add('hidden');
                     isLoading = false;
-                    showToast(`Playing with ${source.name} (${adBlocker.getStats()} ads blocked)`, 'success');
+                    showToast(`Playing with ${source.displayName} (${adBlocker.getStats()} ads blocked)`, 'success');
                 };
 
                 iframe.onerror = () => {
                     clearTimeout(timeout);
                     isLoading = false;
-                    showToast(`Failed to load ${source.name}`, 'error');
+                    showToast(`Failed to load ${source.displayName}`, 'error');
                     loading.classList.add('hidden');
                 };
 
@@ -1407,7 +1413,14 @@
                     b.dataset.source = k;
                     b.type = 'button';
                     b.title = s.note;
-                    b.innerHTML = `<div><div>${s.name} <span class="server-badge">${s.badge}</span></div><div class="server-btn-note">${s.note}</div></div>`;
+                    b.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span class="server-number">Server ${k}</span>
+                            <div style="display: flex; flex-direction: column; text-align: left;">
+                                <div>${s.displayName} <span class="server-badge">${s.badge}</span></div>
+                            </div>
+                        </div>
+                    `;
                     b.onclick = () => loadPlayerEmbed(parseInt(k));
                     container.appendChild(b);
                 });
