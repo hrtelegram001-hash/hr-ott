@@ -441,6 +441,133 @@
             line-height: 1.6;
         }
 
+        /* ── Episode Guide ── */
+        .episode-guide {
+            margin-top: 28px;
+            padding-top: 28px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .episode-guide h3 {
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .seasons-select {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: var(--text);
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 16px;
+        }
+
+        .seasons-select:hover { border-color: var(--red); }
+
+        .episodes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .episode-item {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .episode-item:hover {
+            border-color: var(--red);
+            background: var(--bg-elevated);
+            transform: translateY(-2px);
+        }
+
+        .episode-num {
+            font-weight: 700;
+            color: var(--red);
+            font-size: 0.9rem;
+        }
+
+        .episode-name {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-top: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ── Server Health Indicator ── */
+        .server-health {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            z-index: 11;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.8rem;
+        }
+
+        .health-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(11, 11, 15, 0.72);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 4px;
+            backdrop-filter: blur(8px);
+        }
+
+        .health-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ccc;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .health-dot.online { background: var(--green); }
+        .health-dot.offline { background: #ff6b6b; animation: none; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ── Auto-play Indicator ── */
+        .autoplay-indicator {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 12px 16px;
+            background: rgba(70, 211, 105, 0.15);
+            border: 1px solid rgba(70, 211, 105, 0.3);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--green);
+            font-weight: 600;
+            z-index: 5000;
+            display: none;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .autoplay-indicator.active { display: flex; }
+
         /* ── Toast Notification ── */
         .toast {
             position: fixed;
@@ -554,6 +681,9 @@
 
         <!-- Video Player Container -->
         <div class="player-container" id="playerContainer">
+            <div class="server-health" id="serverHealth">
+                <!-- Dynamically populated -->
+            </div>
             <div class="player-controls">
                 <button class="player-fullscreen-btn" id="playerFullscreenBtn" type="button" aria-label="Toggle fullscreen">
                     <i class="fas fa-expand"></i>
@@ -565,6 +695,12 @@
                 <div class="loading-text">Loading Player</div>
                 <div class="loading-subtext" id="loadingSubtext">Initializing stream with ad blocker...</div>
             </div>
+        </div>
+
+        <!-- Auto-play Indicator -->
+        <div class="autoplay-indicator" id="autoplayIndicator">
+            <i class="fas fa-play-circle"></i>
+            <span>Next episode in <span id="autoplayCounter">10</span>s...</span>
         </div>
 
         <!-- Movie Details -->
@@ -589,6 +725,16 @@
                 <div class="detail-section">
                     <h3><i class="fas fa-video"></i> Description</h3>
                     <p id="descText"></p>
+                </div>
+
+                <div class="episode-guide" id="episodeGuide" style="display:none;">
+                    <h3><i class="fas fa-list"></i> Episodes</h3>
+                    <select class="seasons-select" id="seasonsSelect">
+                        <option>Loading seasons...</option>
+                    </select>
+                    <div class="episodes-grid" id="episodesGrid">
+                        <!-- Dynamically populated -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -742,7 +888,108 @@
             // ═══════ Initialize Ad Blocker ═══════
             const adBlocker = new AdvancedAdBlocker();
 
-            // ═══════ Configuration ═══════
+            // ═══════ Cache Manager (with TTL) ═══════
+            class CacheManager {
+                constructor(ttl = 3600000) { // 1 hour default
+                    this.ttl = ttl;
+                }
+
+                set(key, value) {
+                    const data = {
+                        value: value,
+                        timestamp: Date.now()
+                    };
+                    localStorage.setItem(`cache_${key}`, JSON.stringify(data));
+                }
+
+                get(key) {
+                    const item = localStorage.getItem(`cache_${key}`);
+                    if (!item) return null;
+
+                    const { value, timestamp } = JSON.parse(item);
+                    if (Date.now() - timestamp > this.ttl) {
+                        localStorage.removeItem(`cache_${key}`);
+                        return null;
+                    }
+                    return value;
+                }
+
+                clear(key) {
+                    localStorage.removeItem(`cache_${key}`);
+                }
+            }
+
+            const cache = new CacheManager(3600000); // 1 hour cache
+
+            // ═══════ Lazy Loading Manager ═══════
+            class LazyLoader {
+                constructor() {
+                    this.observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                const img = entry.target;
+                                if (img.dataset.src) {
+                                    img.src = img.dataset.src;
+                                    img.removeAttribute('data-src');
+                                    this.observer.unobserve(img);
+                                }
+                            }
+                        });
+                    });
+                }
+
+                observe(img) {
+                    if (img && img.dataset.src) {
+                        this.observer.observe(img);
+                    }
+                }
+            }
+
+            const lazyLoader = new LazyLoader();
+
+            // ═══════ Server Health Checker ═══════
+            class ServerHealthChecker {
+                constructor() {
+                    this.healthStatus = {};
+                }
+
+                async checkServer(name, url) {
+                    try {
+                        const response = await fetch(url, { method: 'HEAD', mode: 'no-cors' });
+                        this.healthStatus[name] = true;
+                        return true;
+                    } catch (error) {
+                        this.healthStatus[name] = false;
+                        return false;
+                    }
+                }
+
+                async checkAllServers(sources) {
+                    const checks = Object.entries(sources).map(([key, source]) => 
+                        this.checkServer(source.name, source.url)
+                    );
+                    await Promise.all(checks);
+                }
+
+                displayHealth() {
+                    const healthContainer = document.getElementById('serverHealth');
+                    if (!healthContainer) return;
+
+                    healthContainer.innerHTML = '';
+                    Object.entries(this.healthStatus).forEach(([name, isOnline]) => {
+                        const div = document.createElement('div');
+                        div.className = 'health-item';
+                        div.innerHTML = `
+                            <div class="health-dot ${isOnline ? 'online' : 'offline'}"></div>
+                            <span>${name}</span>
+                        `;
+                        healthContainer.appendChild(div);
+                    });
+                }
+            }
+
+            const healthChecker = new ServerHealthChecker();
+
             const TMDB_KEY = '3a87b1db63bc74b8e3fe9266ddc75b30';
             const TMDB_BASE = 'https://api.themoviedb.org/3';
             const TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
@@ -939,6 +1186,11 @@
                 document.querySelectorAll('.server-btn').forEach(btn => {
                     btn.classList.toggle('active', btn.dataset.source === sourceKey.toString());
                 });
+
+                // For TV shows, start auto-play countdown after stream loads
+                if (type === 'tv') {
+                    setTimeout(() => startAutoplayCountdown(), 8000);
+                }
             }
 
             // ═══════ Initialize Server Buttons ═══════
@@ -961,6 +1213,125 @@
                     tabsContainer.appendChild(btn);
                 });
             }
+
+            // ═══════ Episode Guide ═══════
+            async function loadEpisodeGuide() {
+                if (type !== 'tv') return;
+
+                const guideContainer = document.getElementById('episodeGuide');
+                if (!guideContainer) return;
+
+                try {
+                    const cacheKey = `tv_seasons_${id}`;
+                    let seasonsData = cache.get(cacheKey);
+
+                    if (!seasonsData) {
+                        const url = `${TMDB_BASE}/tv/${id}?api_key=${TMDB_KEY}`;
+                        const res = await fetch(url);
+                        if (!res.ok) throw new Error('Failed to fetch TV details');
+                        
+                        const data = await res.json();
+                        seasonsData = data.seasons || [];
+                        cache.set(cacheKey, seasonsData);
+                    }
+
+                    if (seasonsData.length === 0) return;
+
+                    guideContainer.style.display = 'block';
+                    const seasonSelect = document.getElementById('seasonsSelect');
+                    seasonSelect.innerHTML = '';
+
+                    seasonsData.forEach(season => {
+                        const option = document.createElement('option');
+                        option.value = season.season_number;
+                        option.textContent = season.name || `Season ${season.season_number}`;
+                        seasonSelect.appendChild(option);
+                    });
+
+                    seasonSelect.value = season || '1';
+                    seasonSelect.addEventListener('change', (e) => {
+                        loadSeasonEpisodes(e.target.value, id);
+                    });
+
+                    loadSeasonEpisodes(season || '1', id);
+
+                } catch (error) {
+                    console.error('Episode guide error:', error);
+                }
+            }
+
+            async function loadSeasonEpisodes(seasonNum, tvId) {
+                try {
+                    const cacheKey = `tv_season_${tvId}_${seasonNum}`;
+                    let episodes = cache.get(cacheKey);
+
+                    if (!episodes) {
+                        const url = `${TMDB_BASE}/tv/${tvId}/season/${seasonNum}?api_key=${TMDB_KEY}`;
+                        const res = await fetch(url);
+                        if (!res.ok) throw new Error('Failed to fetch episodes');
+                        
+                        const data = await res.json();
+                        episodes = data.episodes || [];
+                        cache.set(cacheKey, episodes);
+                    }
+
+                    const grid = document.getElementById('episodesGrid');
+                    grid.innerHTML = '';
+
+                    episodes.forEach(ep => {
+                        const item = document.createElement('div');
+                        item.className = 'episode-item';
+                        item.innerHTML = `
+                            <div class="episode-num">Ep ${ep.episode_number}</div>
+                            <div class="episode-name">${ep.name || 'Unknown'}</div>
+                        `;
+                        item.addEventListener('click', () => {
+                            season = seasonNum;
+                            episode = ep.episode_number;
+                            loadPlayerEmbed(currentSource);
+                            showToast(`Loading Season ${seasonNum} Episode ${ep.episode_number}`, 'success');
+                        });
+                        grid.appendChild(item);
+                    });
+
+                } catch (error) {
+                    console.error('Episode load error:', error);
+                }
+            }
+
+            // ═══════ Auto-play Next Episode ═══════
+            let autoplayTimer = null;
+            function startAutoplayCountdown() {
+                if (type !== 'tv') return;
+
+                const indicator = document.getElementById('autoplayIndicator');
+                let countdown = 10;
+                indicator.classList.add('active');
+
+                clearInterval(autoplayTimer);
+                autoplayTimer = setInterval(() => {
+                    countdown--;
+                    document.getElementById('autoplayCounter').textContent = countdown;
+
+                    if (countdown === 0) {
+                        clearInterval(autoplayTimer);
+                        indicator.classList.remove('active');
+                        
+                        // Auto-play next episode
+                        const nextEpisode = parseInt(episode) + 1;
+                        season = season;
+                        episode = nextEpisode;
+                        loadPlayerEmbed(currentSource);
+                        showToast(`Auto-playing Season ${season} Episode ${nextEpisode}`, 'success');
+                    }
+                }, 1000);
+
+                indicator.addEventListener('click', () => {
+                    clearInterval(autoplayTimer);
+                    indicator.classList.remove('active');
+                });
+            }
+
 
             // ═══════ Fetch Media Details ═══════
             async function fetchMediaDetails() {
@@ -993,7 +1364,12 @@
 
                     // Populate UI
                     document.getElementById('titleText').textContent = title;
-                    document.getElementById('posterImg').src = poster;
+                    
+                    // Use lazy loading for poster
+                    const posterImg = document.getElementById('posterImg');
+                    posterImg.dataset.src = poster;
+                    lazyLoader.observe(posterImg);
+                    
                     document.getElementById('overviewText').textContent = overview;
                     document.getElementById('castText').textContent = cast;
                     document.getElementById('descText').textContent = overview;
@@ -1011,6 +1387,11 @@
                     // Genres
                     const genresHtml = genres.map(g => `<div class="genre-tag">${g.name}</div>`).join('');
                     document.getElementById('genresRow').innerHTML = genresHtml || '<div class="genre-tag">N/A</div>';
+
+                    // Load episode guide for TV shows
+                    if (type === 'tv') {
+                        await loadEpisodeGuide();
+                    }
 
                     // Auto-load first server
                     loadPlayerEmbed(1);
@@ -1049,6 +1430,21 @@
             // ═══════ Initialize ═══════
             initServerButtons();
             updateFullscreenButton();
+
+            // Check server health
+            healthChecker.checkAllServers(playerSources).then(() => {
+                healthChecker.displayHealth();
+            });
+
+            // Trigger auto-play countdown when iframe loads (TV only)
+            const observer = new MutationObserver(() => {
+                const iframe = document.querySelector('.player-container iframe');
+                if (iframe && type === 'tv') {
+                    startAutoplayCountdown();
+                    observer.disconnect();
+                }
+            });
+            observer.observe(document.getElementById('playerContainer'), { childList: true });
 
             if (id) {
                 fetchMediaDetails();
