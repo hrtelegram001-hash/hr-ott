@@ -574,6 +574,11 @@
             box-shadow: 0 14px 30px rgba(0,0,0,0.2);
         }
 
+        .episode-item.active {
+            border-color: var(--red);
+            box-shadow: 0 10px 30px rgba(229,9,20,0.18);
+        }
+
         .episode-thumb {
             width: 100%;
             aspect-ratio: 16 / 9;
@@ -627,6 +632,7 @@
             display: none;
             gap: 8px;
             align-items: center;
+            cursor: pointer;
         }
 
         .autoplay-indicator.active { display: flex; }
@@ -836,21 +842,12 @@
                         'adsymptotic.com', 'adyoulike.com', 'affiliatex.com'
                     ];
 
-                    this.adPatterns = [
-                        'ad', 'advertisement', 'banner', 'popup', 'modal', 'overlay',
-                        'ads', 'advert', 'sponsor', 'promo', 'commercial', 'promotional',
-                        'interstitial', 'preroll', 'midroll', 'postroll'
-                    ];
-
                     this.init();
                 }
 
                 init() {
-                    // Intercept fetch requests
                     this.interceptFetch();
-                    // Intercept XHR requests
                     this.interceptXHR();
-                    // Block ads in main page
                     this.blockPageAds();
                 }
 
@@ -897,12 +894,10 @@
                     if (typeof url !== 'string') return false;
                     const lowerUrl = url.toLowerCase();
                     
-                    // Check ad domains
                     for (let domain of this.adDomains) {
                         if (lowerUrl.includes(domain)) return true;
                     }
                     
-                    // Check URL patterns
                     const adPatterns = ['/ad/', '/ads/', '/banner', '/popup', '/track', '/pixel', '?ad=', '&ad='];
                     for (let pattern of adPatterns) {
                         if (lowerUrl.includes(pattern)) return true;
@@ -931,7 +926,7 @@
                         '[class*="advertisement"]', '[id*="advertisement"]', '[class*="banner"]', '[id*="banner"]',
                         '[class*="popup"]', '[id*="popup"]', '[class*="modal"]', '[id*="modal"]',
                         '[class*="overlay"]', '[id*="overlay"]', '[class*="sponsor"]', '[id*="sponsor"]',
-                        'ins[class*="adsbygoogle"]', '[data-ad-slot]', '[data-ad-client]', '.advertisement', '#advertisement', '.advert', '#advert'
+                        'ins[class*="adsbygoogle"]', '[data-ad-slot]', '[data-ad-client]'
                     ];
 
                     adSelectors.forEach(selector => {
@@ -958,7 +953,7 @@
 
             // ═══════ Cache Manager (with TTL) ═══════
             class CacheManager {
-                constructor(ttl = 3600000) { // 1 hour default
+                constructor(ttl = 3600000) {
                     this.ttl = ttl;
                 }
 
@@ -987,7 +982,7 @@
                 }
             }
 
-            const cache = new CacheManager(3600000); // 1 hour cache
+            const cache = new CacheManager(3600000);
 
             // ═══════ Lazy Loading Manager ═══════
             class LazyLoader {
@@ -1023,8 +1018,8 @@
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
             const type = (params.get('type') || 'movie').toLowerCase();
-            let season = params.get('s') || '1';
-            let episode = params.get('e') || '1';
+            let season = parseInt(params.get('s') || '1');
+            let episode = parseInt(params.get('e') || '1');
 
             const serverTabs = document.getElementById('serverTabs');
             if (!id) {
@@ -1036,81 +1031,59 @@
             }
 
             // ═══════ Player Sources Configuration ═══════
-            let videasyUrl;
-            if (type === 'tv') {
-                videasyUrl = `https://player.videasy.net/tv/${id}/${season}/${episode}?overlay=true&color=E50914&nextEpisode=true&episodeSelector=true&autoplayNextEpisode=true`;
-            } else {
-                videasyUrl = `https://player.videasy.net/movie/${id}?overlay=true&color=E50914`;
-            }
+            const playerSources = {};
 
             function refreshPlayerSources() {
-                const tvEpisodeUrl = type === 'tv'
-                    ? `https://nxsha.space/embed/tv/${id}/${season}/${episode}`
-                    : null;
-
-                const videasyPlayerUrl = type === 'tv'
-                    ? `https://player.videasy.net/tv/${id}/${season}/${episode}?overlay=true&color=E50914&nextEpisode=true&episodeSelector=true&autoplayNextEpisode=true`
-                    : `https://player.videasy.net/movie/${id}?overlay=true&color=E50914`;
-
-                playerSources[1] = {
-                    name: 'NxSha Stream',
-                    badge: 'Primary',
-                    url: type === 'tv' ? tvEpisodeUrl : `https://nxsha.space/embed/movie/${id}`
-                };
-                playerSources[2] = {
-                    name: 'VidSrc SBS',
-                    badge: 'Recommended',
-                    url: type === 'tv'
-                        ? `https://vidsrc.sbs/embed/tv/${id}/${season}/${episode}`
-                        : `https://vidsrc.sbs/embed/movie/${id}`
-                };
-                playerSources[3] = {
-                    name: 'Videasy',
-                    badge: 'HD + NextEp',
-                    url: videasyPlayerUrl
-                };
-                playerSources[4] = {
-                    name: 'VidBolt',
-                    badge: 'API Embed',
-                    url: type === 'tv'
-                        ? `https://vidbolt.pro/embed/tv/${id}/${season}/${episode}?autoPlay=1&color=E50914`
-                        : `https://vidbolt.pro/embed/movie/${id}?autoPlay=1&color=E50914`
-                };
-            }
-
-            const playerSources = {
-                1: {
-                    name: 'NxSha Stream',
-                    badge: 'Primary',
-                    url: type === 'tv'
-                        ? `https://nxsha.space/embed/tv/${id}/${season}/${episode}`
-                        : `https://nxsha.space/embed/movie/${id}`
-                },
-                2: {
-                    name: 'VidSrc SBS',
-                    badge: 'Recommended',
-                    url: type === 'tv' 
-                        ? `https://vidsrc.sbs/embed/tv/${id}/${season}/${episode}`
-                        : `https://vidsrc.sbs/embed/movie/${id}`
-                },
-                3: {
-                    name: 'Videasy',
-                    badge: 'HD + NextEp',
-                    url: videasyUrl
-                },
-                4: {
-                    name: 'VidBolt',
-                    badge: 'API Embed',
-                    url: type === 'tv'
-                        ? `https://vidbolt.pro/embed/tv/${id}/${season}/${episode}?autoPlay=1&color=E50914`
-                        : `https://vidbolt.pro/embed/movie/${id}?autoPlay=1&color=E50914`
+                if (type === 'tv') {
+                    playerSources[1] = {
+                        name: 'NxSha Stream',
+                        badge: 'Primary',
+                        url: `https://nxsha.space/embed/tv/${id}/${season}/${episode}`
+                    };
+                    playerSources[2] = {
+                        name: 'VidSrc SBS',
+                        badge: 'Recommended',
+                        url: `https://vidsrc.sbs/embed/tv/${id}/${season}/${episode}`
+                    };
+                    playerSources[3] = {
+                        name: 'Videasy',
+                        badge: 'HD + NextEp',
+                        url: `https://player.videasy.net/tv/${id}/${season}/${episode}?overlay=true&color=E50914&nextEpisode=true&episodeSelector=true&autoplayNextEpisode=true`
+                    };
+                    playerSources[4] = {
+                        name: 'VidBolt',
+                        badge: 'API Embed',
+                        url: `https://vidbolt.pro/embed/tv/${id}/${season}/${episode}?autoPlay=1&color=E50914`
+                    };
+                } else {
+                    playerSources[1] = {
+                        name: 'NxSha Stream',
+                        badge: 'Primary',
+                        url: `https://nxsha.space/embed/movie/${id}`
+                    };
+                    playerSources[2] = {
+                        name: 'VidSrc SBS',
+                        badge: 'Recommended',
+                        url: `https://vidsrc.sbs/embed/movie/${id}`
+                    };
+                    playerSources[3] = {
+                        name: 'Videasy',
+                        badge: 'HD',
+                        url: `https://player.videasy.net/movie/${id}?overlay=true&color=E50914`
+                    };
+                    playerSources[4] = {
+                        name: 'VidBolt',
+                        badge: 'API Embed',
+                        url: `https://vidbolt.pro/embed/movie/${id}?autoPlay=1&color=E50914`
+                    };
                 }
-            };
+            }
 
             refreshPlayerSources();
 
             // ═══════ State Variables ═══════
             let currentSource = 1;
+            let isLoadingPlayer = false;
 
             // ═══════ Toast Notification ═══════
             function showToast(message, toastType = 'success') {
@@ -1140,12 +1113,6 @@
                 iframe.setAttribute('mozallowfullscreen', 'true');
                 iframe.setAttribute('loading', 'eager');
                 iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
-
-                // Some embedded providers report sandbox detection errors when extra sandbox restrictions are applied.
-                // Keep the external video iframe unsandboxed so the provider can load controls and overlays correctly.
-                if (iframe.hasAttribute('sandbox')) {
-                    iframe.removeAttribute('sandbox');
-                }
 
                 if (isThirdPartyStream) {
                     iframe.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
@@ -1201,11 +1168,13 @@
 
             // ═══════ Load Player Embed ═══════
             function loadPlayerEmbed(sourceKey) {
+                if (isLoadingPlayer) return;
+                
                 const source = playerSources[sourceKey];
                 if (!source) return;
 
+                isLoadingPlayer = true;
                 currentSource = sourceKey;
-                const url = source.url;
 
                 // Remove old iframe
                 const oldIframe = document.querySelector('.player-container iframe');
@@ -1217,30 +1186,27 @@
                 loading.classList.remove('hidden');
 
                 const iframe = buildPlayerIframe(source);
-                if (adBlocker && typeof adBlocker.isAdUrl === 'function') {
-                    iframe.addEventListener('load', () => {
-                        const blockedCount = adBlocker.getStats();
-                        loading.classList.add('hidden');
-                        showToast(`Playing with ${source.name} (Ad Blocker Active) - ${blockedCount} ads blocked`, 'success');
-                    });
-                } else {
-                    iframe.onload = () => {
-                        loading.classList.add('hidden');
-                        showToast(`Playing with ${source.name}`, 'success');
-                    };
-                }
-
-                iframe.onerror = () => {
-                    showToast(`Failed to load ${source.name}`, 'error');
-                    loading.classList.remove('hidden');
-                };
-
-                // Timeout fallback
-                setTimeout(() => {
+                
+                const loadTimeout = setTimeout(() => {
                     if (!loading.classList.contains('hidden')) {
                         loading.classList.add('hidden');
                     }
-                }, 7000);
+                    isLoadingPlayer = false;
+                }, 8000);
+
+                iframe.onload = () => {
+                    clearTimeout(loadTimeout);
+                    loading.classList.add('hidden');
+                    isLoadingPlayer = false;
+                    showToast(`Playing with ${source.name} (${adBlocker.getStats()} ads blocked)`, 'success');
+                };
+
+                iframe.onerror = () => {
+                    clearTimeout(loadTimeout);
+                    isLoadingPlayer = false;
+                    showToast(`Failed to load ${source.name}. Try another source.`, 'error');
+                    loading.classList.add('hidden');
+                };
 
                 document.getElementById('playerContainer').appendChild(iframe);
 
@@ -1248,50 +1214,26 @@
                 document.querySelectorAll('.server-btn').forEach(btn => {
                     btn.classList.toggle('active', btn.dataset.source === sourceKey.toString());
                 });
-
-                // For TV shows, start auto-play countdown after stream loads
-                if (type === 'tv') {
-                    setTimeout(() => startAutoplayCountdown(), 8000);
-                }
             }
 
             // ═══════ Initialize Server Buttons ═══════
             function initServerButtons() {
                 const tabsContainer = document.getElementById('serverTabs');
-                if (!tabsContainer) {
-                    console.warn('[Server Buttons] serverTabs container not found');
-                    return;
-                }
-
-                if (!playerSources) {
-                    console.warn('[Server Buttons] playerSources not defined');
-                    return;
-                }
+                if (!tabsContainer) return;
 
                 tabsContainer.innerHTML = '';
 
-                const sources = Object.entries(playerSources);
-                if (!sources.length) {
-                    console.warn('[Server Buttons] No sources available');
-                    return;
-                }
-
-                console.log('[Server Buttons] Creating buttons for:', sources.length, 'sources');
-
-                sources.forEach(([key, source]) => {
+                Object.entries(playerSources).forEach(([key, source]) => {
                     const btn = document.createElement('button');
                     btn.className = `server-btn ${key === '1' ? 'active' : ''}`;
                     btn.dataset.source = key;
                     btn.type = 'button';
                     btn.innerHTML = `${source.name} <span class="server-badge">${source.badge}</span>`;
                     btn.addEventListener('click', () => {
-                        console.log('[Server Buttons] Clicked source:', source.name);
                         loadPlayerEmbed(parseInt(key, 10));
                     });
                     tabsContainer.appendChild(btn);
                 });
-
-                console.log('[Server Buttons] Successfully initialized', sources.length, 'buttons');
             }
 
             function updateNowPlayingTitle() {
@@ -1307,24 +1249,6 @@
                 } else {
                     const year = (document.getElementById('metaRow')?.textContent || '').split(/\s+/)[0] || '';
                     metaEl.textContent = year ? `Movie • ${year}` : 'Movie';
-                }
-            }
-
-            async function fetchSeasonImages(tvId, seasonNum) {
-                try {
-                    const url = `${TMDB_BASE}/tv/${tvId}/season/${seasonNum}/images`;
-                    const res = await fetch(url, {
-                        headers: {
-                            'Authorization': 'Bearer ' + TMDB_TOKEN,
-                            'accept': 'application/json'
-                        }
-                    });
-                    if (!res.ok) return [];
-                    const data = await res.json();
-                    return data.posters || [];
-                } catch (error) {
-                    console.error('Season images fetch error:', error);
-                    return [];
                 }
             }
 
@@ -1363,46 +1287,62 @@
                     seasonCards.innerHTML = '';
 
                     seasonsData.forEach(seasonItem => {
+                        const seasonNum = seasonItem.season_number;
+                        
+                        // Add to select
                         const option = document.createElement('option');
-                        option.value = seasonItem.season_number;
-                        option.textContent = seasonItem.name || `Season ${seasonItem.season_number}`;
+                        option.value = seasonNum;
+                        option.textContent = seasonItem.name || `Season ${seasonNum}`;
                         seasonSelect.appendChild(option);
 
+                        // Create season card
                         const card = document.createElement('button');
                         card.type = 'button';
-                        card.className = 'season-card' + (Number(seasonItem.season_number) === Number(season) ? ' active' : '');
+                        card.className = 'season-card' + (seasonNum === season ? ' active' : '');
+                        card.dataset.seasonNumber = seasonNum;
+                        
                         const poster = seasonItem.poster_path ? `${TMDB_IMG}${seasonItem.poster_path}` : '';
                         card.innerHTML = `
-                            ${poster ? `<img class="season-poster" src="${poster}" alt="Season ${seasonItem.season_number}">` : '<div class="season-poster" style="display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:800;color:#fff;">S' + seasonItem.season_number + '</div>'}
-                            <div class="season-label">Season ${seasonItem.season_number}</div>
+                            ${poster ? `<img class="season-poster" src="${poster}" alt="Season ${seasonNum}">` : '<div class="season-poster" style="display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:800;color:#fff;">S' + seasonNum + '</div>'}
+                            <div class="season-label">Season ${seasonNum}</div>
                         `;
+                        
                         card.addEventListener('click', () => {
-                            season = Number(seasonItem.season_number) || 1;
+                            season = seasonNum;
                             episode = 1;
                             refreshPlayerSources();
                             updateNowPlayingTitle();
                             seasonSelect.value = season;
+                            
+                            // Update active states
+                            document.querySelectorAll('.season-card').forEach(c => {
+                                c.classList.toggle('active', parseInt(c.dataset.seasonNumber) === season);
+                            });
+                            
                             loadSeasonEpisodes(season, id);
+                            loadPlayerEmbed(currentSource);
                         });
+                        
                         seasonCards.appendChild(card);
                     });
 
-                    seasonSelect.value = season || '1';
-                    seasonSelect.onchange = (e) => {
-                        season = Number(e.target.value) || 1;
+                    seasonSelect.value = season;
+                    seasonSelect.addEventListener('change', (e) => {
+                        season = parseInt(e.target.value);
                         episode = 1;
                         refreshPlayerSources();
                         updateNowPlayingTitle();
-                        document.querySelectorAll('.season-card').forEach(card => card.classList.toggle('active', Number(card.dataset.seasonNumber) === Number(season)));
+                        
+                        // Update active states
+                        document.querySelectorAll('.season-card').forEach(c => {
+                            c.classList.toggle('active', parseInt(c.dataset.seasonNumber) === season);
+                        });
+                        
                         loadSeasonEpisodes(season, id);
-                    };
-
-                    document.querySelectorAll('.season-card').forEach(card => {
-                        const seasonValue = card.querySelector('.season-label')?.textContent?.match(/\d+/)?.[0];
-                        if (seasonValue) card.dataset.seasonNumber = seasonValue;
+                        loadPlayerEmbed(currentSource);
                     });
 
-                    loadSeasonEpisodes(season || '1', id);
+                    loadSeasonEpisodes(season, id);
 
                 } catch (error) {
                     console.error('Episode guide error:', error);
@@ -1433,33 +1373,43 @@
                     grid.innerHTML = '';
 
                     episodes.forEach(ep => {
+                        const epNum = ep.episode_number;
                         const item = document.createElement('button');
                         item.type = 'button';
                         item.className = 'episode-item';
-                        if (Number(ep.episode_number) === Number(episode) && Number(seasonNum) === Number(season)) {
+                        item.dataset.episodeNumber = epNum;
+                        
+                        if (epNum === episode && seasonNum === season) {
                             item.classList.add('active');
                         }
+                        
                         const still = ep.still_path ? `${TMDB_IMG}${ep.still_path}` : '';
                         const runtime = ep.runtime ? `${ep.runtime} min` : 'TBA';
                         const stillMarkup = still
                             ? '<img class="episode-thumb" src="' + still + '" alt="' + (ep.name || 'Episode') + '" onerror="this.style.display=\'none\';">'
-                            : '<div class="episode-thumb" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(229,9,20,0.25),rgba(255,255,255,0.04));color:#fff;font-weight:800;">EP ' + (ep.episode_number || '') + '</div>';
+                            : '<div class="episode-thumb" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(229,9,20,0.25),rgba(255,255,255,0.04));color:#fff;font-weight:800;">EP ' + epNum + '</div>';
+                        
                         item.innerHTML = stillMarkup +
                             '<div class="episode-content">' +
-                            '<div class="episode-num">Ep ' + (ep.episode_number || '') + '</div>' +
+                            '<div class="episode-num">Ep ' + epNum + '</div>' +
                             '<div class="episode-name">' + (ep.name || 'Unknown') + '</div>' +
                             '<div class="episode-meta">' + runtime + '</div>' +
                             '</div>';
+                        
                         item.addEventListener('click', () => {
-                            season = Number(seasonNum) || 1;
-                            episode = Number(ep.episode_number) || 1;
+                            episode = epNum;
                             refreshPlayerSources();
                             updateNowPlayingTitle();
-                            document.querySelectorAll('.season-card').forEach(card => card.classList.toggle('active', Number(card.dataset.seasonNumber) === Number(season)));
-                            loadSeasonEpisodes(season, id);
+                            
+                            // Update active states
+                            document.querySelectorAll('.episode-item').forEach(el => {
+                                el.classList.remove('active');
+                            });
+                            item.classList.add('active');
+                            
                             loadPlayerEmbed(currentSource);
-                            showToast(`Playing Season ${season} Episode ${episode}`, 'success');
                         });
+                        
                         grid.appendChild(item);
                     });
 
@@ -1487,11 +1437,11 @@
                         indicator.classList.remove('active');
                         
                         // Auto-play next episode
-                        const nextEpisode = parseInt(episode) + 1;
-                        season = season;
-                        episode = nextEpisode;
+                        episode = parseInt(episode) + 1;
+                        refreshPlayerSources();
+                        updateNowPlayingTitle();
                         loadPlayerEmbed(currentSource);
-                        showToast(`Auto-playing Season ${season} Episode ${nextEpisode}`, 'success');
+                        showToast(`Auto-playing Season ${season} Episode ${episode}`, 'success');
                     }
                 }, 1000);
 
@@ -1500,7 +1450,6 @@
                     indicator.classList.remove('active');
                 });
             }
-
 
             // ═══════ Fetch Media Details ═══════
             async function fetchMediaDetails() {
@@ -1539,14 +1488,9 @@
                     document.getElementById('titleText').textContent = title;
                     updateNowPlayingTitle();
 
-                    if (type === 'tv') {
-                        fetchSeasonImages(id, season || 1);
-                    }
-
-                    // Use lazy loading for poster
+                    // Poster
                     const posterImg = document.getElementById('posterImg');
-                    posterImg.dataset.src = poster;
-                    lazyLoader.observe(posterImg);
+                    posterImg.src = poster;
                     
                     document.getElementById('overviewText').textContent = overview;
                     document.getElementById('castText').textContent = cast;
@@ -1640,18 +1584,9 @@
             }, 2000);
 
             // ═══════ Initialize ═══════
+            refreshPlayerSources();
             initServerButtons();
             updateFullscreenButton();
-
-            // Trigger auto-play countdown when iframe loads (TV only)
-            const observer = new MutationObserver(() => {
-                const iframe = document.querySelector('.player-container iframe');
-                if (iframe && type === 'tv') {
-                    startAutoplayCountdown();
-                    observer.disconnect();
-                }
-            });
-            observer.observe(document.getElementById('playerContainer'), { childList: true });
 
             if (id) {
                 fetchMediaDetails();
