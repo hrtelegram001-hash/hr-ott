@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>HR OTT — Watch Now</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0b0b0f;
+            --bg-2: #101015;
+            --bg-card: #16161c;
+            --bg-elevated: #23232c;
+            --red: #E50914;
+            --red-dark: #B20710;
+            --red-glow: rgba(229,9,20,0.45);
+            --gold: #f5c518;
+            --text: #ffffff;
+            --text-muted: #b3b3b3;
+            --text-dim: #7c7c85;
+            --green: #46d369;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background:
+                radial-gradient(1200px 600px at 80% -10%, rgba(229,9,20,0.08), transparent 60%),
+                var(--bg);
+            color: var(--text);
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Navbar ── */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 20px clamp(20px, 3vw, 50px);
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%);
+            transition: background 0.3s ease, padding 0.3s ease;
+            border-bottom: 1px solid transparent;
+        }
+
+        .nav.scrolled {
+            background: rgba(11,11,15,0.95);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 12px clamp(20px, 3vw, 50px);
+        }
+
+        .nav-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--red);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-shadow: 0 0 20px var(--red-glow);
+            user-select: none;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+        }
+
+        .nav-logo:hover { transform: scale(1.05); }
+
+        .nav-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.15);
+            cursor: pointer;
+        }
+
+        .btn-back:hover { background: var(--red); border-color: var(--red); }
+
+        .adblock-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(70, 211, 105, 0.15);
+            border: 1px solid rgba(70, 211, 105, 0.3);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--red), #4a0408);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 4px 14px var(--red-glow);
+        }
+
+        /* ── Main Container ── */
+        .player-wrapper {
+            padding-top: 120px;
+            padding-bottom: 50px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-left: clamp(20px, 3vw, 50px);
+            padding-right: clamp(20px, 3vw, 50px);
+        }
+
+        /* ── Server Tabs ── */
+        .server-section {
+            margin-bottom: 24px;
+        }
+
+        .server-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .server-tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .server-btn {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-muted);
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.25s ease;
+            font-family: 'Inter', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .server-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+
+        .server-btn:hover {
+            background: var(--bg-elevated);
+            color: var(--text);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .server-btn.active {
+            background: linear-gradient(135deg, var(--red), var(--red-dark));
+            border-color: var(--red);
+            color: #fff;
+            box-shadow: 0 4px 14px var(--red-glow);
+        }
+
+        .server-badge {
+            font-size: 0.65rem;
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .server-btn.active .server-badge { background: rgba(255,255,255,0.3); }
+
+        /* ── Player Container ── */
+        .player-container {
+            width: 100%;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            margin-bottom: 40px;
+            border: 1px solid rgba(255,255,255,0.08);
+            padding-bottom: 56.25%;
+            height: 0;
+        }
+
+        .player-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            border: none;
+            background: #000;
+        }
+
+        /* ── Loading State ── */
+        .player-loading {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            background: linear-gradient(135deg, #1a1a1f 0%, #2a2a32 100%);
+            z-index: 10;
+            transition: opacity 0.4s ease;
+        }
+
+        .player-loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(229, 9, 20, 0.2);
+            border-top-color: var(--red);
+            border-radius: 50%;
+            animation: spin 1.2s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading-text {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .loading-subtext {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* ── Details Section ── */
+        .details-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .poster-container {
+            position: sticky;
+            top: 140px;
+        }
+
+        .poster {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s ease;
+            background: var(--bg-card);
+            aspect-ratio: 2/3;
+        }
+
+        .poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .poster:hover img { transform: scale(1.03); }
+
+        .info {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .info-title {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 900;
+            color: var(--text);
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+
+        .meta-row {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .meta-item { display: flex; align-items: center; gap: 4px; }
+        .meta-item.match { color: var(--green); font-weight: 700; }
+
+        .maturity-badge {
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 3px 10px;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .genres-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .genre-tag {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            color: var(--text);
+            transition: all 0.2s ease;
+        }
+
+        .genre-tag:hover {
+            border-color: var(--red);
+            background: var(--bg-elevated);
+        }
+
+        .overview-text {
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-size: 1rem;
+            margin-top: 8px;
+        }
+
+        .detail-section {
+            margin-top: 28px;
+            padding-top: 28px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .detail-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--text);
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .detail-section p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* ── Toast Notification ── */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(24, 24, 28, 0.97);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            border-left: 4px solid var(--red);
+            z-index: 9999;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 12px 36px rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .toast.error { border-left-color: #ff6b6b; }
+        .toast.success { border-left-color: var(--green); }
+
+        /* ── Footer ── */
+        footer {
+            padding: 30px clamp(20px, 3vw, 50px);
+            color: var(--text-dim);
+            font-size: 12px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+            .details-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .poster-container {
+                position: static;
+                max-width: 280px;
+                margin: 0 auto;
+            }
+
+            .info {
+                text-align: center;
+                align-items: center;
+            }
+
+            .meta-row { justify-content: center; }
+            .genres-row { justify-content: center; }
+        }
+
+        @media (max-width: 768px) {
+            .player-wrapper { padding-top: 90px; }
+            .nav { padding: 14px 16px; }
+            .nav.scrolled { padding: 10px 16px; }
+            .nav-logo { font-size: 1.4rem; }
+            .btn-back { font-size: 0.8rem; padding: 8px 12px; }
+            .info-title { font-size: 1.8rem; }
+            .server-btn { padding: 8px 16px; font-size: 0.8rem; }
+            .server-badge { font-size: 0.55rem; }
+        }
+
+        @media (max-width: 480px) {
+            .nav-right { gap: 8px; }
+            .btn-back span { display: none; }
+            .adblock-status { display: none; }
+            .server-tabs { gap: 6px; }
+            .server-btn { padding: 7px 12px; font-size: 0.75rem; }
+            .info-title { font-size: 1.4rem; }
+            .meta-row { font-size: 0.85rem; gap: 10px; }
+            .genre-tag { padding: 4px 10px; font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="nav" id="mainNav">
+        <a href="index.html" class="nav-logo">HR OTT</a>
+        <div class="nav-right">
+            <a href="index.html" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back</span>
+            </a>
+            <div class="adblock-status">
+                <i class="fas fa-shield-alt"></i>
+                <span id="adblockText">Ad Block: ON</span>
+            </div>
+            <div class="profile-avatar">G</div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="player-wrapper">
+        <!-- Server Selection -->
+        <div class="server-section">
+            <label class="server-label"><i class="fas fa-server"></i> Select Stream Source</label>
+            <div class="server-tabs" id="serverTabs">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
+        <!-- Video Player Container -->
+        <div class="player-container" id="playerContainer">
+            <div class="player-loading" id="playerLoading">
+                <div class="spinner"></div>
+                <div class="loading-text">Loading Player</div>
+                <div class="loading-subtext" id="loadingSubtext">Initializing stream with ad blocker...</div>
+            </div>
+        </div>
+
+        <!-- Movie Details -->
+        <div class="details-grid" id="detailsGrid">
+            <div class="poster-container">
+                <div class="poster">
+                    <img id="posterImg" src="" alt="Movie Poster" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 450%22%3E%3Crect fill=%22%23222%22 width=%22300%22 height=%22450%22/%3E%3C/svg%3E';">
+                </div>
+            </div>
+
+            <div class="info">
+                <h1 class="info-title" id="titleText">Loading...</h1>
+                <div class="meta-row" id="metaRow"></div>
+                <div class="genres-row" id="genresRow"></div>
+                <p class="overview-text" id="overviewText"></p>
+
+                <div class="detail-section">
+                    <h3><i class="fas fa-users"></i> Cast</h3>
+                    <p id="castText">Loading cast information...</p>
+                </div>
+
+                <div class="detail-section">
+                    <h3><i class="fas fa-video"></i> Description</h3>
+                    <p id="descText"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 HR OTT — Stream Movies & Series. Powered by TMDB with Ad Blocking Protection.</p>
+    </footer>
+
+    <script>
+        (function() {
+            // ═══════ Advanced Ad Blocker ═══════
+            class AdvancedAdBlocker {
+                constructor() {
+                    this.blockedRequests = 0;
+                    this.adDomains = [
+                        'googlesyndication.com', 'googleadservices.com', 'doubleclick.net',
+                        'ads.google.com', 'pagead2.googlesyndication.com', 'adservice.google.com',
+                        'adwords.google.com', 'google-analytics.com', 'analytics.google.com',
+                        'googletagmanager.com', 'ads-twitter.com', 'static.ads-twitter.com',
+                        'platform.twitter.com', 'facebook.com/ads', 'facebook.net',
+                        'rubiconproject.com', 'pubmatic.com', 'openx.net',
+                        'spotxchange.com', 'adroll.com', 'criteo.com',
+                        'anetwork.net', 'serving-sys.com', 'flashtalking.com',
+                        'turn.com', 'adap.tv', 'pubsub.adap.tv',
+                        'casalemedia.com', 'scorecardresearch.com', 'comscore.com',
+                        'amazon-adsystem.com', 'taboola.com', 'outbrain.com',
+                        'sharethis.com', 'polldaddy.com', 'distene.com',
+                        'ad-delivery.net', 'ads.yahoo.com', 'ads.linkedin.com',
+                        'adsymptotic.com', 'adyoulike.com', 'affiliatex.com'
+                    ];
+
+                    this.adPatterns = [
+                        'ad', 'advertisement', 'banner', 'popup', 'modal', 'overlay',
+                        'ads', 'advert', 'sponsor', 'promo', 'commercial', 'promotional',
+                        'interstitial', 'preroll', 'midroll', 'postroll'
+                    ];
+
+                    this.init();
+                }
+
+                init() {
+                    // Intercept fetch requests
+                    this.interceptFetch();
+                    // Intercept XHR requests
+                    this.interceptXHR();
+                    // Block ads in main page
+                    this.blockPageAds();
+                }
+
+                interceptFetch() {
+                    const originalFetch = window.fetch;
+                    const self = this;
+
+                    window.fetch = function(...args) {
+                        const url = args[0]?.toString?.() || '';
+                        
+                        if (self.isAdURL(url)) {
+                            self.blockedRequests++;
+                            console.log(`[AdBlocker] Blocked fetch: ${url}`);
+                            return Promise.reject(new Error('Ad request blocked'));
+                        }
+                        
+                        return originalFetch.apply(this, args);
+                    };
+                }
+
+                interceptXHR() {
+                    const self = this;
+                    const originalOpen = XMLHttpRequest.prototype.open;
+
+                    XMLHttpRequest.prototype.open = function(method, url, ...rest) {
+                        if (self.isAdURL(url)) {
+                            self.blockedRequests++;
+                            console.log(`[AdBlocker] Blocked XHR: ${url}`);
+                            this._blocked = true;
+                            return;
+                        }
+                        
+                        return originalOpen.call(this, method, url, ...rest);
+                    };
+
+                    const originalSend = XMLHttpRequest.prototype.send;
+                    XMLHttpRequest.prototype.send = function(...args) {
+                        if (this._blocked) return;
+                        return originalSend.apply(this, args);
+                    };
+                }
+
+                isAdURL(url) {
+                    if (typeof url !== 'string') return false;
+                    const lowerUrl = url.toLowerCase();
+                    
+                    // Check ad domains
+                    for (let domain of this.adDomains) {
+                        if (lowerUrl.includes(domain)) return true;
+                    }
+                    
+                    // Check URL patterns
+                    const adPatterns = ['/ad/', '/ads/', '/banner', '/popup', '/track', '/pixel', '?ad=', '&ad='];
+                    for (let pattern of adPatterns) {
+                        if (lowerUrl.includes(pattern)) return true;
+                    }
+                    
+                    return false;
+                }
+
+                blockPageAds() {
+                    // Run initially
+                    this.removeAds();
+                    
+                    // Monitor for new ads
+                    if (window.MutationObserver) {
+                        const observer = new MutationObserver(() => this.removeAds());
+                        observer.observe(document.body, {
+                            childList: true,
+                            subtree: true,
+                            attributes: true
+                        });
+                    }
+                }
+
+                removeAds() {
+                    // Remove ad elements from main page
+                    const adSelectors = [
+                        '[class*="ad"]', '[id*="ad"]',
+                        '[class*="advertisement"]', '[id*="advertisement"]',
+                        '[class*="banner"]', '[id*="banner"]',
+                        '[class*="popup"]', '[id*="popup"]',
+                        '[class*="modal"]', '[id*="modal"]',
+                        '[class*="overlay"]', '[id*="overlay"]',
+                        '[class*="sponsor"]', '[id*="sponsor"]',
+                        'ins[class*="adsbygoogle"]',
+                        '[data-ad-slot]', '[data-ad-client]',
+                        '.advertisement', '#advertisement',
+                        '.advert', '#advert'
+                    ];
+
+                    adSelectors.forEach(selector => {
+                        try {
+                            document.querySelectorAll(selector).forEach(el => {
+                                // Don't remove video containers or player
+                                if (!el.classList.contains('player-container') && 
+                                    !el.classList.contains('video') &&
+                                    !el.id.includes('player')) {
+                                    el.style.display = 'none';
+                                }
+                            });
+                        } catch (e) {}
+                    });
+                }
+
+                getStats() {
+                    return this.blockedRequests;
+                }
+            }
+
+            // ═══════ Initialize Ad Blocker ═══════
+            const adBlocker = new AdvancedAdBlocker();
+
+            // ═══════ Configuration ═══════
+            const TMDB_KEY = '3a87b1db63bc74b8e3fe9266ddc75b30';
+            const TMDB_BASE = 'https://api.themoviedb.org/3';
+            const TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
+
+            // ═══════ Get URL Parameters ═══════
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            const type = (params.get('type') || 'movie').toLowerCase();
+            const season = params.get('s') || '1';
+            const episode = params.get('e') || '1';
+
+            if (!id) {
+                document.querySelector('.info-title').textContent = 'Error: Invalid URL';
+                document.getElementById('overviewText').textContent = 'No media ID provided. Please go back and select a title.';
+                throw new Error('No media ID in URL');
+            }
+
+            // ═══════ Player Sources Configuration ═══════
+            let videasyUrl;
+            if (type === 'tv') {
+                videasyUrl = `https://player.videasy.net/tv/${id}/${season}/${episode}?overlay=true&color=E50914&nextEpisode=true&episodeSelector=true&autoplayNextEpisode=true`;
+            } else {
+                videasyUrl = `https://player.videasy.net/movie/${id}?overlay=true&color=E50914`;
+            }
+
+            const playerSources = {
+                1: {
+                    name: 'VidSrc SBS',
+                    badge: 'Recommended',
+                    url: type === 'tv' 
+                        ? `https://vidsrc.sbs/embed/tv/${id}/${season}/${episode}`
+                        : `https://vidsrc.sbs/embed/movie/${id}`
+                },
+                2: {
+                    name: 'Videasy',
+                    badge: 'HD + NextEp',
+                    url: videasyUrl
+                }
+            };
+
+            // ═══════ State Variables ═══════
+            let currentSource = 1;
+
+            // ═══════ Toast Notification ═══════
+            function showToast(message, toastType = 'success') {
+                const toast = document.createElement('div');
+                toast.className = `toast ${toastType}`;
+                toast.innerHTML = `
+                    <i class="fas fa-${toastType === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                    ${message}
+                `;
+                document.body.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.style.animation = 'slideIn 0.3s ease reverse';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+
+            // ═══════ Load Player Embed ═══════
+            function loadPlayerEmbed(sourceKey) {
+                const source = playerSources[sourceKey];
+                if (!source) return;
+
+                currentSource = sourceKey;
+                const url = source.url;
+
+                // Remove old iframe
+                const oldIframe = document.querySelector('.player-container iframe');
+                if (oldIframe) oldIframe.remove();
+
+                // Show loading
+                const loading = document.getElementById('playerLoading');
+                document.getElementById('loadingSubtext').textContent = `Loading ${source.name} with ad blocker active...`;
+                loading.classList.remove('hidden');
+
+                // Create new iframe
+                const iframe = document.createElement('iframe');
+                iframe.src = url;
+                iframe.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture; accelerometer';
+                iframe.setAttribute('loading', 'lazy');
+                iframe.setAttribute('referrerpolicy', 'no-referrer');
+                iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms allow-popups allow-presentation');
+
+                iframe.onload = () => {
+                    loading.classList.add('hidden');
+                    showToast(`Playing with ${source.name} (Ad Blocker Active) - ${adBlocker.getStats()} ads blocked`, 'success');
+                };
+
+                iframe.onerror = () => {
+                    showToast(`Failed to load ${source.name}`, 'error');
+                    loading.classList.remove('hidden');
+                };
+
+                // Timeout fallback
+                setTimeout(() => {
+                    if (!loading.classList.contains('hidden')) {
+                        loading.classList.add('hidden');
+                    }
+                }, 5000);
+
+                document.getElementById('playerContainer').appendChild(iframe);
+
+                // Update button state
+                document.querySelectorAll('.server-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.source === sourceKey.toString());
+                });
+            }
+
+            // ═══════ Initialize Server Buttons ═══════
+            function initServerButtons() {
+                const tabsContainer = document.getElementById('serverTabs');
+                tabsContainer.innerHTML = '';
+
+                Object.entries(playerSources).forEach(([key, source]) => {
+                    const btn = document.createElement('button');
+                    btn.className = `server-btn ${key === '1' ? 'active' : ''}`;
+                    btn.dataset.source = key;
+                    btn.innerHTML = `${source.name} <span class="server-badge">${source.badge}</span>`;
+                    btn.addEventListener('click', () => loadPlayerEmbed(parseInt(key)));
+                    tabsContainer.appendChild(btn);
+                });
+            }
+
+            // ═══════ Fetch Media Details ═══════
+            async function fetchMediaDetails() {
+                try {
+                    const endpoint = type === 'movie'
+                        ? `/movie/${id}?append_to_response=credits`
+                        : `/tv/${id}?append_to_response=credits`;
+
+                    const sep = endpoint.includes('?') ? '&' : '?';
+                    const url = TMDB_BASE + endpoint + sep + 'api_key=' + TMDB_KEY;
+
+                    const res = await fetch(url);
+                    if (!res.ok) throw new Error('TMDB API Error');
+
+                    const data = await res.json();
+
+                    // Extract data
+                    const title = data.title || data.name || 'Untitled';
+                    const year = (data.release_date || data.first_air_date || '').substring(0, 4);
+                    const rating = data.vote_average ? Number(data.vote_average).toFixed(1) : '?';
+                    const match = data.vote_average ? Math.round(data.vote_average * 10) : 0;
+                    const runtime = data.runtime || (data.episode_run_time?.[0]) || '?';
+                    const poster = data.poster_path ? TMDB_IMG + data.poster_path : '';
+                    const overview = data.overview || 'No description available.';
+                    const genres = data.genres || [];
+                    const cast = data.credits?.cast?.slice(0, 8).map(c => c.name).join(', ') || 'N/A';
+
+                    // Update page title
+                    document.title = `${title} - HR OTT`;
+
+                    // Populate UI
+                    document.getElementById('titleText').textContent = title;
+                    document.getElementById('posterImg').src = poster;
+                    document.getElementById('overviewText').textContent = overview;
+                    document.getElementById('castText').textContent = cast;
+                    document.getElementById('descText').textContent = overview;
+
+                    // Metadata row
+                    const metaHtml = `
+                        <div class="meta-item match">${match}% Match</div>
+                        <div class="meta-item">${year}</div>
+                        <div class="meta-item"><span class="maturity-badge">${rating}</span></div>
+                        <div class="meta-item">${runtime} ${type === 'tv' ? 'min/ep' : 'min'}</div>
+                        <div class="meta-item"><i class="fas fa-hd"></i> HD</div>
+                    `;
+                    document.getElementById('metaRow').innerHTML = metaHtml;
+
+                    // Genres
+                    const genresHtml = genres.map(g => `<div class="genre-tag">${g.name}</div>`).join('');
+                    document.getElementById('genresRow').innerHTML = genresHtml || '<div class="genre-tag">N/A</div>';
+
+                    // Auto-load first server
+                    loadPlayerEmbed(1);
+
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                    showToast('Failed to load media details', 'error');
+                }
+            }
+
+            // ═══════ Nav Scroll Effect ═══════
+            window.addEventListener('scroll', () => {
+                document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 30);
+            });
+
+            // ═══════ Keyboard Shortcuts ═══════
+            document.addEventListener('keydown', (e) => {
+                if (e.key === '1') loadPlayerEmbed(1);
+                if (e.key === '2') loadPlayerEmbed(2);
+            });
+
+            // ═══════ Update Ad Block Status ═══════
+            setInterval(() => {
+                const blockedCount = adBlocker.getStats();
+                document.getElementById('adblockText').textContent = `Ad Block: ON (${blockedCount})`;
+            }, 2000);
+
+            // ═══════ Initialize ═══════
+            initServerButtons();
+            fetchMediaDetails();
+
+        })();
+    </script>
+</body>
+</html>
