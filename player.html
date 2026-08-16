@@ -201,6 +201,23 @@
             align-items: center;
             contain: layout style;
             width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.1) transparent;
+        }
+
+        .server-tabs::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .server-tabs::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .server-tabs::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
         }
 
         .server-btn {
@@ -223,6 +240,7 @@
             contain: layout style;
             white-space: nowrap;
             height: fit-content;
+            flex-shrink: 0;
         }
 
         .server-btn::before {
@@ -258,6 +276,13 @@
         }
 
         .server-btn.active .server-badge { background: rgba(255,255,255,0.3); }
+
+        .server-btn-note {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.6);
+            display: block;
+            margin-top: 2px;
+        }
 
         /* ── Player Container ── */
         .player-container {
@@ -1093,7 +1118,7 @@
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2026 HR OTT — Stream Movies & Series. Powered by TMDB.</p>
+        <p>&copy; 2026 HR OTT — Stream Movies & Series. Powered by TMDB. <strong>HR OTT is completely free and we never run ads.</strong> Any ad or new tab you see comes from the video server itself. Keep the ad blocker on for a clean experience.</p>
     </footer>
 
     <script>
@@ -1218,14 +1243,97 @@
 
             const playerSources = {};
 
-            function refreshPlayerSources() {
-                const baseUrl = type === 'tv' 
-                    ? `embed/tv/${id}/${season}/${episode}`
-                    : `embed/movie/${id}`;
+            // ═══════ PLAYER SOURCES CONFIGURATION ═══════
+            const sourceConfig = [
+                {
+                    id: 1,
+                    name: 'NxSha',
+                    badge: 'Primary',
+                    note: 'Fastest server, HD with subtitles',
+                    movie: (tmdbId) => `https://player.videasy.net/movie/${tmdbId}?color=F5C518&overlay=true`,
+                    tv: (tmdbId, season = 1, episode = 1) => `https://player.videasy.net/tv/${tmdbId}/${season}/${episode}?color=F5C518&nextEpisode=true&episodeSelector=true&autoplayNextEpisode=true&overlay=true`
+                },
+                {
+                    id: 2,
+                    name: 'VidSrc',
+                    badge: 'Fast',
+                    note: 'Fresh links, good for new releases',
+                    movie: (tmdbId) => `https://player.vidzee.wtf/embed/movie/${tmdbId}`,
+                    tv: (tmdbId, season = 1, episode = 1) => `https://player.vidzee.wtf/embed/tv/${tmdbId}/${season}/${episode}`
+                },
+                {
+                    id: 3,
+                    name: 'VidBolt',
+                    badge: 'HD',
+                    note: 'Remembers where you stopped and resumes',
+                    movie: (tmdbId) => `https://www.vidking.net/embed/movie/${tmdbId}?color=F5C518&autoPlay=true`,
+                    tv: (tmdbId, season = 1, episode = 1) => `https://www.vidking.net/embed/tv/${tmdbId}/${season}/${episode}?color=F5C518&autoPlay=true&nextEpisode=true&episodeSelector=true`
+                },
+                {
+                    id: 4,
+                    name: 'VidSrc.sbs',
+                    badge: 'Reliable',
+                    note: 'Plays inside the page, no popups',
+                    movie: (tmdbId) => `https://vidsrc.sbs/embed/movie/${tmdbId}`,
+                    tv: (tmdbId, season = 1, episode = 1) => `https://vidsrc.sbs/embed/tv/${tmdbId}/${season}/${episode}`
+                },
+                {
+                    id: 5,
+                    name: 'VidSrc.wiki',
+                    badge: 'Stable',
+                    note: 'Reliable server, plays inside the page',
+                    movie: (tmdbId) => `https://vidsrc.wiki/embed/movie/${tmdbId}`,
+                    tv: (tmdbId, season = 1, episode = 1) => `https://vidsrc.wiki/embed/tv/${tmdbId}/${season}/${episode}`
+                },
+                {
+                    id: 6,
+                    name: 'VidFast',
+                    badge: 'Quick',
+                    note: 'Fast server with auto next episode',
+                    movie: (tmdbId) => `https://vidfast.vc/movie/${tmdbId}?autoPlay=true&theme=F5C518`,
+                    tv: (tmdbId, season = 1, episode = 1) => `https://vidfast.vc/tv/${tmdbId}/${season}/${episode}?autoPlay=true&theme=F5C518&nextButton=true&autoNext=true`
+                },
+                {
+                    id: 7,
+                    name: 'Garageband',
+                    badge: 'FullScreen',
+                    note: 'Full screen embedded player',
+                    movie: (tmdbId) => `https://proxy.garageband.rocks/embed/movie/${tmdbId}`,
+                    tv: (tmdbId, season = 1, episode = 1) => `https://proxy.garageband.rocks/embed/tv/${tmdbId}/${season}/${episode}?autonext=1`
+                },
+                {
+                    id: 8,
+                    name: 'VidSrc-RU',
+                    badge: 'Mirror',
+                    note: 'Full screen view with good uptime',
+                    movie: (tmdbId) => `https://vidsrc-embed.ru/embed/movie?tmdb=${tmdbId}`,
+                    tv: (tmdbId, season = 1, episode = 1) => `https://vidsrc-embed.ru/embed/tv?tmdb=${tmdbId}&season=${season}&episode=${episode}`
+                },
+                {
+                    id: 9,
+                    name: '2Embed',
+                    badge: 'Popular',
+                    note: 'Full screen view, popular choice',
+                    movie: (tmdbId) => `https://www.2embed.cc/embed/${tmdbId}`,
+                    tv: (tmdbId, season = 1, episode = 1) => `https://www.2embed.cc/embedtv/${tmdbId}&s=${season}&e=${episode}`
+                }
+            ];
 
-                playerSources[1] = {name: 'NxSha', badge: 'Primary', url: `https://nxsha.space/${baseUrl}`};
-                playerSources[2] = {name: 'VidSrc', badge: 'Fast', url: `https://vidsrc.sbs/${baseUrl}`};
-                playerSources[3] = {name: 'VidBolt', badge: 'HD', url: `https://vidbolt.pro/${baseUrl}?autoPlay=1`};
+            function refreshPlayerSources() {
+                Object.keys(playerSources).forEach(k => delete playerSources[k]);
+                
+                sourceConfig.forEach(config => {
+                    const url = type === 'tv' 
+                        ? config.tv(id, season, episode)
+                        : config.movie(id);
+                    
+                    playerSources[config.id] = {
+                        name: config.name,
+                        badge: config.badge,
+                        note: config.note,
+                        url: url
+                    };
+                });
             }
 
             refreshPlayerSources();
@@ -1272,7 +1380,7 @@
                     clearTimeout(timeout);
                     loading.classList.add('hidden');
                     isLoading = false;
-                    showToast(`Playing with ${source.name} (${adBlocker.getStats()} ads blocked)`);
+                    showToast(`Playing with ${source.name} (${adBlocker.getStats()} ads blocked)`, 'success');
                 };
 
                 iframe.onerror = () => {
@@ -1284,7 +1392,7 @@
 
                 document.getElementById('playerContainer').appendChild(iframe);
                 document.querySelectorAll('.server-btn').forEach(b => 
-                    b.classList.toggle('active', b.dataset.source == key)
+                    b.classList.toggle('active', parseInt(b.dataset.source) === key)
                 );
             }
 
@@ -1295,9 +1403,11 @@
                 container.innerHTML = '';
                 Object.entries(playerSources).forEach(([k, s]) => {
                     const b = document.createElement('button');
-                    b.className = `server-btn ${k === '1' ? 'active' : ''}`;
+                    b.className = `server-btn ${parseInt(k) === 1 ? 'active' : ''}`;
                     b.dataset.source = k;
-                    b.innerHTML = `${s.name} <span class="server-badge">${s.badge}</span>`;
+                    b.type = 'button';
+                    b.title = s.note;
+                    b.innerHTML = `<div><div>${s.name} <span class="server-badge">${s.badge}</span></div><div class="server-btn-note">${s.note}</div></div>`;
                     b.onclick = () => loadPlayerEmbed(parseInt(k));
                     container.appendChild(b);
                 });
@@ -1309,7 +1419,7 @@
                 if (!t || !m) return;
 
                 t.textContent = document.getElementById('titleText')?.textContent || 'Loading...';
-                m.textContent = type === 'tv' ? `S${season} E${episode}` : 'Movie';
+                m.textContent = type === 'tv' ? `S${season}E${episode}` : 'Movie';
             }
 
             // ═══════ EPISODE GUIDE ═══════
