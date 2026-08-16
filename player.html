@@ -754,10 +754,13 @@
             const season = params.get('s') || '1';
             const episode = params.get('e') || '1';
 
+            const serverTabs = document.getElementById('serverTabs');
             if (!id) {
-                document.querySelector('.info-title').textContent = 'Error: Invalid URL';
-                document.getElementById('overviewText').textContent = 'No media ID provided. Please go back and select a title.';
-                throw new Error('No media ID in URL');
+                const titleEl = document.querySelector('.info-title');
+                const overviewEl = document.getElementById('overviewText');
+                if (titleEl) titleEl.textContent = 'Error: Invalid URL';
+                if (overviewEl) overviewEl.textContent = 'No media ID provided. Please go back and select a title.';
+                showToast('No media ID provided. Open a title from the home page first.', 'error');
             }
 
             // ═══════ Player Sources Configuration ═══════
@@ -934,6 +937,8 @@
             // ═══════ Initialize Server Buttons ═══════
             function initServerButtons() {
                 const tabsContainer = document.getElementById('serverTabs');
+                if (!tabsContainer) return;
+
                 tabsContainer.innerHTML = '';
 
                 const sources = Object.entries(playerSources);
@@ -1011,7 +1016,8 @@
 
             // ═══════ Nav Scroll Effect ═══════
             window.addEventListener('scroll', () => {
-                document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 30);
+                const nav = document.getElementById('mainNav') || document.querySelector('.nav');
+                if (nav) nav.classList.toggle('scrolled', window.scrollY > 30);
             });
 
             // ═══════ Keyboard Shortcuts ═══════
@@ -1035,7 +1041,10 @@
             // ═══════ Initialize ═══════
             initServerButtons();
             updateFullscreenButton();
-            fetchMediaDetails();
+
+            if (id) {
+                fetchMediaDetails();
+            }
 
         })();
     </script>
