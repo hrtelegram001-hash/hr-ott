@@ -775,7 +775,9 @@
                 1: {
                     name: 'NxSha Stream',
                     badge: 'Primary',
-                    url: `https://nxsha.space/embed/movie/${id}`
+                    url: type === 'tv'
+                        ? `https://nxsha.space/embed/tv/${id}/${season}/${episode}`
+                        : `https://nxsha.space/embed/movie/${id}`
                 },
                 2: {
                     name: 'VidSrc SBS',
