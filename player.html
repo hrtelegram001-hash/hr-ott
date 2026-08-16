@@ -145,6 +145,8 @@
         /* ── Server Tabs ── */
         .server-section {
             margin-bottom: 24px;
+            z-index: 50;
+            position: relative;
         }
 
         .server-label {
@@ -161,6 +163,8 @@
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
+            min-height: 40px;
+            align-items: center;
         }
 
         .server-btn {
@@ -1196,12 +1200,25 @@
             // ═══════ Initialize Server Buttons ═══════
             function initServerButtons() {
                 const tabsContainer = document.getElementById('serverTabs');
-                if (!tabsContainer) return;
+                if (!tabsContainer) {
+                    console.warn('[Server Buttons] serverTabs container not found');
+                    return;
+                }
+
+                if (!playerSources) {
+                    console.warn('[Server Buttons] playerSources not defined');
+                    return;
+                }
 
                 tabsContainer.innerHTML = '';
 
                 const sources = Object.entries(playerSources);
-                if (!sources.length) return;
+                if (!sources.length) {
+                    console.warn('[Server Buttons] No sources available');
+                    return;
+                }
+
+                console.log('[Server Buttons] Creating buttons for:', sources.length, 'sources');
 
                 sources.forEach(([key, source]) => {
                     const btn = document.createElement('button');
@@ -1209,9 +1226,14 @@
                     btn.dataset.source = key;
                     btn.type = 'button';
                     btn.innerHTML = `${source.name} <span class="server-badge">${source.badge}</span>`;
-                    btn.addEventListener('click', () => loadPlayerEmbed(parseInt(key, 10)));
+                    btn.addEventListener('click', () => {
+                        console.log('[Server Buttons] Clicked source:', source.name);
+                        loadPlayerEmbed(parseInt(key, 10));
+                    });
                     tabsContainer.appendChild(btn);
                 });
+
+                console.log('[Server Buttons] Successfully initialized', sources.length, 'buttons');
             }
 
             // ═══════ Episode Guide ═══════
