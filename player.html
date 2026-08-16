@@ -773,18 +773,23 @@
 
             const playerSources = {
                 1: {
+                    name: 'NxSha Stream',
+                    badge: 'Primary',
+                    url: `https://nxsha.space/embed/movie/${id}`
+                },
+                2: {
                     name: 'VidSrc SBS',
                     badge: 'Recommended',
                     url: type === 'tv' 
                         ? `https://vidsrc.sbs/embed/tv/${id}/${season}/${episode}`
                         : `https://vidsrc.sbs/embed/movie/${id}`
                 },
-                2: {
+                3: {
                     name: 'Videasy',
                     badge: 'HD + NextEp',
                     url: videasyUrl
                 },
-                3: {
+                4: {
                     name: 'VidBolt',
                     badge: 'API Embed',
                     url: type === 'tv'
@@ -1025,6 +1030,7 @@
                 if (e.key === '1') loadPlayerEmbed(1);
                 if (e.key === '2') loadPlayerEmbed(2);
                 if (e.key === '3') loadPlayerEmbed(3);
+                if (e.key === '4') loadPlayerEmbed(4);
             });
 
             document.getElementById('playerFullscreenBtn')?.addEventListener('click', togglePlayerFullscreen);
