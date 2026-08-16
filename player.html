@@ -818,9 +818,6 @@
 
         <!-- Video Player Container -->
         <div class="player-container" id="playerContainer">
-            <div class="server-health" id="serverHealth">
-                <!-- Dynamically populated -->
-            </div>
             <div class="player-controls">
                 <button class="player-fullscreen-btn" id="playerFullscreenBtn" type="button" aria-label="Toggle fullscreen">
                     <i class="fas fa-expand"></i>
@@ -880,20 +877,6 @@
                     </div>
                 </div>
 
-                <div class="provider-section" id="providerSection">
-                    <div class="provider-section-header">
-                        <div class="provider-main-tab"><i class="fas fa-globe"></i> Watch Providers</div>
-                    </div>
-
-                    <div class="provider-subtabs">
-                        <button class="provider-subtab active" type="button" data-provider-type="movie">Movie Providers</button>
-                        <button class="provider-subtab" type="button" data-provider-type="tv">TV Providers</button>
-                    </div>
-
-                    <div class="providers-grid" id="providersGrid">
-                        <div class="provider-empty">Loading providers...</div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -1104,49 +1087,6 @@
             }
 
             const lazyLoader = new LazyLoader();
-
-            // ═══════ Server Health Checker ═══════
-            class ServerHealthChecker {
-                constructor() {
-                    this.healthStatus = {};
-                }
-
-                async checkServer(name, url) {
-                    try {
-                        const response = await fetch(url, { method: 'HEAD', mode: 'no-cors' });
-                        this.healthStatus[name] = true;
-                        return true;
-                    } catch (error) {
-                        this.healthStatus[name] = false;
-                        return false;
-                    }
-                }
-
-                async checkAllServers(sources) {
-                    const checks = Object.entries(sources).map(([key, source]) => 
-                        this.checkServer(source.name, source.url)
-                    );
-                    await Promise.all(checks);
-                }
-
-                displayHealth() {
-                    const healthContainer = document.getElementById('serverHealth');
-                    if (!healthContainer) return;
-
-                    healthContainer.innerHTML = '';
-                    Object.entries(this.healthStatus).forEach(([name, isOnline]) => {
-                        const div = document.createElement('div');
-                        div.className = 'health-item';
-                        div.innerHTML = `
-                            <div class="health-dot ${isOnline ? 'online' : 'offline'}"></div>
-                            <span>${name}</span>
-                        `;
-                        healthContainer.appendChild(div);
-                    });
-                }
-            }
-
-            const healthChecker = new ServerHealthChecker();
 
             const TMDB_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzYTg3YjFkYjYzYmM3NGI4ZTNmZTkyNjZkZGM3NWIzMCIsIm5iZiI6MTc4Njg2NTkwOS40ODE5OTk5LCJzdWIiOiI2YTgxNjhmNThkMTFjYTkzYTRjOTQwMjUiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.01jTorcHrhobfm6YuVtlrxA5AGgM12WD_NbPKLxt76s';
             const TMDB_BASE = 'https://api.themoviedb.org/3';
@@ -1461,53 +1401,6 @@
                 }
             }
 
-            async function loadWatchProviders(providerType = (type === 'tv' ? 'tv' : 'movie')) {
-                const grid = document.getElementById('providersGrid');
-                if (!grid) return;
-
-                grid.innerHTML = '<div class="provider-empty">Loading providers...</div>';
-
-                try {
-                    const url = `${TMDB_BASE}/watch/providers/${providerType}?language=en-US`;
-                    const res = await fetch(url, {
-                        headers: {
-                            'Authorization': 'Bearer ' + TMDB_TOKEN,
-                            'accept': 'application/json'
-                        }
-                    });
-                    if (!res.ok) throw new Error('Watch providers request failed');
-
-                    const data = await res.json();
-                    const regionCode = 'US';
-                    const providers = (data.results || [])
-                        .filter(provider => provider && provider.display_priorities && provider.display_priorities[regionCode] !== undefined)
-                        .sort((a, b) => {
-                            const aPriority = a.display_priorities[regionCode] || 999999;
-                            const bPriority = b.display_priorities[regionCode] || 999999;
-                            return aPriority - bPriority;
-                        })
-                        .slice(0, 20);
-
-                    if (!providers.length) {
-                        grid.innerHTML = '<div class="provider-empty">No providers available for the US region.</div>';
-                        return;
-                    }
-
-                    grid.innerHTML = providers.map((provider) => {
-                        const image = provider.logo_path ? `${TMDB_IMG}${provider.logo_path}` : '';
-                        return `
-                            <div class="provider-card">
-                                ${image ? `<img class="provider-logo" src="${image}" alt="${provider.provider_name}" onerror="this.style.display='none'; this.parentElement.querySelector('.provider-name').style.display='block';">` : ''}
-                                <div class="provider-name">${provider.provider_name}</div>
-                            </div>
-                        `;
-                    }).join('');
-                } catch (error) {
-                    console.error('Provider load error:', error);
-                    grid.innerHTML = '<div class="provider-empty">Unable to load providers right now.</div>';
-                }
-            }
-
             // ═══════ Episode Guide ═══════
             async function loadEpisodeGuide() {
                 if (type !== 'tv') return;
@@ -1734,14 +1627,6 @@
                 if (e.key === '4') loadPlayerEmbed(4);
             });
 
-            document.querySelectorAll('.provider-subtab').forEach((tab) => {
-                tab.addEventListener('click', () => {
-                    const selected = tab.dataset.providerType;
-                    document.querySelectorAll('.provider-subtab').forEach(btn => btn.classList.toggle('active', btn === tab));
-                    loadWatchProviders(selected);
-                });
-            });
-
             document.getElementById('playerFullscreenBtn')?.addEventListener('click', togglePlayerFullscreen);
             document.addEventListener('fullscreenchange', updateFullscreenButton);
             document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
@@ -1755,13 +1640,7 @@
 
             // ═══════ Initialize ═══════
             initServerButtons();
-            loadWatchProviders(type === 'tv' ? 'tv' : 'movie');
             updateFullscreenButton();
-
-            // Check server health
-            healthChecker.checkAllServers(playerSources).then(() => {
-                healthChecker.displayHealth();
-            });
 
             // Trigger auto-play countdown when iframe loads (TV only)
             const observer = new MutationObserver(() => {

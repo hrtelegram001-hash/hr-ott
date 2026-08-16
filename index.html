@@ -420,92 +420,6 @@
         .modal-body span.value { color: #fff; font-size: 0.95rem; }
         .modal-meta { display: flex; gap: 14px; align-items: center; font-size: 0.9rem; margin-bottom: 16px; flex-wrap: wrap; }
 
-        /* ── Watch Providers ── */
-        .provider-shell {
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            padding: 12px var(--pad) 24px;
-        }
-        .provider-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            padding-top: 8px;
-        }
-        .provider-main-tab {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: #fff;
-        }
-        .provider-subtabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .provider-subtab {
-            border: 1px solid rgba(255,255,255,0.12);
-            background: rgba(255,255,255,0.03);
-            color: var(--text-muted);
-            padding: 10px 16px;
-            border-radius: 999px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .provider-subtab.active {
-            background: linear-gradient(135deg, rgba(229,9,20,0.22), rgba(255,255,255,0.05));
-            color: #fff;
-            border-color: rgba(229,9,20,0.8);
-            box-shadow: 0 10px 22px rgba(229,9,20,0.18);
-        }
-        .provider-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 16px;
-            padding: 8px 0 0;
-        }
-        .provider-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            min-height: 140px;
-            padding: 16px 12px;
-            text-align: center;
-            background: rgba(22,22,28,0.9);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 12px;
-            box-shadow: 0 10px 26px rgba(0,0,0,0.22);
-        }
-        .provider-logo {
-            width: 54px;
-            height: 54px;
-            border-radius: 16px;
-            object-fit: cover;
-            background: rgba(255,255,255,0.08);
-        }
-        .provider-name {
-            font-size: 0.82rem;
-            line-height: 1.4;
-            font-weight: 700;
-            color: #fff;
-            word-break: break-word;
-        }
-        .provider-empty {
-            text-align: center;
-            color: var(--text-muted);
-            padding: 24px 16px;
-            border: 1px dashed rgba(255,255,255,0.15);
-            border-radius: 12px;
-            background: rgba(255,255,255,0.02);
-        }
-
         /* ── Empty state ── */
         .empty-state { text-align: center; padding: 110px 20px; color: #888; }
         .empty-state i { font-size: 3rem; margin-bottom: 20px; display: block; color: var(--red); }
@@ -573,7 +487,6 @@
             <a data-cat="movies">Movies</a>
             <a data-cat="new">New &amp; Popular</a>
             <a data-cat="mylist">My List</a>
-            <a data-cat="watchprovider">Watch Provider</a>
         </div>
         <div class="nav-right">
             <div class="search-container">
@@ -630,7 +543,6 @@
         <button class="bottom-nav-item" type="button" data-cat="movies"><i>🎬</i><span>Movies</span></button>
         <button class="bottom-nav-item" type="button" data-cat="new"><i>✨</i><span>New</span></button>
         <button class="bottom-nav-item" type="button" data-cat="mylist"><i>❤️</i><span>My List</span></button>
-        <button class="bottom-nav-item" type="button" data-cat="watchprovider"><i>▶️</i><span>Provider</span></button>
     </nav>
 
     <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
@@ -1105,63 +1017,8 @@
                 window.location.hash = cat;
                 if (cat === 'home') renderHome();
                 else if (cat === 'mylist') renderMyList();
-                else if (cat === 'watchprovider') renderWatchProviders('movie');
                 else renderWall(cat);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-
-            async function renderWatchProviders(providerType = 'movie') {
-                teardownWall();
-                hideHero();
-                const container = document.getElementById('sectionsContainer');
-                container.innerHTML = `
-                    <div class="provider-shell">
-                        <div class="provider-header">
-                            <div class="provider-main-tab"><i class="fas fa-globe"></i> Watch Providers</div>
-                        </div>
-                        <div class="provider-subtabs">
-                            <button class="provider-subtab ${providerType === 'movie' ? 'active' : ''}" type="button" data-provider-type="movie">Movie Providers</button>
-                            <button class="provider-subtab ${providerType === 'tv' ? 'active' : ''}" type="button" data-provider-type="tv">TV Providers</button>
-                        </div>
-                        <div class="provider-grid" id="watchProvidersGrid"></div>
-                    </div>
-                `;
-
-                const tabs = document.querySelectorAll('.provider-subtab');
-                tabs.forEach((tab) => {
-                    tab.addEventListener('click', () => {
-                        const selected = tab.dataset.providerType;
-                        tabs.forEach(btn => btn.classList.toggle('active', btn === tab));
-                        renderWatchProviders(selected);
-                    });
-                });
-
-                try {
-                    const data = await tmdbFetch(`/watch/providers/${providerType}?language=en-US`);
-                    const providers = (data.results || [])
-                        .filter(item => item && item.provider_name)
-                        .sort((a, b) => (a.display_priority || 999) - (b.display_priority || 999))
-                        .slice(0, 24);
-
-                    const grid = document.getElementById('watchProvidersGrid');
-                    if (!providers.length) {
-                        grid.innerHTML = '<div class="provider-empty">No providers available for this category right now.</div>';
-                        return;
-                    }
-
-                    grid.innerHTML = providers.map((provider) => {
-                        const logo = provider.logo_path ? `${TMDB_IMG}${provider.logo_path}` : '';
-                        return `
-                            <div class="provider-card">
-                                ${logo ? `<img class="provider-logo" src="${logo}" alt="${provider.provider_name}">` : ''}
-                                <div class="provider-name">${provider.provider_name}</div>
-                            </div>
-                        `;
-                    }).join('');
-                } catch (error) {
-                    console.error('Watch provider load error:', error);
-                    document.getElementById('watchProvidersGrid').innerHTML = '<div class="provider-empty">Unable to load watch providers right now.</div>';
-                }
             }
 
             async function renderHome(){
@@ -1371,8 +1228,6 @@
                     await renderHome();
                 } else if (route === 'mylist') {
                     renderMyList();
-                } else if (route === 'watchprovider') {
-                    await renderWatchProviders();
                 } else {
                     renderRecent();
                     await renderHome();
