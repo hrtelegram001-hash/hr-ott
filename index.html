@@ -371,6 +371,11 @@
         /* ── Recently Watched ── */
         .recent-wrap { margin: 0 0 26px; display:none; position: relative; }
 
+        .personalized-row {
+            position: relative;
+            margin: 0 0 18px;
+        }
+
         /* ── Back to top ── */
         .back-to-top {
             position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; border-radius: 50%;
@@ -856,6 +861,26 @@
                 saveRec(); renderRecent();
             }
 
+            function buildPersonalizedRow(title, items, rowKey) {
+                const section = document.createElement('div');
+                section.className = 'section personalized-row';
+                section.innerHTML = `
+                    <h2 class="section-title">${title}</h2>
+                    <div class="row-scroll-area">
+                        <button class="scroll-btn left"><i class="fas fa-chevron-left"></i></button>
+                        <div class="row-track" id="grid-${rowKey}"></div>
+                        <button class="scroll-btn right"><i class="fas fa-chevron-right"></i></button>
+                    </div>`;
+                const track = section.querySelector('.row-track');
+                section.querySelector('.scroll-btn.left').addEventListener('click', () => track.scrollBy({ left: -track.clientWidth * 0.85, behavior: 'smooth'}));
+                section.querySelector('.scroll-btn.right').addEventListener('click', () => track.scrollBy({ left: track.clientWidth * 0.85, behavior: 'smooth'}));
+                items.slice(0, 12).forEach(item => {
+                    const card = createCard(item, item.type || item.media_type || 'movie');
+                    if(card) track.appendChild(card);
+                });
+                return section;
+            }
+
             function renderRecent(){
                 const wrap=document.getElementById('recentSection');
                 if(recent.length===0){ wrap.style.display='none'; return; }
@@ -871,6 +896,36 @@
                     c.querySelector('.card-rating').innerHTML='<i class="fas fa-clock"></i>';
                     grid.appendChild(c);
                 });
+            }
+
+            function renderPersonalizedRows() {
+                const container = document.getElementById('sectionsContainer');
+                if (!container) return;
+
+                const continueItems = recent.slice(0, 8).map(item => ({
+                    id: item.id,
+                    title: item.title,
+                    type: item.type || 'movie',
+                    media_type: item.type || 'movie',
+                    poster_path: item.poster ? item.poster.replace(TMDB_IMG, '').replace(/^\//, '') : '',
+                    release_date: item.year ? item.year + '-01-01' : '',
+                    vote_average: 0
+                }));
+
+                if (continueItems.length) {
+                    const continueSection = buildPersonalizedRow('Continue Watching', continueItems, 'continue-watching');
+                    container.appendChild(continueSection);
+                }
+
+                const topPicks = heroMovies.slice(0, 10).map(item => ({
+                    ...item,
+                    media_type: item.media_type || (item.title ? 'movie' : 'tv')
+                }));
+
+                if (topPicks.length) {
+                    const topPickSection = buildPersonalizedRow('Top Picks For You', topPicks, 'top-picks');
+                    container.appendChild(topPickSection);
+                }
             }
 
             // ═══════ Modal ═══════
@@ -1071,6 +1126,8 @@
                 const heroRow = results.find(r=>r.cfg.hero);
                 if(heroRow && heroRow.data.length) buildHero(heroRow.data);
                 else hideHero();
+
+                renderPersonalizedRows();
             }
             function hideHeroReset(){ const h=document.getElementById('hero'); h.style.display='block'; }
 

@@ -495,6 +495,43 @@
             font-weight: 700;
         }
 
+        .season-cards {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+            scrollbar-width: none;
+        }
+        .season-cards::-webkit-scrollbar { display: none; }
+
+        .season-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 0;
+            overflow: hidden;
+            min-width: 110px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .season-card:hover { border-color: var(--red); transform: translateY(-2px); }
+        .season-card.active { border-color: var(--red); box-shadow: 0 10px 30px rgba(229,9,20,0.18); }
+        .season-poster {
+            width: 100%;
+            height: 130px;
+            object-fit: cover;
+            display: block;
+            background: rgba(255,255,255,0.05);
+        }
+        .season-label {
+            padding: 10px 8px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            color: var(--text);
+            text-align: center;
+        }
+
         .seasons-select {
             background: var(--bg-card);
             border: 1px solid rgba(255,255,255,0.15);
@@ -512,7 +549,7 @@
 
         .episodes-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 12px;
             max-height: 400px;
             overflow-y: auto;
@@ -758,6 +795,7 @@
 
                 <div class="episode-guide" id="episodeGuide" style="display:none;">
                     <h3><i class="fas fa-list"></i> Episodes</h3>
+                    <div class="season-cards" id="seasonCards"></div>
                     <select class="seasons-select" id="seasonsSelect">
                         <option>Loading seasons...</option>
                     </select>
@@ -985,8 +1023,8 @@
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
             const type = (params.get('type') || 'movie').toLowerCase();
-            const season = params.get('s') || '1';
-            const episode = params.get('e') || '1';
+            let season = params.get('s') || '1';
+            let episode = params.get('e') || '1';
 
             const serverTabs = document.getElementById('serverTabs');
             if (!id) {
@@ -1320,22 +1358,49 @@
 
                     guideContainer.style.display = 'block';
                     const seasonSelect = document.getElementById('seasonsSelect');
+                    const seasonCards = document.getElementById('seasonCards');
                     seasonSelect.innerHTML = '';
+                    seasonCards.innerHTML = '';
 
-                    seasonsData.forEach(season => {
+                    seasonsData.forEach(seasonItem => {
                         const option = document.createElement('option');
-                        option.value = season.season_number;
-                        option.textContent = season.name || `Season ${season.season_number}`;
+                        option.value = seasonItem.season_number;
+                        option.textContent = seasonItem.name || `Season ${seasonItem.season_number}`;
                         seasonSelect.appendChild(option);
+
+                        const card = document.createElement('button');
+                        card.type = 'button';
+                        card.className = 'season-card' + (Number(seasonItem.season_number) === Number(season) ? ' active' : '');
+                        const poster = seasonItem.poster_path ? `${TMDB_IMG}${seasonItem.poster_path}` : '';
+                        card.innerHTML = `
+                            ${poster ? `<img class="season-poster" src="${poster}" alt="Season ${seasonItem.season_number}">` : '<div class="season-poster" style="display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:800;color:#fff;">S' + seasonItem.season_number + '</div>'}
+                            <div class="season-label">Season ${seasonItem.season_number}</div>
+                        `;
+                        card.addEventListener('click', () => {
+                            season = Number(seasonItem.season_number) || 1;
+                            episode = 1;
+                            refreshPlayerSources();
+                            updateNowPlayingTitle();
+                            seasonSelect.value = season;
+                            loadSeasonEpisodes(season, id);
+                        });
+                        seasonCards.appendChild(card);
                     });
 
                     seasonSelect.value = season || '1';
                     seasonSelect.onchange = (e) => {
                         season = Number(e.target.value) || 1;
+                        episode = 1;
                         refreshPlayerSources();
                         updateNowPlayingTitle();
+                        document.querySelectorAll('.season-card').forEach(card => card.classList.toggle('active', Number(card.dataset.seasonNumber) === Number(season)));
                         loadSeasonEpisodes(season, id);
                     };
+
+                    document.querySelectorAll('.season-card').forEach(card => {
+                        const seasonValue = card.querySelector('.season-label')?.textContent?.match(/\d+/)?.[0];
+                        if (seasonValue) card.dataset.seasonNumber = seasonValue;
+                    });
 
                     loadSeasonEpisodes(season || '1', id);
 
@@ -1371,6 +1436,9 @@
                         const item = document.createElement('button');
                         item.type = 'button';
                         item.className = 'episode-item';
+                        if (Number(ep.episode_number) === Number(episode) && Number(seasonNum) === Number(season)) {
+                            item.classList.add('active');
+                        }
                         const still = ep.still_path ? `${TMDB_IMG}${ep.still_path}` : '';
                         const runtime = ep.runtime ? `${ep.runtime} min` : 'TBA';
                         const stillMarkup = still
@@ -1387,6 +1455,8 @@
                             episode = Number(ep.episode_number) || 1;
                             refreshPlayerSources();
                             updateNowPlayingTitle();
+                            document.querySelectorAll('.season-card').forEach(card => card.classList.toggle('active', Number(card.dataset.seasonNumber) === Number(season)));
+                            loadSeasonEpisodes(season, id);
                             loadPlayerEmbed(currentSource);
                             showToast(`Playing Season ${season} Episode ${episode}`, 'success');
                         });
