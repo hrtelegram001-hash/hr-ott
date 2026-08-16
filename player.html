@@ -40,9 +40,7 @@
         }
 
         body {
-            background:
-                radial-gradient(1200px 600px at 80% -10%, rgba(229,9,20,0.08), transparent 60%),
-                var(--bg);
+            background: var(--bg);
             color: var(--text);
             font-family: 'Inter', system-ui, sans-serif;
             overflow-x: hidden;
@@ -277,17 +275,27 @@
 
         .server-btn.active .server-badge { background: rgba(255,255,255,0.3); }
 
-        .server-number {
+        .server-name-tooltip {
+            position: absolute;
+            bottom: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.95);
+            color: var(--gold);
+            padding: 4px 8px;
+            border-radius: 4px;
             font-size: 0.7rem;
-            background: rgba(229, 9, 20, 0.3);
-            padding: 1px 6px;
-            border-radius: 10px;
             font-weight: 700;
-            letter-spacing: 0.5px;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 1000;
+            border: 1px solid var(--red);
         }
 
-        .server-btn.active .server-number {
-            background: rgba(255,255,255,0.3);
+        .server-btn:hover .server-name-tooltip {
+            opacity: 1;
         }
 
         /* ── Player Container ── */
@@ -332,52 +340,6 @@
             contain: layout style;
         }
 
-        .now-playing-strip {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
-            background: linear-gradient(90deg, rgba(229,9,20,0.15), rgba(255,255,255,0.02));
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 10px;
-            padding: 14px 18px;
-            margin: 0 0 24px 0;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-            contain: layout style;
-            width: 100%;
-            flex-wrap: wrap;
-        }
-
-        .now-playing-label {
-            font-size: 0.72rem;
-            color: var(--text-muted);
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-
-        .now-playing-title {
-            font-size: clamp(1rem, 2vw, 1.5rem);
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            color: var(--text);
-            text-shadow: 0 0 18px rgba(229,9,20,0.28);
-            flex: 1;
-            min-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .now-playing-meta {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            font-weight: 600;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
         .player-fullscreen-btn {
             appearance: none;
             border: 1px solid rgba(255,255,255,0.2);
@@ -403,11 +365,6 @@
             background: rgba(229, 9, 20, 0.82);
             border-color: rgba(229, 9, 20, 0.9);
             transform: translateY(-1px);
-        }
-
-        .player-container.is-fullscreen {
-            border-radius: 0;
-            box-shadow: none;
         }
 
         /* ── Loading State ── */
@@ -453,137 +410,169 @@
             color: var(--text-muted);
         }
 
-        /* ── Details Section ── */
-        .details-grid {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 40px;
-            align-items: start;
-            contain: layout style;
-            width: 100%;
-        }
-
-        .poster-container {
-            position: sticky;
-            top: 140px;
-            width: 100%;
-            max-width: 280px;
-        }
-
-        .poster {
-            width: 100%;
+        /* ── Ad Disclaimer ── */
+        .ad-disclaimer {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(229, 9, 20, 0.08);
+            border: 1px solid rgba(229, 9, 20, 0.25);
             border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 28px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            contain: layout style;
+        }
+
+        .ad-disclaimer i {
+            color: var(--red);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        /* ── Netflix Style Details Section ── */
+        .media-backdrop {
+            position: relative;
+            margin-bottom: 40px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.9);
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: transform 0.3s ease;
-            background: var(--bg-card);
-            aspect-ratio: 2/3;
-            will-change: auto;
             contain: layout style paint;
         }
 
-        .poster img {
+        .backdrop-image {
+            width: 100%;
+            height: 400px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            filter: brightness(0.4) blur(2px);
+        }
+
+        .backdrop-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(11, 11, 15, 0.7) 0%, rgba(11, 11, 15, 0.95) 50%, var(--bg) 100%);
+            z-index: 1;
+        }
+
+        .media-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 30px;
+            padding: 40px clamp(20px, 3vw, 50px);
+            align-items: flex-end;
+        }
+
+        .media-poster {
+            width: 200px;
+            height: 300px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--bg-card);
+            flex-shrink: 0;
+            contain: layout style paint;
+        }
+
+        .media-poster img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
-            transition: transform 0.3s ease;
-            will-change: transform;
         }
 
-        .poster:hover img { transform: scale(1.03); }
-
-        .info {
+        .media-info {
             display: flex;
             flex-direction: column;
             gap: 16px;
-            contain: layout style;
-            width: 100%;
+            flex: 1;
+            min-width: 0;
         }
 
-        .info-title {
-            font-family: 'Inter', sans-serif;
-            font-size: clamp(1.8rem, 4vw, 3rem);
+        .media-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
             font-weight: 900;
-            color: var(--text);
-            line-height: 1.2;
-            letter-spacing: -1px;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
             word-break: break-word;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
         }
 
-        .meta-row {
+        .media-meta {
             display: flex;
             gap: 16px;
             align-items: center;
             flex-wrap: wrap;
-            color: var(--text-muted);
             font-weight: 500;
             font-size: 0.95rem;
-            contain: layout style;
-            width: 100%;
         }
 
-        .meta-item { 
-            display: flex; 
-            align-items: center; 
+        .meta-item {
+            display: flex;
+            align-items: center;
             gap: 4px;
             flex-shrink: 0;
         }
 
-        .meta-item.match { color: var(--green); font-weight: 700; }
+        .meta-item.match { 
+            color: var(--green); 
+            font-weight: 700;
+        }
 
         .maturity-badge {
             border: 1px solid rgba(255,255,255,0.4);
-            padding: 3px 10px;
+            padding: 4px 12px;
             border-radius: 3px;
             font-size: 0.8rem;
             font-weight: 700;
-            color: var(--text);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .genres-row {
+        .media-genres {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
-            margin-top: 8px;
-            contain: layout style;
-            width: 100%;
         }
 
         .genre-tag {
-            background: var(--bg-card);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
             border-radius: 20px;
             padding: 6px 14px;
             font-size: 0.8rem;
-            color: var(--text);
             transition: all 0.2s ease;
             will-change: border-color, background;
-            white-space: nowrap;
         }
 
         .genre-tag:hover {
             border-color: var(--red);
-            background: var(--bg-elevated);
+            background: rgba(229, 9, 20, 0.2);
         }
 
-        .overview-text {
+        .media-description {
+            max-width: 700px;
             color: var(--text-muted);
             line-height: 1.7;
-            font-size: 1rem;
-            margin-top: 8px;
+            font-size: 0.95rem;
         }
 
-        .detail-section {
+        /* ── Details Section ── */
+        .details-section {
             margin-top: 28px;
             padding-top: 28px;
             border-top: 1px solid rgba(255,255,255,0.08);
         }
 
-        .detail-section h3 {
+        .details-section h3 {
             font-size: 1.1rem;
             margin-bottom: 12px;
             color: var(--text);
@@ -591,7 +580,7 @@
             letter-spacing: -0.3px;
         }
 
-        .detail-section p {
+        .details-section p {
             color: var(--text-muted);
             font-size: 0.95rem;
             line-height: 1.6;
@@ -759,29 +748,6 @@
             margin-top: 8px;
         }
 
-        /* ── Auto-play Indicator ── */
-        .autoplay-indicator {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            padding: 12px 16px;
-            background: rgba(70, 211, 105, 0.15);
-            border: 1px solid rgba(70, 211, 105, 0.3);
-            border-radius: 6px;
-            font-size: 0.85rem;
-            color: var(--green);
-            font-weight: 600;
-            z-index: 5000;
-            display: none;
-            gap: 8px;
-            align-items: center;
-            cursor: pointer;
-            will-change: auto;
-            contain: layout style;
-        }
-
-        .autoplay-indicator.active { display: flex; }
-
         /* ── Toast Notification ── */
         .toast {
             position: fixed;
@@ -813,36 +779,21 @@
         .toast.error { border-left-color: #ff6b6b; }
         .toast.success { border-left-color: var(--green); }
 
-        /* ── Footer ── */
-        footer {
-            padding: 30px clamp(16px, 2vw, 40px);
-            color: var(--text-dim);
-            font-size: 12px;
-            border-top: 1px solid rgba(255,255,255,0.08);
-            margin-top: 40px;
-            text-align: center;
-            width: 100%;
-        }
-
         /* ── Responsive ── */
         @media (max-width: 1200px) {
-            .details-grid {
+            .media-content {
                 grid-template-columns: 1fr;
-                gap: 30px;
+                gap: 20px;
+                align-items: flex-start;
             }
 
-            .poster-container {
-                position: static;
-                max-width: 280px;
-                margin: 0 auto;
+            .media-poster {
+                width: 150px;
+                height: 225px;
             }
 
-            .info {
-                text-align: left;
-            }
-
-            .player-container {
-                min-height: 300px;
+            .backdrop-image {
+                height: 300px;
             }
         }
 
@@ -870,10 +821,6 @@
                 padding: 8px 12px; 
             }
 
-            .info-title { 
-                font-size: 1.6rem; 
-            }
-
             .server-btn { 
                 padding: 8px 16px; 
                 font-size: 0.8rem; 
@@ -888,17 +835,16 @@
                 margin-bottom: 20px;
             }
 
-            .now-playing-strip {
-                margin-bottom: 16px;
-                padding: 12px 14px;
+            .backdrop-image {
+                height: 250px;
             }
 
-            .now-playing-title {
-                font-size: clamp(0.9rem, 2vw, 1.2rem);
+            .media-content {
+                padding: 30px clamp(16px, 2vw, 40px);
             }
 
-            .details-grid {
-                gap: 20px;
+            .media-title {
+                font-size: 1.8rem;
             }
 
             .episodes-grid {
@@ -939,53 +885,53 @@
                 font-size: 0.75rem; 
             }
 
-            .info-title { 
-                font-size: 1.3rem; 
-            }
-
-            .meta-row { 
-                font-size: 0.8rem; 
-                gap: 8px; 
-            }
-
-            .genre-tag { 
-                padding: 4px 10px; 
-                font-size: 0.7rem; 
-            }
-
             .player-container {
                 min-height: 200px;
                 margin-bottom: 16px;
             }
 
-            .now-playing-strip {
+            .ad-disclaimer {
+                font-size: 0.8rem;
+                padding: 12px 14px;
                 gap: 10px;
-                padding: 10px 12px;
             }
 
-            .now-playing-title {
-                font-size: 0.9rem;
+            .ad-disclaimer i {
+                font-size: 1rem;
             }
 
-            .player-fullscreen-btn {
-                padding: 8px 12px;
-                font-size: 0.75rem;
+            .backdrop-image {
+                height: 200px;
             }
 
-            .player-fullscreen-btn span {
-                display: none;
-            }
-
-            .details-grid {
+            .media-content {
+                grid-template-columns: 1fr;
+                padding: 20px 16px;
                 gap: 16px;
             }
 
-            .poster-container {
-                max-width: 100%;
+            .media-poster {
+                width: 120px;
+                height: 180px;
+                margin: 0 auto;
             }
 
-            .seasons-select {
-                max-width: 100%;
+            .media-title {
+                font-size: 1.3rem;
+            }
+
+            .media-meta {
+                font-size: 0.8rem;
+                gap: 8px;
+            }
+
+            .toast {
+                bottom: 80px;
+                right: 16px;
+                left: 16px;
+                max-width: calc(100vw - 32px);
+                font-size: 13px;
+                padding: 12px 16px;
             }
 
             .episodes-grid {
@@ -1007,23 +953,6 @@
 
             .episode-meta {
                 font-size: 0.65rem;
-            }
-
-            .toast {
-                bottom: 80px;
-                right: 16px;
-                left: 16px;
-                max-width: calc(100vw - 32px);
-                font-size: 13px;
-                padding: 12px 16px;
-            }
-
-            .autoplay-indicator {
-                bottom: 100px;
-                right: 16px;
-                left: 16px;
-                max-width: calc(100vw - 32px);
-                justify-content: center;
             }
         }
     </style>
@@ -1071,61 +1000,53 @@
             </div>
         </div>
 
-        <div class="now-playing-strip" id="nowPlayingStrip">
-            <div class="now-playing-label">Now Playing</div>
-            <div class="now-playing-title" id="nowPlayingTitle">Loading...</div>
-            <div class="now-playing-meta" id="nowPlayingMeta">Preparing stream...</div>
+        <!-- Ad Disclaimer -->
+        <div class="ad-disclaimer">
+            <i class="fas fa-ban"></i>
+            <span><strong>HR OTT is completely free and we never run ads.</strong> Any ad or new tab you see comes from the video server itself. Keep the ad blocker on for a clean experience.</span>
         </div>
 
-        <!-- Auto-play Indicator -->
-        <div class="autoplay-indicator" id="autoplayIndicator">
-            <i class="fas fa-play-circle"></i>
-            <span>Next episode in <span id="autoplayCounter">10</span>s...</span>
-        </div>
-
-        <!-- Movie Details -->
-        <div class="details-grid" id="detailsGrid">
-            <div class="poster-container">
-                <div class="poster">
-                    <img id="posterImg" src="" alt="Movie Poster" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 450%22%3E%3Crect fill=%22%23222%22 width=%22300%22 height=%22450%22/%3E%3C/svg%3E';">
+        <!-- Netflix Style Details with Backdrop -->
+        <div class="media-backdrop" id="mediaBackdrop">
+            <div class="backdrop-image" id="backdropImage"></div>
+            <div class="backdrop-overlay"></div>
+            <div class="media-content">
+                <div class="media-poster">
+                    <img id="posterImg" src="" alt="Movie Poster" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 300%22%3E%3Crect fill=%22%23222%22 width=%22200%22 height=%22300%22/%3E%3C/svg%3E';">
+                </div>
+                <div class="media-info">
+                    <h1 class="media-title" id="titleText">Loading...</h1>
+                    <div class="media-meta" id="metaRow"></div>
+                    <div class="media-genres" id="genresRow"></div>
+                    <p class="media-description" id="overviewText"></p>
                 </div>
             </div>
+        </div>
 
-            <div class="info">
-                <h1 class="info-title" id="titleText">Loading...</h1>
-                <div class="meta-row" id="metaRow"></div>
-                <div class="genres-row" id="genresRow"></div>
-                <p class="overview-text" id="overviewText"></p>
+        <!-- Cast Section -->
+        <div class="details-section">
+            <h3><i class="fas fa-users"></i> Cast</h3>
+            <p id="castText">Loading cast information...</p>
+        </div>
 
-                <div class="detail-section">
-                    <h3><i class="fas fa-users"></i> Cast</h3>
-                    <p id="castText">Loading cast information...</p>
-                </div>
+        <!-- Description Section -->
+        <div class="details-section">
+            <h3><i class="fas fa-video"></i> Description</h3>
+            <p id="descText"></p>
+        </div>
 
-                <div class="detail-section">
-                    <h3><i class="fas fa-video"></i> Description</h3>
-                    <p id="descText"></p>
-                </div>
-
-                <div class="episode-guide" id="episodeGuide" style="display:none;">
-                    <h3><i class="fas fa-list"></i> Episodes</h3>
-                    <div class="season-cards" id="seasonCards"></div>
-                    <select class="seasons-select" id="seasonsSelect">
-                        <option>Loading seasons...</option>
-                    </select>
-                    <div class="episodes-grid" id="episodesGrid">
-                        <!-- Dynamically populated -->
-                    </div>
-                </div>
-
+        <!-- Episode Guide for TV Shows -->
+        <div class="episode-guide" id="episodeGuide" style="display:none;">
+            <h3><i class="fas fa-list"></i> Episodes</h3>
+            <div class="season-cards" id="seasonCards"></div>
+            <select class="seasons-select" id="seasonsSelect">
+                <option>Loading seasons...</option>
+            </select>
+            <div class="episodes-grid" id="episodesGrid">
+                <!-- Dynamically populated -->
             </div>
         </div>
     </div>
-
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 HR OTT — Stream Movies & Series. Powered by TMDB. <strong>HR OTT is completely free and we never run ads.</strong> Any ad or new tab you see comes from the video server itself. Keep the ad blocker on for a clean experience.</p>
-    </footer>
 
     <script>
         'use strict';
@@ -1236,6 +1157,7 @@
             const TMDB_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzYTg3YjFkYjYzYmM3NGI4ZTNmZTkyNjZkZGM3NWIzMCIsIm5iZiI6MTc4Njg2NTkwOS40ODE5OTk5LCJzdWIiOiI2YTgxNjhmNThkMTFjYTkzYTRjOTQwMjUiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.01jTorcHrhobfm6YuVtlrxA5AGgM12WD_NbPKLxt76s';
             const TMDB_BASE = 'https://api.themoviedb.org/3';
             const TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
+            const TMDB_BACKDROP = 'https://image.tmdb.org/t/p/w1280';
 
             // ═══════ STATE ═══════
             const params = new URLSearchParams(window.location.search);
@@ -1245,7 +1167,6 @@
             let episode = parseInt(params.get('e') || '1');
             let isLoading = false;
             let currentSource = 1;
-            let autoplayTimer = null;
 
             const playerSources = {};
 
@@ -1254,72 +1175,54 @@
                 {
                     id: 1,
                     displayName: 'Videasy',
-                    badge: 'Primary',
-                    note: 'Fastest server, HD with subtitles',
                     movie: (tmdbId) => `https://player.videasy.net/movie/${tmdbId}?color=F5C518&overlay=true`,
                     tv: (tmdbId, season = 1, episode = 1) => `https://player.videasy.net/tv/${tmdbId}/${season}/${episode}?color=F5C518&nextEpisode=true&episodeSelector=true&autoplayNextEpisode=true&overlay=true`
                 },
                 {
                     id: 2,
                     displayName: 'Vidzee',
-                    badge: 'Fast',
-                    note: 'Fresh links, good for new releases',
                     movie: (tmdbId) => `https://player.vidzee.wtf/embed/movie/${tmdbId}`,
                     tv: (tmdbId, season = 1, episode = 1) => `https://player.vidzee.wtf/embed/tv/${tmdbId}/${season}/${episode}`
                 },
                 {
                     id: 3,
                     displayName: 'Vidking',
-                    badge: 'HD',
-                    note: 'Remembers where you stopped and resumes',
                     movie: (tmdbId) => `https://www.vidking.net/embed/movie/${tmdbId}?color=F5C518&autoPlay=true`,
                     tv: (tmdbId, season = 1, episode = 1) => `https://www.vidking.net/embed/tv/${tmdbId}/${season}/${episode}?color=F5C518&autoPlay=true&nextEpisode=true&episodeSelector=true`
                 },
                 {
                     id: 4,
                     displayName: 'VidSrc.sbs',
-                    badge: 'Reliable',
-                    note: 'Plays inside the page, no popups',
                     movie: (tmdbId) => `https://vidsrc.sbs/embed/movie/${tmdbId}`,
                     tv: (tmdbId, season = 1, episode = 1) => `https://vidsrc.sbs/embed/tv/${tmdbId}/${season}/${episode}`
                 },
                 {
                     id: 5,
                     displayName: 'VidSrc.wiki',
-                    badge: 'Stable',
-                    note: 'Reliable server, plays inside the page',
                     movie: (tmdbId) => `https://vidsrc.wiki/embed/movie/${tmdbId}`,
                     tv: (tmdbId, season = 1, episode = 1) => `https://vidsrc.wiki/embed/tv/${tmdbId}/${season}/${episode}`
                 },
                 {
                     id: 6,
                     displayName: 'VidFast',
-                    badge: 'Quick',
-                    note: 'Fast server with auto next episode',
                     movie: (tmdbId) => `https://vidfast.vc/movie/${tmdbId}?autoPlay=true&theme=F5C518`,
                     tv: (tmdbId, season = 1, episode = 1) => `https://vidfast.vc/tv/${tmdbId}/${season}/${episode}?autoPlay=true&theme=F5C518&nextButton=true&autoNext=true`
                 },
                 {
                     id: 7,
                     displayName: 'Garageband',
-                    badge: 'FullScreen',
-                    note: 'Full screen embedded player',
                     movie: (tmdbId) => `https://proxy.garageband.rocks/embed/movie/${tmdbId}`,
                     tv: (tmdbId, season = 1, episode = 1) => `https://proxy.garageband.rocks/embed/tv/${tmdbId}/${season}/${episode}?autonext=1`
                 },
                 {
                     id: 8,
                     displayName: 'VidSrc-RU',
-                    badge: 'Mirror',
-                    note: 'Full screen view with good uptime',
                     movie: (tmdbId) => `https://vidsrc-embed.ru/embed/movie?tmdb=${tmdbId}`,
                     tv: (tmdbId, season = 1, episode = 1) => `https://vidsrc-embed.ru/embed/tv?tmdb=${tmdbId}&season=${season}&episode=${episode}`
                 },
                 {
                     id: 9,
                     displayName: '2Embed',
-                    badge: 'Popular',
-                    note: 'Full screen view, popular choice',
                     movie: (tmdbId) => `https://www.2embed.cc/embed/${tmdbId}`,
                     tv: (tmdbId, season = 1, episode = 1) => `https://www.2embed.cc/embedtv/${tmdbId}&s=${season}&e=${episode}`
                 }
@@ -1335,8 +1238,6 @@
                     
                     playerSources[config.id] = {
                         displayName: config.displayName,
-                        badge: config.badge,
-                        note: config.note,
                         url: url
                     };
                 });
@@ -1412,27 +1313,11 @@
                     b.className = `server-btn ${parseInt(k) === 1 ? 'active' : ''}`;
                     b.dataset.source = k;
                     b.type = 'button';
-                    b.title = s.note;
-                    b.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span class="server-number">Server ${k}</span>
-                            <div style="display: flex; flex-direction: column; text-align: left;">
-                                <div>${s.displayName} <span class="server-badge">${s.badge}</span></div>
-                            </div>
-                        </div>
-                    `;
+                    b.title = `Server ${k} - ${s.displayName}`;
+                    b.innerHTML = `Server ${k}<span class="server-name-tooltip">${s.displayName}</span>`;
                     b.onclick = () => loadPlayerEmbed(parseInt(k));
                     container.appendChild(b);
                 });
-            }
-
-            function updateNowPlaying() {
-                const t = document.getElementById('nowPlayingTitle');
-                const m = document.getElementById('nowPlayingMeta');
-                if (!t || !m) return;
-
-                t.textContent = document.getElementById('titleText')?.textContent || 'Loading...';
-                m.textContent = type === 'tv' ? `S${season}E${episode}` : 'Movie';
             }
 
             // ═══════ EPISODE GUIDE ═══════
@@ -1478,7 +1363,6 @@
                             season = s.season_number;
                             episode = 1;
                             refreshPlayerSources();
-                            updateNowPlaying();
                             select.value = season;
                             document.querySelectorAll('.season-card').forEach(c => c.classList.toggle('active', c.dataset.seasonNumber == season));
                             loadSeasonEpisodes(season, id);
@@ -1492,7 +1376,6 @@
                         season = parseInt(e.target.value);
                         episode = 1;
                         refreshPlayerSources();
-                        updateNowPlaying();
                         document.querySelectorAll('.season-card').forEach(c => c.classList.toggle('active', c.dataset.seasonNumber == season));
                         loadSeasonEpisodes(season, id);
                         loadPlayerEmbed(currentSource);
@@ -1530,7 +1413,6 @@
                         item.onclick = () => {
                             episode = ep.episode_number;
                             refreshPlayerSources();
-                            updateNowPlaying();
                             document.querySelectorAll('.episode-item').forEach(el => el.classList.remove('active'));
                             item.classList.add('active');
                             loadPlayerEmbed(currentSource);
@@ -1559,23 +1441,29 @@
                     const rating = data.vote_average ? Number(data.vote_average).toFixed(1) : '?';
                     const runtime = data.runtime || (data.episode_run_time?.[0]) || '?';
                     const poster = data.poster_path ? TMDB_IMG + data.poster_path : '';
+                    const backdrop = data.backdrop_path ? TMDB_BACKDROP + data.backdrop_path : poster;
                     const overview = data.overview || 'No description available.';
                     const genres = data.genres || [];
                     const cast = data.credits?.cast?.slice(0, 8).map(c => c.name).join(', ') || 'N/A';
 
                     document.title = `${title} - HR OTT`;
                     document.getElementById('titleText').textContent = title;
-                    updateNowPlaying();
                     document.getElementById('posterImg').src = poster;
                     document.getElementById('overviewText').textContent = overview;
                     document.getElementById('castText').textContent = cast;
                     document.getElementById('descText').textContent = overview;
 
+                    // Set backdrop image
+                    const backdropEl = document.getElementById('backdropImage');
+                    if (backdropEl) {
+                        backdropEl.style.backgroundImage = `url('${backdrop}')`;
+                    }
+
                     document.getElementById('metaRow').innerHTML = `
                         <div class="meta-item match">${match}% Match</div>
                         <div class="meta-item">${year}</div>
                         <div class="meta-item"><span class="maturity-badge">${rating}</span></div>
-                        <div class="meta-item">${runtime}</div>
+                        <div class="meta-item">${runtime} min</div>
                         <div class="meta-item"><i class="fas fa-hd"></i> HD</div>
                     `;
 
