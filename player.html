@@ -253,6 +253,42 @@
             justify-content: flex-end;
         }
 
+        .now-playing-strip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            background: linear-gradient(90deg, rgba(229,9,20,0.15), rgba(255,255,255,0.02));
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin: 0 0 24px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        }
+
+        .now-playing-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .now-playing-title {
+            font-size: clamp(1.1rem, 2vw, 1.65rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--text);
+            text-shadow: 0 0 18px rgba(229,9,20,0.28);
+        }
+
+        .now-playing-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
         .player-fullscreen-btn {
             appearance: none;
             border: 1px solid rgba(255,255,255,0.2);
@@ -701,6 +737,12 @@
             </div>
         </div>
 
+        <div class="now-playing-strip" id="nowPlayingStrip">
+            <div class="now-playing-label">Now Playing</div>
+            <div class="now-playing-title" id="nowPlayingTitle">Loading...</div>
+            <div class="now-playing-meta" id="nowPlayingMeta">Preparing stream...</div>
+        </div>
+
         <!-- Auto-play Indicator -->
         <div class="autoplay-indicator" id="autoplayIndicator">
             <i class="fas fa-play-circle"></i>
@@ -1022,6 +1064,41 @@
                 videasyUrl = `https://player.videasy.net/movie/${id}?overlay=true&color=E50914`;
             }
 
+            function refreshPlayerSources() {
+                const tvEpisodeUrl = type === 'tv'
+                    ? `https://nxsha.space/embed/tv/${id}/${season}/${episode}`
+                    : null;
+
+                const videasyPlayerUrl = type === 'tv'
+                    ? `https://player.videasy.net/tv/${id}/${season}/${episode}?overlay=true&color=E50914&nextEpisode=true&episodeSelector=true&autoplayNextEpisode=true`
+                    : `https://player.videasy.net/movie/${id}?overlay=true&color=E50914`;
+
+                playerSources[1] = {
+                    name: 'NxSha Stream',
+                    badge: 'Primary',
+                    url: type === 'tv' ? tvEpisodeUrl : `https://nxsha.space/embed/movie/${id}`
+                };
+                playerSources[2] = {
+                    name: 'VidSrc SBS',
+                    badge: 'Recommended',
+                    url: type === 'tv'
+                        ? `https://vidsrc.sbs/embed/tv/${id}/${season}/${episode}`
+                        : `https://vidsrc.sbs/embed/movie/${id}`
+                };
+                playerSources[3] = {
+                    name: 'Videasy',
+                    badge: 'HD + NextEp',
+                    url: videasyPlayerUrl
+                };
+                playerSources[4] = {
+                    name: 'VidBolt',
+                    badge: 'API Embed',
+                    url: type === 'tv'
+                        ? `https://vidbolt.pro/embed/tv/${id}/${season}/${episode}?autoPlay=1&color=E50914`
+                        : `https://vidbolt.pro/embed/movie/${id}?autoPlay=1&color=E50914`
+                };
+            }
+
             const playerSources = {
                 1: {
                     name: 'NxSha Stream',
@@ -1050,6 +1127,8 @@
                         : `https://vidbolt.pro/embed/movie/${id}?autoPlay=1&color=E50914`
                 }
             };
+
+            refreshPlayerSources();
 
             // ═══════ State Variables ═══════
             let currentSource = 1;
@@ -1236,6 +1315,40 @@
                 console.log('[Server Buttons] Successfully initialized', sources.length, 'buttons');
             }
 
+            function updateNowPlayingTitle() {
+                const titleEl = document.getElementById('nowPlayingTitle');
+                const metaEl = document.getElementById('nowPlayingMeta');
+                if (!titleEl || !metaEl) return;
+
+                const title = document.getElementById('titleText')?.textContent || 'Loading...';
+                titleEl.textContent = title;
+
+                if (type === 'tv') {
+                    metaEl.textContent = `Season ${season} • Episode ${episode}`;
+                } else {
+                    const year = (document.getElementById('metaRow')?.textContent || '').split(/\s+/)[0] || '';
+                    metaEl.textContent = year ? `Movie • ${year}` : 'Movie';
+                }
+            }
+
+            async function fetchSeasonImages(tvId, seasonNum) {
+                try {
+                    const url = `${TMDB_BASE}/tv/${tvId}/season/${seasonNum}/images`;
+                    const res = await fetch(url, {
+                        headers: {
+                            'Authorization': 'Bearer ' + TMDB_TOKEN,
+                            'accept': 'application/json'
+                        }
+                    });
+                    if (!res.ok) return [];
+                    const data = await res.json();
+                    return data.posters || [];
+                } catch (error) {
+                    console.error('Season images fetch error:', error);
+                    return [];
+                }
+            }
+
             // ═══════ Episode Guide ═══════
             async function loadEpisodeGuide() {
                 if (type !== 'tv') return;
@@ -1276,9 +1389,12 @@
                     });
 
                     seasonSelect.value = season || '1';
-                    seasonSelect.addEventListener('change', (e) => {
-                        loadSeasonEpisodes(e.target.value, id);
-                    });
+                    seasonSelect.onchange = (e) => {
+                        season = Number(e.target.value) || 1;
+                        refreshPlayerSources();
+                        updateNowPlayingTitle();
+                        loadSeasonEpisodes(season, id);
+                    };
 
                     loadSeasonEpisodes(season || '1', id);
 
@@ -1318,10 +1434,12 @@
                             <div class="episode-name">${ep.name || 'Unknown'}</div>
                         `;
                         item.addEventListener('click', () => {
-                            season = seasonNum;
-                            episode = ep.episode_number;
+                            season = Number(seasonNum) || 1;
+                            episode = Number(ep.episode_number) || 1;
+                            refreshPlayerSources();
+                            updateNowPlayingTitle();
                             loadPlayerEmbed(currentSource);
-                            showToast(`Loading Season ${seasonNum} Episode ${ep.episode_number}`, 'success');
+                            showToast(`Loading Season ${season} Episode ${episode}`, 'success');
                         });
                         grid.appendChild(item);
                     });
@@ -1400,7 +1518,12 @@
 
                     // Populate UI
                     document.getElementById('titleText').textContent = title;
-                    
+                    updateNowPlayingTitle();
+
+                    if (type === 'tv') {
+                        fetchSeasonImages(id, season || 1);
+                    }
+
                     // Use lazy loading for poster
                     const posterImg = document.getElementById('posterImg');
                     posterImg.dataset.src = poster;
