@@ -173,6 +173,139 @@
             flex-direction: column;
         }
 
+        /* ── Netflix Style Hero Section ── */
+        .media-hero {
+            position: relative;
+            margin-bottom: 40px;
+            border-radius: 12px;
+            overflow: hidden;
+            height: 500px;
+            display: flex;
+            align-items: flex-end;
+            contain: layout style paint;
+        }
+
+        .hero-backdrop {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.35) blur(3px);
+            z-index: 0;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(11, 11, 15, 0) 0%, rgba(11, 11, 15, 0.5) 40%, rgba(11, 11, 15, 0.95) 100%);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 30px;
+            width: 100%;
+            padding: 40px clamp(20px, 3vw, 50px);
+            align-items: flex-end;
+        }
+
+        .hero-poster {
+            width: 220px;
+            height: 330px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--bg-card);
+            flex-shrink: 0;
+            contain: layout style paint;
+        }
+
+        .hero-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .hero-info {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            flex: 1;
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+            word-break: break-word;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .meta-item.match { 
+            color: var(--green); 
+            font-weight: 700;
+        }
+
+        .maturity-badge {
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 4px 12px;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-genres {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .genre-tag {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+            will-change: border-color, background;
+        }
+
+        .genre-tag:hover {
+            border-color: var(--red);
+            background: rgba(229, 9, 20, 0.2);
+        }
+
+        .hero-description {
+            max-width: 700px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
         /* ── Server Tabs ── */
         .server-section {
             margin-bottom: 24px;
@@ -262,18 +395,6 @@
             color: #fff;
             box-shadow: 0 4px 14px var(--red-glow);
         }
-
-        .server-badge {
-            font-size: 0.65rem;
-            background: rgba(255,255,255,0.2);
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .server-btn.active .server-badge { background: rgba(255,255,255,0.3); }
 
         .server-name-tooltip {
             position: absolute;
@@ -432,137 +553,89 @@
             flex-shrink: 0;
         }
 
-        /* ── Netflix Style Details Section ── */
-        .media-backdrop {
-            position: relative;
-            margin-bottom: 40px;
-            border-radius: 12px;
-            overflow: hidden;
-            contain: layout style paint;
+        /* ── Cast Section ── */
+        .cast-section {
+            margin-top: 28px;
+            padding-top: 28px;
+            border-top: 1px solid rgba(255,255,255,0.08);
         }
 
-        .backdrop-image {
-            width: 100%;
-            height: 400px;
-            background-size: cover;
-            background-position: center;
-            position: relative;
-            filter: brightness(0.4) blur(2px);
+        .cast-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: var(--text);
+            font-weight: 700;
+            letter-spacing: -0.3px;
         }
 
-        .backdrop-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(11, 11, 15, 0.7) 0%, rgba(11, 11, 15, 0.95) 50%, var(--bg) 100%);
-            z-index: 1;
-        }
-
-        .media-content {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 2;
+        .cast-grid {
             display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 30px;
-            padding: 40px clamp(20px, 3vw, 50px);
-            align-items: flex-end;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 20px;
+            contain: layout style;
         }
 
-        .media-poster {
-            width: 200px;
-            height: 300px;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-            border: 1px solid rgba(255,255,255,0.1);
+        .cast-member {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .cast-member:hover {
+            transform: translateY(-4px);
+        }
+
+        .cast-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
             background: var(--bg-card);
+            border: 2px solid rgba(229, 9, 20, 0.3);
+            overflow: hidden;
             flex-shrink: 0;
-            contain: layout style paint;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            transition: all 0.2s ease;
         }
 
-        .media-poster img {
+        .cast-member:hover .cast-avatar {
+            border-color: var(--red);
+            box-shadow: 0 8px 30px rgba(229, 9, 20, 0.3);
+        }
+
+        .cast-avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
         }
 
-        .media-info {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .media-title {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 900;
-            line-height: 1.1;
-            letter-spacing: -1.5px;
-            word-break: break-word;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
-        }
-
-        .media-meta {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-            flex-wrap: wrap;
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-
-        .meta-item {
+        .cast-avatar-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-card) 100%);
             display: flex;
             align-items: center;
-            gap: 4px;
-            flex-shrink: 0;
+            justify-content: center;
+            color: var(--text-dim);
+            font-size: 2rem;
         }
 
-        .meta-item.match { 
-            color: var(--green); 
-            font-weight: 700;
+        .cast-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
         }
 
-        .maturity-badge {
-            border: 1px solid rgba(255,255,255,0.4);
-            padding: 4px 12px;
-            border-radius: 3px;
+        .cast-character {
             font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .media-genres {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .genre-tag {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 20px;
-            padding: 6px 14px;
-            font-size: 0.8rem;
-            transition: all 0.2s ease;
-            will-change: border-color, background;
-        }
-
-        .genre-tag:hover {
-            border-color: var(--red);
-            background: rgba(229, 9, 20, 0.2);
-        }
-
-        .media-description {
-            max-width: 700px;
             color: var(--text-muted);
-            line-height: 1.7;
-            font-size: 0.95rem;
         }
 
         /* ── Details Section ── */
@@ -781,19 +854,28 @@
 
         /* ── Responsive ── */
         @media (max-width: 1200px) {
-            .media-content {
+            .hero-content {
                 grid-template-columns: 1fr;
                 gap: 20px;
                 align-items: flex-start;
             }
 
-            .media-poster {
+            .hero-poster {
                 width: 150px;
                 height: 225px;
             }
 
-            .backdrop-image {
-                height: 300px;
+            .media-hero {
+                height: 400px;
+            }
+
+            .cast-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+
+            .cast-avatar {
+                width: 100px;
+                height: 100px;
             }
         }
 
@@ -826,25 +908,40 @@
                 font-size: 0.8rem; 
             }
 
-            .server-badge { 
-                font-size: 0.55rem; 
-            }
-
             .player-container {
                 min-height: 250px;
                 margin-bottom: 20px;
             }
 
-            .backdrop-image {
-                height: 250px;
+            .media-hero {
+                height: 320px;
             }
 
-            .media-content {
-                padding: 30px clamp(16px, 2vw, 40px);
+            .hero-poster {
+                width: 120px;
+                height: 180px;
             }
 
-            .media-title {
+            .hero-title {
                 font-size: 1.8rem;
+            }
+
+            .cast-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 16px;
+            }
+
+            .cast-avatar {
+                width: 90px;
+                height: 90px;
+            }
+
+            .cast-name {
+                font-size: 0.8rem;
+            }
+
+            .cast-character {
+                font-size: 0.7rem;
             }
 
             .episodes-grid {
@@ -900,29 +997,33 @@
                 font-size: 1rem;
             }
 
-            .backdrop-image {
-                height: 200px;
+            .media-hero {
+                height: 280px;
+                margin-bottom: 30px;
             }
 
-            .media-content {
-                grid-template-columns: 1fr;
+            .hero-content {
                 padding: 20px 16px;
                 gap: 16px;
             }
 
-            .media-poster {
-                width: 120px;
-                height: 180px;
+            .hero-poster {
+                width: 100px;
+                height: 150px;
                 margin: 0 auto;
             }
 
-            .media-title {
+            .hero-title {
                 font-size: 1.3rem;
             }
 
-            .media-meta {
+            .hero-meta {
                 font-size: 0.8rem;
                 gap: 8px;
+            }
+
+            .hero-description {
+                font-size: 0.85rem;
             }
 
             .toast {
@@ -932,6 +1033,24 @@
                 max-width: calc(100vw - 32px);
                 font-size: 13px;
                 padding: 12px 16px;
+            }
+
+            .cast-grid {
+                grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+                gap: 12px;
+            }
+
+            .cast-avatar {
+                width: 80px;
+                height: 80px;
+            }
+
+            .cast-name {
+                font-size: 0.75rem;
+            }
+
+            .cast-character {
+                font-size: 0.65rem;
             }
 
             .episodes-grid {
@@ -977,6 +1096,23 @@
 
     <!-- Main Content -->
     <div class="player-wrapper">
+        <!-- Netflix Style Hero Section -->
+        <div class="media-hero" id="mediaHero">
+            <div class="hero-backdrop" id="heroBackdrop"></div>
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <div class="hero-poster">
+                    <img id="posterImg" src="" alt="Movie Poster" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 220 330%22%3E%3Crect fill=%22%23222%22 width=%22220%22 height=%22330%22/%3E%3C/svg%3E';">
+                </div>
+                <div class="hero-info">
+                    <h1 class="hero-title" id="titleText">Loading...</h1>
+                    <div class="hero-meta" id="metaRow"></div>
+                    <div class="hero-genres" id="genresRow"></div>
+                    <p class="hero-description" id="overviewText"></p>
+                </div>
+            </div>
+        </div>
+
         <!-- Server Selection -->
         <div class="server-section">
             <label class="server-label"><i class="fas fa-server"></i> Select Stream Source</label>
@@ -1006,27 +1142,12 @@
             <span><strong>HR OTT is completely free and we never run ads.</strong> Any ad or new tab you see comes from the video server itself. Keep the ad blocker on for a clean experience.</span>
         </div>
 
-        <!-- Netflix Style Details with Backdrop -->
-        <div class="media-backdrop" id="mediaBackdrop">
-            <div class="backdrop-image" id="backdropImage"></div>
-            <div class="backdrop-overlay"></div>
-            <div class="media-content">
-                <div class="media-poster">
-                    <img id="posterImg" src="" alt="Movie Poster" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 300%22%3E%3Crect fill=%22%23222%22 width=%22200%22 height=%22300%22/%3E%3C/svg%3E';">
-                </div>
-                <div class="media-info">
-                    <h1 class="media-title" id="titleText">Loading...</h1>
-                    <div class="media-meta" id="metaRow"></div>
-                    <div class="media-genres" id="genresRow"></div>
-                    <p class="media-description" id="overviewText"></p>
-                </div>
-            </div>
-        </div>
-
         <!-- Cast Section -->
-        <div class="details-section">
+        <div class="cast-section">
             <h3><i class="fas fa-users"></i> Cast</h3>
-            <p id="castText">Loading cast information...</p>
+            <div class="cast-grid" id="castGrid">
+                <!-- Dynamically populated -->
+            </div>
         </div>
 
         <!-- Description Section -->
@@ -1320,6 +1441,27 @@
                 });
             }
 
+            // ═══════ CAST RENDERING ═══════
+            function renderCast(castList) {
+                const castGrid = document.getElementById('castGrid');
+                if (!castGrid) return;
+
+                castGrid.innerHTML = '';
+                castList.forEach(member => {
+                    const castEl = document.createElement('div');
+                    castEl.className = 'cast-member';
+                    const photoUrl = member.profile_path ? `${TMDB_IMG}${member.profile_path}` : null;
+                    castEl.innerHTML = `
+                        <div class="cast-avatar">
+                            ${photoUrl ? `<img src="${photoUrl}" alt="${member.name}">` : `<div class="cast-avatar-placeholder"><i class="fas fa-user"></i></div>`}
+                        </div>
+                        <div class="cast-name">${member.name}</div>
+                        ${member.character ? `<div class="cast-character">${member.character}</div>` : ''}
+                    `;
+                    castGrid.appendChild(castEl);
+                });
+            }
+
             // ═══════ EPISODE GUIDE ═══════
             async function loadEpisodeGuide() {
                 if (type !== 'tv') return;
@@ -1444,17 +1586,16 @@
                     const backdrop = data.backdrop_path ? TMDB_BACKDROP + data.backdrop_path : poster;
                     const overview = data.overview || 'No description available.';
                     const genres = data.genres || [];
-                    const cast = data.credits?.cast?.slice(0, 8).map(c => c.name).join(', ') || 'N/A';
+                    const cast = data.credits?.cast?.slice(0, 12) || [];
 
                     document.title = `${title} - HR OTT`;
                     document.getElementById('titleText').textContent = title;
                     document.getElementById('posterImg').src = poster;
                     document.getElementById('overviewText').textContent = overview;
-                    document.getElementById('castText').textContent = cast;
                     document.getElementById('descText').textContent = overview;
 
                     // Set backdrop image
-                    const backdropEl = document.getElementById('backdropImage');
+                    const backdropEl = document.getElementById('heroBackdrop');
                     if (backdropEl) {
                         backdropEl.style.backgroundImage = `url('${backdrop}')`;
                     }
@@ -1468,6 +1609,11 @@
                     `;
 
                     document.getElementById('genresRow').innerHTML = genres.map(g => `<div class="genre-tag">${g.name}</div>`).join('') || '<div class="genre-tag">N/A</div>';
+
+                    // Render cast with photos
+                    if (cast.length > 0) {
+                        renderCast(cast);
+                    }
 
                     if (type === 'tv') {
                         await loadEpisodeGuide();
