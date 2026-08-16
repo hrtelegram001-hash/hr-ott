@@ -35,6 +35,8 @@
             scroll-behavior: auto;
             -webkit-tap-highlight-color: transparent; 
             overflow-y: scroll;
+            width: 100%;
+            height: 100%;
         }
 
         body {
@@ -48,6 +50,7 @@
             -webkit-font-smoothing: subpixel-antialiased;
             -moz-osx-font-smoothing: grayscale;
             will-change: auto;
+            width: 100%;
         }
 
         /* ── Navbar ── */
@@ -66,6 +69,8 @@
             border-bottom: 1px solid transparent;
             will-change: background;
             contain: layout style paint;
+            width: 100%;
+            height: auto;
         }
 
         .nav.scrolled {
@@ -89,6 +94,7 @@
             transition: transform 0.2s ease;
             will-change: transform;
             flex-shrink: 0;
+            white-space: nowrap;
         }
 
         .nav-logo:hover { transform: scale(1.05); }
@@ -116,6 +122,8 @@
             border: 1px solid rgba(255,255,255,0.15);
             cursor: pointer;
             will-change: background, border-color;
+            white-space: nowrap;
+            height: fit-content;
         }
 
         .btn-back:hover { background: var(--red); border-color: var(--red); }
@@ -134,6 +142,8 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             flex-shrink: 0;
+            white-space: nowrap;
+            height: fit-content;
         }
 
         .profile-avatar {
@@ -155,11 +165,14 @@
         .player-wrapper {
             padding-top: 120px;
             padding-bottom: 50px;
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
-            padding-left: clamp(20px, 3vw, 50px);
-            padding-right: clamp(20px, 3vw, 50px);
+            padding-left: clamp(16px, 2vw, 40px);
+            padding-right: clamp(16px, 2vw, 40px);
             contain: layout style paint;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         /* ── Server Tabs ── */
@@ -167,6 +180,7 @@
             margin-bottom: 24px;
             z-index: 50;
             position: relative;
+            width: 100%;
         }
 
         .server-label {
@@ -186,6 +200,7 @@
             min-height: 40px;
             align-items: center;
             contain: layout style;
+            width: 100%;
         }
 
         .server-btn {
@@ -206,6 +221,8 @@
             overflow: hidden;
             will-change: background, border-color;
             contain: layout style;
+            white-space: nowrap;
+            height: fit-content;
         }
 
         .server-btn::before {
@@ -245,16 +262,20 @@
         /* ── Player Container ── */
         .player-container {
             width: 100%;
+            max-width: 100%;
             background: #000;
             border-radius: 8px;
             overflow: hidden;
             position: relative;
             box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             border: 1px solid rgba(255,255,255,0.08);
-            padding-bottom: 56.25%;
-            height: 0;
+            aspect-ratio: 16 / 9;
             contain: layout style paint;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
         }
 
         .player-container iframe {
@@ -276,6 +297,7 @@
             z-index: 12;
             display: flex;
             justify-content: flex-end;
+            gap: 12px;
             contain: layout style;
         }
 
@@ -288,9 +310,11 @@
             border: 1px solid rgba(255,255,255,0.08);
             border-radius: 10px;
             padding: 14px 18px;
-            margin: 0 0 24px;
+            margin: 0 0 24px 0;
             box-shadow: 0 8px 30px rgba(0,0,0,0.2);
             contain: layout style;
+            width: 100%;
+            flex-wrap: wrap;
         }
 
         .now-playing-label {
@@ -303,7 +327,7 @@
         }
 
         .now-playing-title {
-            font-size: clamp(1.1rem, 2vw, 1.65rem);
+            font-size: clamp(1rem, 2vw, 1.5rem);
             font-weight: 800;
             letter-spacing: -0.03em;
             color: var(--text);
@@ -340,6 +364,8 @@
             backdrop-filter: blur(8px);
             transition: all 0.2s ease;
             will-change: background;
+            white-space: nowrap;
+            height: fit-content;
         }
 
         .player-fullscreen-btn:hover {
@@ -399,15 +425,18 @@
         /* ── Details Section ── */
         .details-grid {
             display: grid;
-            grid-template-columns: 280px 1fr;
+            grid-template-columns: 1fr 2fr;
             gap: 40px;
             align-items: start;
             contain: layout style;
+            width: 100%;
         }
 
         .poster-container {
             position: sticky;
             top: 140px;
+            width: 100%;
+            max-width: 280px;
         }
 
         .poster {
@@ -439,14 +468,15 @@
             flex-direction: column;
             gap: 16px;
             contain: layout style;
+            width: 100%;
         }
 
         .info-title {
             font-family: 'Inter', sans-serif;
-            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-size: clamp(1.8rem, 4vw, 3rem);
             font-weight: 900;
             color: var(--text);
-            line-height: 1.1;
+            line-height: 1.2;
             letter-spacing: -1px;
             word-break: break-word;
         }
@@ -460,6 +490,7 @@
             font-weight: 500;
             font-size: 0.95rem;
             contain: layout style;
+            width: 100%;
         }
 
         .meta-item { 
@@ -488,6 +519,7 @@
             flex-wrap: wrap;
             margin-top: 8px;
             contain: layout style;
+            width: 100%;
         }
 
         .genre-tag {
@@ -556,6 +588,7 @@
             margin-bottom: 16px;
             scrollbar-width: none;
             contain: layout style;
+            width: 100%;
         }
 
         .season-cards::-webkit-scrollbar { display: none; }
@@ -612,17 +645,20 @@
             font-family: 'Inter', sans-serif;
             margin-bottom: 16px;
             will-change: border-color;
+            width: 100%;
+            max-width: 300px;
         }
 
         .seasons-select:hover { border-color: var(--red); }
 
         .episodes-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 12px;
-            max-height: 400px;
+            max-height: 450px;
             overflow-y: auto;
             contain: layout style;
+            width: 100%;
         }
 
         .episode-item {
@@ -662,6 +698,9 @@
         .episode-content {
             padding: 12px;
             text-align: left;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .episode-num {
@@ -680,6 +719,7 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            flex: 1;
         }
 
         .episode-meta {
@@ -714,7 +754,7 @@
         /* ── Toast Notification ── */
         .toast {
             position: fixed;
-            bottom: 30px;
+            bottom: 100px;
             right: 30px;
             background: rgba(24, 24, 28, 0.97);
             color: white;
@@ -731,6 +771,7 @@
             animation: slideIn 0.3s ease;
             will-change: transform;
             contain: layout style;
+            max-width: 90vw;
         }
 
         @keyframes slideIn {
@@ -743,16 +784,17 @@
 
         /* ── Footer ── */
         footer {
-            padding: 30px clamp(20px, 3vw, 50px);
+            padding: 30px clamp(16px, 2vw, 40px);
             color: var(--text-dim);
             font-size: 12px;
             border-top: 1px solid rgba(255,255,255,0.08);
             margin-top: 40px;
             text-align: center;
+            width: 100%;
         }
 
         /* ── Responsive ── */
-        @media (max-width: 1024px) {
+        @media (max-width: 1200px) {
             .details-grid {
                 grid-template-columns: 1fr;
                 gap: 30px;
@@ -765,34 +807,193 @@
             }
 
             .info {
-                text-align: center;
-                align-items: center;
+                text-align: left;
             }
 
-            .meta-row { justify-content: center; }
-            .genres-row { justify-content: center; }
+            .player-container {
+                min-height: 300px;
+            }
         }
 
         @media (max-width: 768px) {
-            .player-wrapper { padding-top: 90px; }
-            .nav { padding: 14px 16px; }
-            .nav.scrolled { padding: 10px 16px; }
-            .nav-logo { font-size: 1.4rem; }
-            .btn-back { font-size: 0.8rem; padding: 8px 12px; }
-            .info-title { font-size: 1.8rem; }
-            .server-btn { padding: 8px 16px; font-size: 0.8rem; }
-            .server-badge { font-size: 0.55rem; }
+            .player-wrapper { 
+                padding-top: 100px;
+                padding-bottom: 40px;
+            }
+
+            .nav { 
+                padding: 12px 16px; 
+                gap: 12px;
+            }
+
+            .nav.scrolled { 
+                padding: 8px 16px; 
+            }
+
+            .nav-logo { 
+                font-size: 1.4rem; 
+            }
+
+            .btn-back { 
+                font-size: 0.8rem; 
+                padding: 8px 12px; 
+            }
+
+            .info-title { 
+                font-size: 1.6rem; 
+            }
+
+            .server-btn { 
+                padding: 8px 16px; 
+                font-size: 0.8rem; 
+            }
+
+            .server-badge { 
+                font-size: 0.55rem; 
+            }
+
+            .player-container {
+                min-height: 250px;
+                margin-bottom: 20px;
+            }
+
+            .now-playing-strip {
+                margin-bottom: 16px;
+                padding: 12px 14px;
+            }
+
+            .now-playing-title {
+                font-size: clamp(0.9rem, 2vw, 1.2rem);
+            }
+
+            .details-grid {
+                gap: 20px;
+            }
+
+            .episodes-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                max-height: 400px;
+            }
         }
 
         @media (max-width: 480px) {
-            .nav-right { gap: 8px; }
-            .btn-back span { display: none; }
-            .adblock-status { display: none; }
-            .server-tabs { gap: 6px; }
-            .server-btn { padding: 7px 12px; font-size: 0.75rem; }
-            .info-title { font-size: 1.4rem; }
-            .meta-row { font-size: 0.85rem; gap: 10px; }
-            .genre-tag { padding: 4px 10px; font-size: 0.7rem; }
+            .player-wrapper {
+                padding-left: 12px;
+                padding-right: 12px;
+                padding-top: 85px;
+            }
+
+            .nav-right { 
+                gap: 8px; 
+            }
+
+            .btn-back span { 
+                display: none; 
+            }
+
+            .btn-back {
+                padding: 6px 10px;
+            }
+
+            .adblock-status { 
+                display: none; 
+            }
+
+            .server-tabs { 
+                gap: 6px; 
+            }
+
+            .server-btn { 
+                padding: 7px 12px; 
+                font-size: 0.75rem; 
+            }
+
+            .info-title { 
+                font-size: 1.3rem; 
+            }
+
+            .meta-row { 
+                font-size: 0.8rem; 
+                gap: 8px; 
+            }
+
+            .genre-tag { 
+                padding: 4px 10px; 
+                font-size: 0.7rem; 
+            }
+
+            .player-container {
+                min-height: 200px;
+                margin-bottom: 16px;
+            }
+
+            .now-playing-strip {
+                gap: 10px;
+                padding: 10px 12px;
+            }
+
+            .now-playing-title {
+                font-size: 0.9rem;
+            }
+
+            .player-fullscreen-btn {
+                padding: 8px 12px;
+                font-size: 0.75rem;
+            }
+
+            .player-fullscreen-btn span {
+                display: none;
+            }
+
+            .details-grid {
+                gap: 16px;
+            }
+
+            .poster-container {
+                max-width: 100%;
+            }
+
+            .seasons-select {
+                max-width: 100%;
+            }
+
+            .episodes-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 8px;
+            }
+
+            .episode-content {
+                padding: 10px;
+            }
+
+            .episode-num {
+                font-size: 0.8rem;
+            }
+
+            .episode-name {
+                font-size: 0.75rem;
+            }
+
+            .episode-meta {
+                font-size: 0.65rem;
+            }
+
+            .toast {
+                bottom: 80px;
+                right: 16px;
+                left: 16px;
+                max-width: calc(100vw - 32px);
+                font-size: 13px;
+                padding: 12px 16px;
+            }
+
+            .autoplay-indicator {
+                bottom: 100px;
+                right: 16px;
+                left: 16px;
+                max-width: calc(100vw - 32px);
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -899,7 +1100,7 @@
         'use strict';
 
         (function() {
-            // ═══════ PERFORMANCE OPTIMIZED AD BLOCKER ═══════
+            // ═══════ OPTIMIZED AD BLOCKER ═══════
             class OptimizedAdBlocker {
                 constructor() {
                     this.blockedAds = 0;
@@ -908,12 +1109,10 @@
                         'ads.google.com', 'pagead2.googlesyndication.com', 'adservice.google.com',
                         'facebook.com', 'facebook.net', 'criteo.com', 'taboola.com'
                     ]);
-                    this.adPatterns = /(?:ad|advertisement|banner|popup|tracker)/i;
                     this.initAdBlocker();
                 }
 
                 initAdBlocker() {
-                    // Lightweight fetch blocking
                     const originalFetch = window.fetch;
                     const self = this;
 
@@ -926,7 +1125,6 @@
                         return originalFetch.apply(this, args);
                     };
 
-                    // Defer heavy ad detection
                     if (document.readyState === 'loading') {
                         document.addEventListener('DOMContentLoaded', () => this.setupMutationObserver());
                     } else {
@@ -943,9 +1141,7 @@
 
                     observer.observe(document.body, {
                         childList: true,
-                        subtree: true,
-                        attributes: false,
-                        attributeFilter: []
+                        subtree: true
                     });
                 }
 
