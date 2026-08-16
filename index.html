@@ -766,14 +766,31 @@
             };
 
             let watchlist=[], recent=[], heroMovies=[], heroIdx=0, heroTimer;
-            let wallState = null;
+            let wallState = null, watchProgress = {}, recommendations = {};
 
             function loadStorage() {
-                try { watchlist=JSON.parse(localStorage.HR_wl||'[]'); recent=JSON.parse(localStorage.HR_rec||'[]'); }
-                catch(e){ watchlist=[]; recent=[]; }
+                try { 
+                    watchlist=JSON.parse(localStorage.HR_wl||'[]'); 
+                    recent=JSON.parse(localStorage.HR_rec||'[]');
+                    watchProgress=JSON.parse(localStorage.HR_progress||'{}');
+                    recommendations=JSON.parse(localStorage.HR_recs||'{}');
+                }
+                catch(e){ watchlist=[]; recent=[]; watchProgress={}; recommendations={}; }
             }
             function saveWl(){ localStorage.HR_wl = JSON.stringify(watchlist); }
             function saveRec(){ localStorage.HR_rec = JSON.stringify(recent); }
+            function saveProgress(){ localStorage.HR_progress = JSON.stringify(watchProgress); }
+            function saveRecs(){ localStorage.HR_recs = JSON.stringify(recommendations); }
+            
+            function updateWatchProgress(id, type, watched, total) {
+                const key = `${type}-${id}`;
+                watchProgress[key] = { id, type, watched: Math.min(watched, total), total, pct: Math.round(watched/total*100), at: Date.now() };
+                saveProgress();
+            }
+            
+            function getWatchProgress(id, type) {
+                return watchProgress[`${type}-${id}`] || null;
+            }
 
             async function tmdbFetch(endpoint) {
                 const res = await fetch(TMDB_BASE+endpoint, {
@@ -794,7 +811,7 @@
             }
 
             // ═══════ Poster Card (portrait) ═══════
-            function createCard(item, forcedType){
+            function createCard(item, forcedType, showProgress=false){
                 const type = forcedType || item.media_type || 'movie';
                 if(type !== 'movie' && type !== 'tv') return null;
                 const posterPath = item.poster_path ? TMDB_IMG + item.poster_path
@@ -805,6 +822,7 @@
                 const match = item.vote_average ? Math.round(item.vote_average * 10) : 0;
                 const id = item.id;
                 const top = item.vote_average >= 8;
+                const progress = showProgress ? getWatchProgress(id, type) : null;
 
                 const card = document.createElement('div');
                 card.className='card'; card.dataset.id=id; card.dataset.type=type;
@@ -813,6 +831,7 @@
                         <img src="${posterPath}" loading="lazy" alt="${esc(title)}" onerror="this.style.background='#1a1a20';this.style.opacity='0';">
                         <div class="card-rating"><i class="fas fa-star"></i>${rating}</div>
                         ${top?'<div class="card-toplist">Top</div>':''}
+                        ${progress ? `<div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(0,0,0,0.3);border-radius:0 0 6px 6px;"><div style="height:100%;background:var(--red);width:${progress.pct}%;"></div></div>` : ''}
                         <div class="card-overlay">
                             <div class="card-name">${esc(title)}</div>
                             <div class="card-sub"><span class="match">${match}% Match</span><span>${year||''}</span></div>
@@ -856,12 +875,20 @@
 
             function addRecent(id,title,poster,year,type){
                 recent=recent.filter(r=>r.id!=id);
-                recent.unshift({id,title,poster,year,type});
+                recent.unshift({id,title,poster,year,type,lastWatch:Date.now()});
                 if(recent.length>12) recent.pop();
                 saveRec(); renderRecent();
             }
+            
+            function getTimeAgo(time) {
+                const sec = Math.floor((Date.now()-time)/1000);
+                if(sec<60) return 'just now';
+                if(sec<3600) return Math.floor(sec/60)+'m ago';
+                if(sec<86400) return Math.floor(sec/3600)+'h ago';
+                return Math.floor(sec/86400)+'d ago';
+            }
 
-            function buildPersonalizedRow(title, items, rowKey) {
+            function buildPersonalizedRow(title, items, rowKey, showProgress=false) {
                 const section = document.createElement('div');
                 section.className = 'section personalized-row';
                 section.innerHTML = `
@@ -875,7 +902,7 @@
                 section.querySelector('.scroll-btn.left').addEventListener('click', () => track.scrollBy({ left: -track.clientWidth * 0.85, behavior: 'smooth'}));
                 section.querySelector('.scroll-btn.right').addEventListener('click', () => track.scrollBy({ left: track.clientWidth * 0.85, behavior: 'smooth'}));
                 items.slice(0, 12).forEach(item => {
-                    const card = createCard(item, item.type || item.media_type || 'movie');
+                    const card = createCard(item, item.type || item.media_type || 'movie', showProgress);
                     if(card) track.appendChild(card);
                 });
                 return section;
@@ -886,14 +913,15 @@
                 if(recent.length===0){ wrap.style.display='none'; return; }
                 wrap.style.display='block';
                 const grid=document.getElementById('recentGrid'); grid.innerHTML='';
-                recent.forEach(r=>{
+                recent.slice().sort((a,b)=>(b.lastWatch||0)-(a.lastWatch||0)).forEach(r=>{
                     const c=createCard({
                         id:r.id, title:r.title, poster_path:null, backdrop_path:null,
                         release_date:(r.year||'')+'-01-01', vote_average:0
-                    }, r.type);
+                    }, r.type, true);
                     if(!c) return;
                     const img=c.querySelector('img'); if(r.poster) img.src=r.poster;
-                    c.querySelector('.card-rating').innerHTML='<i class="fas fa-clock"></i>';
+                    const timeAgo = r.lastWatch ? getTimeAgo(r.lastWatch) : '';
+                    c.querySelector('.card-rating').innerHTML=`<i class="fas fa-clock"></i> ${timeAgo}`;
                     grid.appendChild(c);
                 });
             }
@@ -913,7 +941,7 @@
                 }));
 
                 if (continueItems.length) {
-                    const continueSection = buildPersonalizedRow('Continue Watching', continueItems, 'continue-watching');
+                    const continueSection = buildPersonalizedRow('Continue Watching', continueItems, 'continue-watching', true);
                     container.appendChild(continueSection);
                 }
 
@@ -926,6 +954,30 @@
                     const topPickSection = buildPersonalizedRow('Top Picks For You', topPicks, 'top-picks');
                     container.appendChild(topPickSection);
                 }
+                
+                if(recent.length > 0) {
+                    const lastWatched = recent[0];
+                    if(lastWatched.title) {
+                        const simKey = `sim-${lastWatched.type}-${lastWatched.id}`;
+                        if(recommendations[simKey] && recommendations[simKey].length) {
+                            const simItems = recommendations[simKey].slice(0, 10).map(item => ({
+                                ...item,
+                                media_type: item.media_type || (item.title ? 'movie' : 'tv')
+                            }));
+                            const titleShort = lastWatched.title.substring(0, 30);
+                            const simSection = buildPersonalizedRow(`Because you watched \"${titleShort}\"`, simItems, simKey);
+                            container.appendChild(simSection);
+                        }
+                    }
+                }
+            }
+            
+            async function fetchSimilarContent(id, type) {
+                try {
+                    const endpoint = `/${type}/${id}/similar`;
+                    const data = await tmdbFetch(endpoint);
+                    return data.results || [];
+                } catch(e) { return []; }
             }
 
             // ═══════ Modal ═══════
@@ -1127,6 +1179,18 @@
                 if(heroRow && heroRow.data.length) buildHero(heroRow.data);
                 else hideHero();
 
+                if(recent.length > 0) {
+                    const lastWatched = recent[0];
+                    const simKey = `sim-${lastWatched.type}-${lastWatched.id}`;
+                    if(!recommendations[simKey]) {
+                        const sims = await fetchSimilarContent(lastWatched.id, lastWatched.type);
+                        if(sims.length) {
+                            recommendations[simKey] = sims;
+                            saveRecs();
+                        }
+                    }
+                }
+                
                 renderPersonalizedRows();
             }
             function hideHeroReset(){ const h=document.getElementById('hero'); h.style.display='block'; }

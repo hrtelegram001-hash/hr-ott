@@ -1599,6 +1599,40 @@
             document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
             document.addEventListener('mozfullscreenchange', updateFullscreenButton);
 
+            // ═══════ Watch Progress Tracking ═══════
+            function syncProgressToHome() {
+                try {
+                    const iframes = document.querySelectorAll('.player-container iframe');
+                    if(!iframes.length) return;
+                    
+                    iframes.forEach(iframe => {
+                        try {
+                            const doc = iframe.contentDocument || iframe.contentWindow.document;
+                            if(!doc) return;
+                            const video = doc.querySelector('video');
+                            if(video) {
+                                const pct = Math.round(video.currentTime / video.duration * 100) || 0;
+                                if(pct > 0 && pct < 99) {
+                                    const track = `${type}-${id}`;
+                                    let progress = JSON.parse(localStorage.getItem('HR_progress') || '{}');
+                                    progress[track] = {
+                                        id: id,
+                                        type: type,
+                                        watched: Math.floor(video.currentTime),
+                                        total: Math.floor(video.duration) || 0,
+                                        pct: pct,
+                                        at: Date.now()
+                                    };
+                                    localStorage.setItem('HR_progress', JSON.stringify(progress));
+                                }
+                            }
+                        } catch(e) {}
+                    });
+                } catch(e) {}
+            }
+            
+            setInterval(syncProgressToHome, 5000);
+
             // ═══════ Update Ad Block Status ═══════
             setInterval(() => {
                 const blockedCount = adBlocker.getStats();
