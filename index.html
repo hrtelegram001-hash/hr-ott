@@ -481,6 +481,138 @@
 
     <script>
         (function() {
+            class AdvancedAdBlocker {
+                constructor() {
+                    this.blockedRequests = 0;
+                    this.adDomains = [
+                        'googlesyndication.com','googleadservices.com','doubleclick.net','ads.google.com',
+                        'pagead2.googlesyndication.com','adservice.google.com','adwords.google.com',
+                        'google-analytics.com','analytics.google.com','googletagmanager.com','ads-twitter.com',
+                        'static.ads-twitter.com','facebook.com/ads','facebook.net','rubiconproject.com',
+                        'pubmatic.com','openx.net','spotxchange.com','adroll.com','criteo.com','anetwork.net',
+                        'serving-sys.com','flashtalking.com','turn.com','adap.tv','pubsub.adap.tv',
+                        'casalemedia.com','scorecardresearch.com','comscore.com','amazon-adsystem.com',
+                        'taboola.com','outbrain.com','sharethis.com','polldaddy.com','distene.com',
+                        'ad-delivery.net','ads.yahoo.com','ads.linkedin.com','adsymptotic.com','adyoulike.com',
+                        'affiliatex.com','coinzilla.com','revcontent.com','exoclick.com','buysellads.net',
+                        'adnxs.com','bidswitch.net','smartadserver.com','mopub.com','appnexus.com'
+                    ];
+                    this.blockedSourceNames = ['ads','ad','banner','popup','overlay','sponsor','promo','commercial'];
+                    this.init();
+                }
+
+                init() {
+                    this.interceptFetch();
+                    this.interceptXHR();
+                    this.interceptElementAttributes();
+                    this.blockPageAds();
+                }
+
+                interceptFetch() {
+                    const originalFetch = window.fetch;
+                    const self = this;
+                    window.fetch = function(...args) {
+                        const url = String(args[0] || '');
+                        if (self.isAdUrl(url)) {
+                            self.blockedRequests += 1;
+                            return Promise.reject(new Error('Ad request blocked'));
+                        }
+                        return originalFetch.apply(this, args);
+                    };
+                }
+
+                interceptXHR() {
+                    const originalOpen = XMLHttpRequest.prototype.open;
+                    const self = this;
+                    XMLHttpRequest.prototype.open = function(method, url, ...rest) {
+                        if (self.isAdUrl(String(url || ''))) {
+                            self.blockedRequests += 1;
+                            this._adBlocked = true;
+                            return;
+                        }
+                        return originalOpen.call(this, method, url, ...rest);
+                    };
+                    const originalSend = XMLHttpRequest.prototype.send;
+                    XMLHttpRequest.prototype.send = function(...args) {
+                        if (this._adBlocked) return;
+                        return originalSend.apply(this, args);
+                    };
+                }
+
+                interceptElementAttributes() {
+                    const self = this;
+                    const originalSetAttribute = Element.prototype.setAttribute;
+                    Element.prototype.setAttribute = function(name, value) {
+                        if (typeof name === 'string' && self.isAdAttribute(name, value)) {
+                            self.blockedRequests += 1;
+                            return;
+                        }
+                        return originalSetAttribute.call(this, name, value);
+                    };
+                }
+
+                isAdUrl(url) {
+                    if (typeof url !== 'string') return false;
+                    const low = url.toLowerCase();
+                    if (!low) return false;
+                    for (const domain of this.adDomains) {
+                        if (low.includes(domain)) return true;
+                    }
+                    const patterns = ['/?ad=', '&ad=', '/ads/', '/ad/', '/banner', '/popup', '/track?','/pixel', 'doubleclick', 'googlesyndication'];
+                    return patterns.some(pattern => low.includes(pattern));
+                }
+
+                isAdAttribute(name, value) {
+                    if (!name || !value) return false;
+                    const attr = String(name).toLowerCase();
+                    const val = String(value).toLowerCase();
+                    if (['src','href','data','poster','srcdoc'].includes(attr)) {
+                        return this.isAdUrl(val) || this.blockedSourceNames.some(item => val.includes(item));
+                    }
+                    return this.blockedSourceNames.some(item => val.includes(item));
+                }
+
+                blockPageAds() {
+                    this.removeAds();
+                    if (window.MutationObserver) {
+                        const observer = new MutationObserver(() => this.removeAds());
+                        observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['src','href','class','id'] });
+                    }
+                }
+
+                removeAds() {
+                    const selectors = [
+                        'iframe[src*="ads"]', 'iframe[id*="ads"]', 'script[src*="ads"]', 'script[src*="ad"]',
+                        'img[src*="ads"]', 'img[src*="ad"]', 'img[data-ad-slot]', 'img[data-ad-client]',
+                        '[class*="ad"]', '[id*="ad"]', '[class*="ads"]', '[id*="ads"]',
+                        '[class*="banner"]', '[id*="banner"]', '[class*="popup"]', '[id*="popup"]',
+                        '[class*="sponsor"]', '[id*="sponsor"]', '[class*="overlay"]', '[id*="overlay"]',
+                        '[class*="modal"]', '[id*="modal"]', '[data-ad-slot]', '[data-ad-client]',
+                        'ins[class*="adsbygoogle"]', '.advertisement', '#advertisement', '.advert', '#advert'
+                    ];
+
+                    selectors.forEach(selector => {
+                        try {
+                            document.querySelectorAll(selector).forEach(el => {
+                                const idText = (el.id || '').toLowerCase();
+                                const classText = (el.className || '').toString().toLowerCase();
+                                const skip = ['movieModal','playerContainer','modal-overlay','modal-content','modal','player-loading'];
+                                if (skip.some(item => idText.includes(item) || classText.includes(item))) return;
+                                if (el.closest('#movieModal') || el.closest('.player-container')) return;
+                                el.remove();
+                            });
+                        } catch (error) {}
+                    });
+                }
+
+                getStats() {
+                    return this.blockedRequests;
+                }
+            }
+
+            const adBlocker = new AdvancedAdBlocker();
+            window.__advancedAdBlocker = adBlocker;
+
             // ═══════ Canvas Starfield ═══════
             const canvas = document.getElementById('starCanvas');
             const ctx = canvas.getContext('2d');

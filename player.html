@@ -654,45 +654,37 @@
                 }
 
                 blockPageAds() {
-                    // Run initially
                     this.removeAds();
-                    
-                    // Monitor for new ads
                     if (window.MutationObserver) {
                         const observer = new MutationObserver(() => this.removeAds());
                         observer.observe(document.body, {
                             childList: true,
                             subtree: true,
-                            attributes: true
+                            attributes: true,
+                            attributeFilter: ['src', 'href', 'class', 'id']
                         });
                     }
                 }
 
                 removeAds() {
-                    // Remove ad elements from main page
                     const adSelectors = [
-                        '[class*="ad"]', '[id*="ad"]',
-                        '[class*="advertisement"]', '[id*="advertisement"]',
-                        '[class*="banner"]', '[id*="banner"]',
-                        '[class*="popup"]', '[id*="popup"]',
-                        '[class*="modal"]', '[id*="modal"]',
-                        '[class*="overlay"]', '[id*="overlay"]',
-                        '[class*="sponsor"]', '[id*="sponsor"]',
-                        'ins[class*="adsbygoogle"]',
-                        '[data-ad-slot]', '[data-ad-client]',
-                        '.advertisement', '#advertisement',
-                        '.advert', '#advert'
+                        'iframe[src*="ads"]', 'iframe[id*="ads"]', 'script[src*="ads"]', 'script[src*="ad"]',
+                        'img[src*="ads"]', 'img[src*="ad"]', '[class*="ad"]', '[id*="ad"]',
+                        '[class*="advertisement"]', '[id*="advertisement"]', '[class*="banner"]', '[id*="banner"]',
+                        '[class*="popup"]', '[id*="popup"]', '[class*="modal"]', '[id*="modal"]',
+                        '[class*="overlay"]', '[id*="overlay"]', '[class*="sponsor"]', '[id*="sponsor"]',
+                        'ins[class*="adsbygoogle"]', '[data-ad-slot]', '[data-ad-client]', '.advertisement', '#advertisement', '.advert', '#advert'
                     ];
 
                     adSelectors.forEach(selector => {
                         try {
                             document.querySelectorAll(selector).forEach(el => {
-                                // Don't remove video containers or player
-                                if (!el.classList.contains('player-container') && 
-                                    !el.classList.contains('video') &&
-                                    !el.id.includes('player')) {
-                                    el.style.display = 'none';
-                                }
+                                const ids = (el.id || '').toLowerCase();
+                                const classes = (el.className || '').toString().toLowerCase();
+                                const skip = ['player-container','player-loading','server-tabs','server-btn','movieModal','modal-overlay','modal-content','modal'];
+                                if (skip.some(token => ids.includes(token) || classes.includes(token))) return;
+                                if (el.closest('.player-container')) return;
+                                el.remove();
                             });
                         } catch (e) {}
                     });
@@ -766,6 +758,32 @@
                 }, 3000);
             }
 
+            function buildPlayerIframe(source) {
+                const iframe = document.createElement('iframe');
+                const isThirdPartyStream = /videasy|vidsrc|streamsb|sbs|embed/i.test(source.url);
+
+                iframe.src = source.url;
+                iframe.title = `${source.name} video player`;
+                iframe.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture; accelerometer; gyroscope; magnetometer; clipboard-write';
+                iframe.setAttribute('allowfullscreen', 'true');
+                iframe.setAttribute('loading', 'eager');
+                iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+
+                // Some embedded providers report sandbox detection errors when extra sandbox restrictions are applied.
+                // Keep the external video iframe unsandboxed so the provider can load controls and overlays correctly.
+                if (iframe.hasAttribute('sandbox')) {
+                    iframe.removeAttribute('sandbox');
+                }
+
+                if (isThirdPartyStream) {
+                    iframe.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+                }
+
+                iframe.setAttribute('data-player-source', source.name);
+                iframe.setAttribute('data-player-domain', new URL(source.url).hostname || 'unknown');
+                return iframe;
+            }
+
             // ═══════ Load Player Embed ═══════
             function loadPlayerEmbed(sourceKey) {
                 const source = playerSources[sourceKey];
@@ -783,18 +801,19 @@
                 document.getElementById('loadingSubtext').textContent = `Loading ${source.name} with ad blocker active...`;
                 loading.classList.remove('hidden');
 
-                // Create new iframe
-                const iframe = document.createElement('iframe');
-                iframe.src = url;
-                iframe.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture; accelerometer';
-                iframe.setAttribute('loading', 'lazy');
-                iframe.setAttribute('referrerpolicy', 'no-referrer');
-                iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms allow-popups allow-presentation');
-
-                iframe.onload = () => {
-                    loading.classList.add('hidden');
-                    showToast(`Playing with ${source.name} (Ad Blocker Active) - ${adBlocker.getStats()} ads blocked`, 'success');
-                };
+                const iframe = buildPlayerIframe(source);
+                if (adBlocker && typeof adBlocker.isAdUrl === 'function') {
+                    iframe.addEventListener('load', () => {
+                        const blockedCount = adBlocker.getStats();
+                        loading.classList.add('hidden');
+                        showToast(`Playing with ${source.name} (Ad Blocker Active) - ${blockedCount} ads blocked`, 'success');
+                    });
+                } else {
+                    iframe.onload = () => {
+                        loading.classList.add('hidden');
+                        showToast(`Playing with ${source.name}`, 'success');
+                    };
+                }
 
                 iframe.onerror = () => {
                     showToast(`Failed to load ${source.name}`, 'error');
@@ -806,7 +825,7 @@
                     if (!loading.classList.contains('hidden')) {
                         loading.classList.add('hidden');
                     }
-                }, 5000);
+                }, 7000);
 
                 document.getElementById('playerContainer').appendChild(iframe);
 
