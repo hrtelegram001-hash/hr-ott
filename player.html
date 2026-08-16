@@ -736,6 +736,13 @@
                     name: 'Videasy',
                     badge: 'HD + NextEp',
                     url: videasyUrl
+                },
+                3: {
+                    name: 'VidBolt',
+                    badge: 'API Embed',
+                    url: type === 'tv'
+                        ? `https://vidbolt.pro/embed/tv/${id}/${season}/${episode}?autoPlay=1&color=E50914`
+                        : `https://vidbolt.pro/embed/movie/${id}?autoPlay=1&color=E50914`
                 }
             };
 
@@ -918,6 +925,7 @@
             document.addEventListener('keydown', (e) => {
                 if (e.key === '1') loadPlayerEmbed(1);
                 if (e.key === '2') loadPlayerEmbed(2);
+                if (e.key === '3') loadPlayerEmbed(3);
             });
 
             // ═══════ Update Ad Block Status ═══════
