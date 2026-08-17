@@ -242,7 +242,7 @@
         .ott-filter-bar {
             position: sticky; top: 80px; z-index: 95;
             background: linear-gradient(180deg, rgba(11,11,15,0.95) 0%, rgba(11,11,15,0.8) 100%);
-            padding: 14px var(--pad);
+            padding: 16px var(--pad);
             display: none;
             flex-wrap: wrap;
             gap: 10px;
@@ -258,8 +258,9 @@
         
         .ott-filter-label {
             font-size: 0.75rem; font-weight: 700; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 0.5px;
-            align-self: center; margin-right: 6px;
+            text-transform: uppercase; letter-spacing: 0.8px;
+            align-self: center; margin-right: 12px;
+            white-space: nowrap;
         }
         
         .ott-filter-btn {
@@ -298,6 +299,15 @@
             letter-spacing: 0.8px; padding: 4px 8px; border-radius: 4px;
             text-transform: uppercase; display: flex; align-items: center; gap: 4px;
             box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+        }
+
+        .upcoming-badge {
+            position: absolute; top: 8px; left: 8px; z-index: 4;
+            background: linear-gradient(135deg, #4169E1, #1E90FF);
+            color: #fff; font-size: 0.7rem; font-weight: 900;
+            letter-spacing: 0.8px; padding: 4px 8px; border-radius: 4px;
+            text-transform: uppercase; display: flex; align-items: center; gap: 4px;
+            box-shadow: 0 4px 12px rgba(65, 105, 225, 0.4);
         }
 
         /* ── Hero ── */
@@ -345,12 +355,17 @@
 
         /* ── Rows wrapper ── */
         .rows-wrapper { position: relative; z-index: 5; margin-top: -70px; padding-bottom: 30px; contain: layout; }
-        .section { margin: 0 0 26px; position: relative; }
+        .section { margin: 0 0 28px; position: relative; }
+        
         .section-title {
-            font-size: 1.3rem; font-weight: 800; margin-bottom: 12px; padding: 0 var(--pad);
+            font-size: 1.3rem; font-weight: 800; margin-bottom: 16px; padding: 0 var(--pad);
             color: var(--text); display: flex; align-items: center; gap: 12px; letter-spacing: -0.3px;
         }
-        .section-title::before { content:''; width:4px; height:22px; border-radius:2px; background: var(--red); box-shadow: 0 0 12px var(--red-glow); }
+        .section-title::before { 
+            content:''; width:4px; height:22px; border-radius:2px; 
+            background: var(--red); box-shadow: 0 0 12px var(--red-glow); 
+            flex-shrink: 0;
+        }
 
         /* ── Horizontal poster row (home) ── */
         .row-scroll-area { position: relative; contain: layout; }
@@ -443,11 +458,11 @@
         @keyframes spin { 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
 
         /* ── Recently Watched ── */
-        .recent-wrap { margin: 0 0 26px; display:none; position: relative; contain: layout; }
+        .recent-wrap { margin: 0 0 28px; display:none; position: relative; contain: layout; }
 
         .personalized-row {
             position: relative;
-            margin: 0 0 18px;
+            margin: 0 0 28px;
             contain: layout;
         }
 
@@ -505,13 +520,13 @@
         .modal-watchlist-btn.active { background: rgba(229,9,20,0.16); border-color: rgba(229,9,20,0.8); }
         
         .modal-ott-section {
-            margin: 18px 0; padding: 14px; background: rgba(22,22,28,0.6); border-radius: 8px;
+            margin: 20px 0 0 0; padding: 16px; background: rgba(22,22,28,0.6); border-radius: 8px;
             border: 1px solid rgba(255,255,255,0.06);
         }
 
         .modal-ott-label {
-            font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;
-            letter-spacing: 0.5px; margin-bottom: 10px; display: block;
+            font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;
+            letter-spacing: 0.8px; margin-bottom: 12px; display: block;
         }
 
         .modal-ott-providers {
@@ -533,11 +548,11 @@
             width: 22px; height: 22px; border-radius: 3px; object-fit: cover;
         }
 
-        .modal-body { padding: 22px var(--pad) 40px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; }
+        .modal-body { padding: 24px var(--pad) 40px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 32px; }
         .modal-body p { font-size: 1rem; line-height: 1.55; color: #fff; margin-bottom: 16px; }
-        .modal-body span.label { color: var(--text-dim); display: block; font-size: 0.85rem; margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+        .modal-body span.label { color: var(--text-dim); display: block; font-size: 0.75rem; margin-bottom: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         .modal-body span.value { color: #fff; font-size: 0.95rem; }
-        .modal-meta { display: flex; gap: 14px; align-items: center; font-size: 0.9rem; margin-bottom: 16px; flex-wrap: wrap; }
+        .modal-meta { display: flex; gap: 14px; align-items: center; font-size: 0.9rem; margin-bottom: 18px; flex-wrap: wrap; }
 
         /* ── Empty state ── */
         .empty-state { text-align: center; padding: 110px 20px; color: #888; }
@@ -579,12 +594,12 @@
             .hero-title { font-size: 2.4rem; }
             .hero-watch, .hero-info { padding: 10px 18px; font-size: 14px; }
             .hero-dots { bottom: 22%; }
-            .section-title { font-size: 1.1rem; }
+            .section-title { font-size: 1.1rem; margin-bottom: 14px; }
             .search-input.active { width: 150px; }
             .search-dropdown { min-width: 260px; }
             .modal-body { grid-template-columns: 1fr; padding: 20px; }
             .modal-title { font-size: 1.7rem; }
-            .ott-filter-bar { padding: 10px var(--pad); }
+            .ott-filter-bar { padding: 12px var(--pad); }
             .ott-filter-btn { padding: 6px 12px; font-size: 0.75rem; }
         }
     </style>
@@ -631,7 +646,7 @@
 
     <!-- Recently Watched -->
     <div class="recent-wrap" id="recentSection">
-        <h2 class="section-title">Continue Watching</h2>
+        <h2 class="section-title">▶️ Continue Watching</h2>
         <div class="row-scroll-area"><div class="row-track" id="recentGrid"></div></div>
     </div>
 
@@ -687,7 +702,7 @@
 
     <script>
         // ═════════════════════════════════════════════════════════════════════════
-        // FIXED: Top 10 API + OTT Provider Filter + UI Improvements
+        // UPDATED: Upcoming Movies + Trending + Proper Date Handling
         // ═════════════════════════════════════════════════════════════════════════
 
         class AdvancedAdBlocker {
@@ -836,6 +851,13 @@
         const API_CACHE = new Map();
         const CACHE_TTL = 60 * 60 * 1000;
 
+        // ═══════ Date Utilities ═══════
+        function getDateString(daysOffset = 0) {
+            const d = new Date();
+            d.setDate(d.getDate() + daysOffset);
+            return d.toISOString().split('T')[0];
+        }
+
         // ═══════ Fetch with Auth ═══════
         async function tmdbFetch(endpoint) {
             const cacheKey = endpoint;
@@ -912,7 +934,6 @@
             });
             btnEl.classList.add('active');
             
-            // Reload current category with provider filter
             const activeLink = document.querySelector('[data-cat].active');
             if (activeLink && (activeLink.dataset.cat === 'movies' || activeLink.dataset.cat === 'tv')) {
                 const cat = activeLink.dataset.cat;
@@ -933,19 +954,25 @@
             return [];
         }
 
-        // ═══════ Home Rows Config - FIXED TOP 10 ═══════
-        const HOME_ROWS = [
-            { key:'trending',   title:'🔥 Trending Now',      ep:'/trending/movie/week?page=', type:'movie', hero:true },
-            { key:'toptoday',   title:'📊 Top 10 Today',      ep:'/trending/all/day?page=', type:'mixed', top10:true },
-            { key:'topweek',    title:'📈 Top 10 This Week',  ep:'/trending/all/week?page=', type:'mixed', top10:true },
-            { key:'toprated',   title:'⭐ Top Rated',         ep:'/movie/top_rated?page=', type:'movie' },
-            { key:'action',     title:'💥 Action & Adventure',ep:'/discover/movie?with_genres=28&sort_by=popularity.desc&page=', type:'movie' },
-            { key:'scifi',      title:'🚀 Sci-Fi & Fantasy',  ep:'/discover/movie?with_genres=878&sort_by=popularity.desc&page=', type:'movie' },
-            { key:'horror',     title:'👻 Horror & Thrillers',ep:'/discover/movie?with_genres=27&sort_by=popularity.desc&page=', type:'movie' },
-            { key:'comedy',     title:'😂 Comedy',            ep:'/discover/movie?with_genres=35&sort_by=popularity.desc&page=', type:'movie' },
-            { key:'animation',  title:'🎨 Animation',         ep:'/discover/movie?with_genres=16&sort_by=popularity.desc&page=', type:'movie' },
-            { key:'tvshows',    title:'📺 Trending TV Shows', ep:'/trending/tv/week?page=', type:'tv' },
-        ];
+        // ═══════ Home Rows Config - UPCOMING + TRENDING ═══════
+        function getHomeRows() {
+            const today = getDateString();
+            const in30Days = getDateString(30);
+            
+            return [
+                { key:'trending',   title:'🔥 Trending Now',          ep:'/trending/movie/week?page=', type:'movie', hero:true },
+                { key:'toptoday',   title:'📊 Top 10 Today',          ep:'/trending/all/day?page=', type:'mixed', top10:true },
+                { key:'topweek',    title:'📈 Top 10 This Week',      ep:'/trending/all/week?page=', type:'mixed', top10:true },
+                { key:'upcoming',   title:'🎬 Coming Soon',           ep:`/discover/movie?include_adult=false&include_video=false&sort_by=popularity.desc&with_release_type=2|3&release_date.gte=${today}&release_date.lte=${in30Days}&page=`, type:'movie', upcoming:true },
+                { key:'toprated',   title:'⭐ Top Rated',             ep:'/movie/top_rated?page=', type:'movie' },
+                { key:'action',     title:'💥 Action & Adventure',    ep:'/discover/movie?with_genres=28&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'scifi',      title:'🚀 Sci-Fi & Fantasy',      ep:'/discover/movie?with_genres=878&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'horror',     title:'👻 Horror & Thrillers',    ep:'/discover/movie?with_genres=27&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'comedy',     title:'😂 Comedy',                ep:'/discover/movie?with_genres=35&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'animation',  title:'🎨 Animation',             ep:'/discover/movie?with_genres=16&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'tvshows',    title:'📺 Trending TV Shows',     ep:'/trending/tv/week?page=', type:'tv' },
+            ];
+        }
 
         const WALLS = {
             movies: { title:'🎬 Movies',      ep:'/discover/movie?sort_by=popularity.desc&vote_count.gte=50&page=', type:'movie' },
@@ -1016,7 +1043,7 @@
         }
 
         // ═══════ Create Card ═══════
-        function createCard(item, forcedType, showProgress=false, top10Rank=null) {
+        function createCard(item, forcedType, showProgress=false, top10Rank=null, isUpcoming=false) {
             const type = forcedType || item.media_type || 'movie';
             if(type !== 'movie' && type !== 'tv') return null;
             
@@ -1028,6 +1055,7 @@
             const id = item.id;
             const top = item.vote_average >= 8;
             const progress = showProgress ? getWatchProgress(id, type) : null;
+            const releaseDate = item.release_date || item.first_air_date || '';
 
             const card = document.createElement('div');
             card.className = 'card';
@@ -1039,7 +1067,8 @@
                     <img src="${posterPath}" loading="lazy" alt="${esc(title)}" decoding="async" onerror="this.style.opacity='0';">
                     <div class="card-rating"><i class="fas fa-star"></i>${rating}</div>
                     ${top10Rank ? `<div class="top10-badge">#${top10Rank}</div>` : ''}
-                    ${top ? '<div style="position:absolute;top:8px;right:8px;background:var(--gold);color:#000;font-size:0.65rem;font-weight:900;letter-spacing:0.5px;padding:4px 7px;border-radius:4px;text-transform:uppercase;"><i class="fas fa-crown"></i> Top</div>' : ''}
+                    ${isUpcoming ? `<div class="upcoming-badge"><i class="fas fa-calendar"></i> ${releaseDate}</div>` : ''}
+                    ${top && !top10Rank ? '<div style="position:absolute;top:8px;right:8px;background:var(--gold);color:#000;font-size:0.65rem;font-weight:900;letter-spacing:0.5px;padding:4px 7px;border-radius:4px;text-transform:uppercase;"><i class="fas fa-crown"></i> Top</div>' : ''}
                     ${progress ? `<div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(0,0,0,0.3);"><div style="height:100%;background:var(--red);width:${progress.pct}%;"></div></div>` : ''}
                     <div class="card-overlay">
                         <div class="card-name">${esc(title)}</div>
@@ -1111,7 +1140,7 @@
         }
 
         // ═══════ Build Personalized Rows ═══════
-        function buildPersonalizedRow(title, items, rowKey, showProgress=false, top10=false) {
+        function buildPersonalizedRow(title, items, rowKey, showProgress=false, top10=false, upcoming=false) {
             const section = document.createElement('div');
             section.className = 'section personalized-row';
             section.innerHTML = `
@@ -1133,7 +1162,7 @@
             const displayItems = top10 ? items.slice(0, 10) : items.slice(0, 18);
             displayItems.forEach((item, idx) => {
                 const rank = top10 ? idx + 1 : null;
-                const card = createCard(item, item.type || item.media_type || 'movie', showProgress, rank);
+                const card = createCard(item, item.type || item.media_type || 'movie', showProgress, rank, upcoming);
                 if(card) track.appendChild(card);
             });
 
@@ -1422,6 +1451,7 @@
             const container = document.getElementById('sectionsContainer');
             container.innerHTML = '';
 
+            const HOME_ROWS = getHomeRows();
             HOME_ROWS.forEach(c => container.appendChild(createRowSection(c)));
 
             const proms = HOME_ROWS.map(async c => {
@@ -1440,7 +1470,7 @@
                 const displayCount = r.cfg.top10 ? 10 : 18;
                 r.data.slice(0, displayCount).forEach((m, idx) => {
                     const rank = r.cfg.top10 ? idx + 1 : null;
-                    const card = createCard(m, r.cfg.type, false, rank);
+                    const card = createCard(m, r.cfg.type, false, rank, r.cfg.upcoming);
                     if(card) grid.appendChild(card);
                 });
             });
@@ -1452,7 +1482,7 @@
             renderRecent();
         }
 
-        // ═══════ WALL: infinite poster grid with OTT filtering ═══════
+        // ═══════ WALL: infinite poster grid ═══════
         function teardownWall() {
             if(wallState && wallState.observer) wallState.observer.disconnect();
             wallState = null;
@@ -1471,7 +1501,6 @@
                     <div class="grid-sentinel" id="wallSentinel"></div>
                 </div>`;
 
-            // Build endpoint with provider filter if selected
             let ep = cfg.ep;
             if (selectedOttProvider) {
                 const ampChar = ep.includes('?') ? '&' : '?';
