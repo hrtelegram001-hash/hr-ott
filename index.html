@@ -436,9 +436,439 @@
 
     <script>
         (function() {
-            // ═══════ AD BLOCKER ═══════
-            class AdBlocker { constructor() { this.blocked = 0; this.domains = ['googlesyndication.com','doubleclick.net','adservice.google.com','ads-twitter.com','facebook.com/ads','rubiconproject.com','pubmatic.com','openx.net','spotxchange.com','adroll.com','criteo.com','casalemedia.com','amazon-adsystem.com','taboola.com','outbrain.com','exoclick.com','adnxs.com']; this.init(); } init() { const origFetch = window.fetch; const self = this; window.fetch = function(...args) { const url = String(args[0] || ''); if (self.isAd(url)) { self.blocked++; return Promise.reject(new Error('Ad blocked')); } return origFetch.apply(this, args); }; } isAd(url) { if (!url) return false; const low = url.toLowerCase(); for (const d of this.domains) if (low.includes(d)) return true; return /[?&]ad[=&]/.test(low); } getStats() { return this.blocked; } }
-            const adBlocker = new AdBlocker();
+            // ═══════════════════════════════════════════════
+            // ═══ ENHANCED AD BLOCKER ═══
+            // ═══════════════════════════════════════════════
+            class EnhancedAdBlocker {
+                constructor() {
+                    this.blockedCount = 0;
+                    this.popupBlocked = 0;
+                    this.scriptBlocked = 0;
+                    this.iframeBlocked = 0;
+                    
+                    // Comprehensive ad domain list
+                    this.adDomains = [
+                        // Major ad networks
+                        'googlesyndication.com', 'doubleclick.net', 'adservice.google.com',
+                        'googleads.g.doubleclick.net', 'googleadservices.com',
+                        'ads-twitter.com', 'facebook.com/ads', 'fbcdn.net',
+                        'rubiconproject.com', 'pubmatic.com', 'openx.net',
+                        'spotxchange.com', 'adroll.com', 'criteo.com',
+                        'casalemedia.com', 'amazon-adsystem.com', 'amazon-adsystem.com',
+                        'taboola.com', 'outbrain.com', 'exoclick.com',
+                        'adnxs.com', 'adsrvr.org', 'adzerk.net',
+                        'adform.net', 'adfox.ru', 'adition.com',
+                        'advertise.com', 'advertising.com', 'adzerk.com',
+                        'bidswitch.net', 'bluekai.com', 'bounceexchange.com',
+                        'contextweb.com', 'demandbase.com', 'dianomi.com',
+                        'doubleverify.com', 'eplanning.net', 'exelator.com',
+                        'eyeota.net', 'flashtalking.com', 'google-analytics.com',
+                        'googletagmanager.com', 'googletagservices.com',
+                        'gumgum.com', 'indexexchange.com', 'lijit.com',
+                        'liveintent.com', 'lotame.com', 'mopub.com',
+                        'neustar.biz', 'outbrain.com', 'pubexchange.com',
+                        'pulpix.com', 'quantcast.com', 'rhythmone.com',
+                        'scorecardresearch.com', 'sharethrough.com', 'simpli.fi',
+                        'smartadserver.com', 'sovrn.com', 'spotx.tv',
+                        'stickyads.tv', 'taboola.com', 'tremorhub.com',
+                        'turn.com', 'undertone.com', 'vevo.com',
+                        'videohub.com', 'vungle.com', 'yieldmo.com',
+                        'yieldmanager.com', 'zedo.com',
+                        
+                        // Video player ad domains
+                        'vidoomy.com', 'adserver.video', 'video-ad.com',
+                        'prebid.org', 'vast.ad', 'vpaid.com',
+                        'ima3.video', 'adserver-video.com',
+                        'video-advertising.com', 'ad-video.com',
+                        'video-ads.com', 'videos-ad.com',
+                        'adserver.video', 'video-ad-serving.com',
+                        'vast-player.com', 'vpaid-player.com',
+                        'video-ad-sdk.com', 'ad-video-sdk.com',
+                        
+                        // Popup/popunder domains
+                        'popads.net', 'popcash.net', 'popunder.com',
+                        'popup-ad.com', 'pop-under.com',
+                        'adpop.com', 'popad.net', 'popunder.io',
+                        'popup-service.com', 'popup-ad-network.com',
+                        
+                        // Malware/adware domains
+                        'adware.com', 'malware.com', 'adware-remover.com',
+                        'spyware.com', 'adware-removal.com',
+                        'adware-protection.com', 'malware-protection.com',
+                        
+                        // Redirect/tracking domains
+                        'redirectingat.com', 'redirect-tracker.com',
+                        'ad-redirect.com', 'tracking-ad.com',
+                        'ad-tracking.com', 'tracking-service.com',
+                        'redirect-ad.com', 'ad-traffic.com',
+                        
+                        // Streaming ad domains
+                        'streaming-ads.com', 'stream-ad.com',
+                        'streaming-ad.com', 'ad-stream.com',
+                        'streamingad.com', 'streamad.com',
+                        'videos-streaming-ads.com', 'live-ad.com',
+                        
+                        // Common ad keywords in URLs
+                        'banner', 'sponsor', 'promo', 'affiliate',
+                        'partners', 'advert', 'marketing', 'campaign',
+                        'clicks', 'impression', 'conversion'
+                    ];
+                    
+                    // Ad URL patterns (regex)
+                    this.adPatterns = [
+                        /[/?&]ad(=|_|\.)/i,
+                        /[/?&]advert/i,
+                        /[/?&]banner/i,
+                        /[/?&]sponsor/i,
+                        /[/?&]promo/i,
+                        /[/?&]affiliate/i,
+                        /[/?&]campaign/i,
+                        /[/?&]marketing/i,
+                        /[/?&]clicks?=/, 
+                        /[/?&]impression/,
+                        /[/?&]conversion/,
+                        /doubleclick\.net/i,
+                        /googleadservices/i,
+                        /googlesyndication/i,
+                        /taboola\.com/i,
+                        /outbrain\.com/i,
+                        /popads\.net/i,
+                        /popcash\.net/i,
+                        /exoclick\.com/i,
+                        /adnxs\.com/i,
+                        /openx\.net/i,
+                        /pubmatic\.com/i,
+                        /rubiconproject\.com/i,
+                        /casalemedia\.com/i,
+                        /criteo\.com/i,
+                        /adroll\.com/i,
+                        /amazon-adsystem\.com/i,
+                        /adform\.net/i,
+                        /smartadserver\.com/i,
+                        /yieldmo\.com/i,
+                        /zedo\.com/i,
+                        /spotx\.tv/i,
+                        /vungle\.com/i,
+                        /adserver\.video/i,
+                        /vast\.ad/i,
+                        /vpaid/i,
+                        /ima3\.video/i,
+                        /prebid\.org/i
+                    ];
+                    
+                    this.init();
+                }
+
+                init() {
+                    // Intercept fetch requests
+                    this.interceptFetch();
+                    
+                    // Intercept XMLHttpRequest
+                    this.interceptXHR();
+                    
+                    // Block popups
+                    this.blockPopups();
+                    
+                    // Block iframe creation
+                    this.blockIframes();
+                    
+                    // Block script injection
+                    this.blockScripts();
+                    
+                    // Block image requests
+                    this.blockImages();
+                    
+                    // Block WebSocket connections
+                    this.blockWebSockets();
+                    
+                    // Block navigator.sendBeacon
+                    this.blockBeacon();
+                    
+                    // Periodically clean up
+                    setInterval(() => this.cleanup(), 5000);
+                }
+
+                isAdUrl(url) {
+                    if (!url) return false;
+                    const lowerUrl = url.toLowerCase();
+                    
+                    // Check domain list
+                    for (const domain of this.adDomains) {
+                        if (lowerUrl.includes(domain)) return true;
+                    }
+                    
+                    // Check regex patterns
+                    for (const pattern of this.adPatterns) {
+                        if (pattern.test(lowerUrl)) return true;
+                    }
+                    
+                    return false;
+                }
+
+                interceptFetch() {
+                    const self = this;
+                    const origFetch = window.fetch;
+                    
+                    window.fetch = function(...args) {
+                        const url = String(args[0] || '');
+                        if (self.isAdUrl(url)) {
+                            self.blockedCount++;
+                            self.scriptBlocked++;
+                            console.log(`[AdBlocker] Blocked fetch: ${url}`);
+                            return Promise.reject(new Error('Ad blocked by HR OTT AdBlocker'));
+                        }
+                        return origFetch.apply(this, args);
+                    };
+                }
+
+                interceptXHR() {
+                    const self = this;
+                    const origOpen = XMLHttpRequest.prototype.open;
+                    
+                    XMLHttpRequest.prototype.open = function(method, url, ...rest) {
+                        if (self.isAdUrl(url)) {
+                            self.blockedCount++;
+                            self.scriptBlocked++;
+                            console.log(`[AdBlocker] Blocked XHR: ${url}`);
+                            // Abort the request
+                            setTimeout(() => {
+                                try { this.abort(); } catch(e) {}
+                            }, 0);
+                            return;
+                        }
+                        return origOpen.call(this, method, url, ...rest);
+                    };
+                }
+
+                blockPopups() {
+                    const self = this;
+                    const origOpen = window.open;
+                    
+                    window.open = function(url, name, features) {
+                        if (url && self.isAdUrl(url)) {
+                            self.blockedCount++;
+                            self.popupBlocked++;
+                            console.log(`[AdBlocker] Blocked popup: ${url}`);
+                            // Return a dummy window object
+                            return {
+                                closed: true,
+                                close: function() {},
+                                focus: function() {},
+                                blur: function() {},
+                                postMessage: function() {}
+                            };
+                        }
+                        return origOpen.call(this, url, name, features);
+                    };
+                    
+                    // Block onclick popups
+                    document.addEventListener('click', function(e) {
+                        const target = e.target.closest('a');
+                        if (target && target.target === '_blank') {
+                            const href = target.href || '';
+                            if (self.isAdUrl(href)) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                self.blockedCount++;
+                                self.popupBlocked++;
+                                console.log(`[AdBlocker] Blocked click popup: ${href}`);
+                                return false;
+                            }
+                        }
+                    }, true);
+                }
+
+                blockIframes() {
+                    const self = this;
+                    const origCreateElement = document.createElement.bind(document);
+                    
+                    document.createElement = function(tagName, options) {
+                        const element = origCreateElement(tagName, options);
+                        if (tagName.toLowerCase() === 'iframe') {
+                            const origSetAttribute = element.setAttribute.bind(element);
+                            element.setAttribute = function(name, value) {
+                                if (name === 'src' && self.isAdUrl(value)) {
+                                    self.blockedCount++;
+                                    self.iframeBlocked++;
+                                    console.log(`[AdBlocker] Blocked iframe: ${value}`);
+                                    value = 'about:blank';
+                                }
+                                return origSetAttribute(name, value);
+                            };
+                            
+                            // Also intercept src property
+                            const desc = Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype, 'src');
+                            if (desc) {
+                                Object.defineProperty(element, 'src', {
+                                    get: function() { return desc.get.call(this); },
+                                    set: function(value) {
+                                        if (self.isAdUrl(value)) {
+                                            self.blockedCount++;
+                                            self.iframeBlocked++;
+                                            console.log(`[AdBlocker] Blocked iframe src: ${value}`);
+                                            value = 'about:blank';
+                                        }
+                                        return desc.set.call(this, value);
+                                    }
+                                });
+                            }
+                        }
+                        return element;
+                    };
+                }
+
+                blockScripts() {
+                    const self = this;
+                    const origCreateElement = document.createElement.bind(document);
+                    
+                    document.createElement = function(tagName, options) {
+                        const element = origCreateElement(tagName, options);
+                        if (tagName.toLowerCase() === 'script') {
+                            const origSetAttribute = element.setAttribute.bind(element);
+                            element.setAttribute = function(name, value) {
+                                if (name === 'src' && self.isAdUrl(value)) {
+                                    self.blockedCount++;
+                                    self.scriptBlocked++;
+                                    console.log(`[AdBlocker] Blocked script: ${value}`);
+                                    // Replace with empty script
+                                    return;
+                                }
+                                return origSetAttribute(name, value);
+                            };
+                            
+                            // Intercept src property
+                            const desc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');
+                            if (desc) {
+                                Object.defineProperty(element, 'src', {
+                                    get: function() { return desc.get.call(this); },
+                                    set: function(value) {
+                                        if (self.isAdUrl(value)) {
+                                            self.blockedCount++;
+                                            self.scriptBlocked++;
+                                            console.log(`[AdBlocker] Blocked script src: ${value}`);
+                                            value = '';
+                                        }
+                                        return desc.set.call(this, value);
+                                    }
+                                });
+                            }
+                        }
+                        return element;
+                    };
+                }
+
+                blockImages() {
+                    const self = this;
+                    const origCreateElement = document.createElement.bind(document);
+                    
+                    document.createElement = function(tagName, options) {
+                        const element = origCreateElement(tagName, options);
+                        if (tagName.toLowerCase() === 'img') {
+                            const origSetAttribute = element.setAttribute.bind(element);
+                            element.setAttribute = function(name, value) {
+                                if (name === 'src' && self.isAdUrl(value)) {
+                                    self.blockedCount++;
+                                    console.log(`[AdBlocker] Blocked image: ${value}`);
+                                    value = '';
+                                }
+                                return origSetAttribute(name, value);
+                            };
+                            
+                            // Intercept src property
+                            const desc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+                            if (desc) {
+                                Object.defineProperty(element, 'src', {
+                                    get: function() { return desc.get.call(this); },
+                                    set: function(value) {
+                                        if (self.isAdUrl(value)) {
+                                            self.blockedCount++;
+                                            console.log(`[AdBlocker] Blocked image src: ${value}`);
+                                            value = '';
+                                        }
+                                        return desc.set.call(this, value);
+                                    }
+                                });
+                            }
+                        }
+                        return element;
+                    };
+                }
+
+                blockWebSockets() {
+                    const self = this;
+                    const origWebSocket = window.WebSocket;
+                    
+                    window.WebSocket = function(url, protocols) {
+                        if (self.isAdUrl(url)) {
+                            self.blockedCount++;
+                            console.log(`[AdBlocker] Blocked WebSocket: ${url}`);
+                            // Return a dummy WebSocket
+                            return {
+                                readyState: 3,
+                                close: function() {},
+                                send: function() {},
+                                addEventListener: function() {},
+                                removeEventListener: function() {},
+                                dispatchEvent: function() {}
+                            };
+                        }
+                        return new origWebSocket(url, protocols);
+                    };
+                }
+
+                blockBeacon() {
+                    const self = this;
+                    const origSendBeacon = navigator.sendBeacon;
+                    
+                    navigator.sendBeacon = function(url, data) {
+                        if (self.isAdUrl(url)) {
+                            self.blockedCount++;
+                            console.log(`[AdBlocker] Blocked beacon: ${url}`);
+                            return true;
+                        }
+                        return origSendBeacon.call(this, url, data);
+                    };
+                }
+
+                cleanup() {
+                    // Remove any ad elements that might have slipped through
+                    const selectors = [
+                        '[id*="ad" i]', '[class*="ad" i]', 
+                        '[id*="banner" i]', '[class*="banner" i]',
+                        '[id*="sponsor" i]', '[class*="sponsor" i]',
+                        '[id*="promo" i]', '[class*="promo" i]',
+                        '.ad-container', '.ad-wrapper', '.ad-banner',
+                        '.advertisement', '.google-ads', '.adsbygoogle',
+                        '.ad-slot', '.ad-unit', '.ad-frame'
+                    ];
+                    
+                    try {
+                        document.querySelectorAll(selectors.join(',')).forEach(el => {
+                            if (el && el.parentNode) {
+                                // Check if it's likely an ad
+                                const rect = el.getBoundingClientRect();
+                                if (rect.width > 0 && rect.height > 0 && 
+                                    (rect.width > 300 || rect.height > 50)) {
+                                    el.style.display = 'none';
+                                    el.style.pointerEvents = 'none';
+                                }
+                            }
+                        });
+                    } catch(e) {}
+                }
+
+                getStats() {
+                    return {
+                        totalBlocked: this.blockedCount,
+                        popupsBlocked: this.popupBlocked,
+                        scriptsBlocked: this.scriptBlocked,
+                        iframesBlocked: this.iframeBlocked
+                    };
+                }
+            }
+
+            // ═══════ INIT AD BLOCKER ═══════
+            const adBlocker = new EnhancedAdBlocker();
 
             // ═══════ CANVAS STARFIELD ═══════
             const canvas = document.getElementById('starCanvas');
@@ -493,9 +923,60 @@
             let searchTotalPages = 1;
             let searchIsLoading = false;
 
-            function loadStorage() { try { watchlist=JSON.parse(localStorage.HR_wl||'[]'); recent=JSON.parse(localStorage.HR_rec||'[]'); } catch(e){ watchlist=[]; recent=[]; } }
-            function saveWl(){ localStorage.HR_wl = JSON.stringify(watchlist); }
-            function saveRec(){ localStorage.HR_rec = JSON.stringify(recent); }
+            // ═══════ PERSISTENCE ═══════
+            const STORAGE_KEY = 'hr_ott_state';
+            
+            function saveAppState() {
+                try {
+                    const state = {
+                        route: currentRoute,
+                        watchlist: watchlist,
+                        recent: recent,
+                        timestamp: Date.now()
+                    };
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                } catch (e) {
+                    console.warn('Could not save state:', e);
+                }
+            }
+
+            function loadAppState() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (!raw) return null;
+                    const state = JSON.parse(raw);
+                    if (state.timestamp && (Date.now() - state.timestamp) > 604800000) {
+                        localStorage.removeItem(STORAGE_KEY);
+                        return null;
+                    }
+                    return state;
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            function loadStorage() { 
+                try { 
+                    const saved = loadAppState();
+                    if (saved) {
+                        watchlist = saved.watchlist || [];
+                        recent = saved.recent || [];
+                        currentRoute = saved.route || 'home';
+                    } else {
+                        watchlist = JSON.parse(localStorage.HR_wl||'[]'); 
+                        recent = JSON.parse(localStorage.HR_rec||'[]');
+                    }
+                } catch(e){ watchlist=[]; recent=[]; } 
+            }
+            
+            function saveWl(){ 
+                localStorage.HR_wl = JSON.stringify(watchlist); 
+                saveAppState();
+            }
+            function saveRec(){ 
+                localStorage.HR_rec = JSON.stringify(recent); 
+                saveAppState();
+            }
 
             async function tmdbFetch(endpoint) {
                 const sep = endpoint.includes('?') ? '&' : '?';
@@ -1062,6 +1543,8 @@
                 const heroRow = results.find(r=>r.cfg.hero);
                 if(heroRow && heroRow.data.length) buildHero(heroRow.data); else hideHero();
                 showHideFooter();
+                updateNavActive('home');
+                saveAppState();
             }
 
             function teardownWall(){ if(wallState && wallState.observer) wallState.observer.disconnect(); wallState = null; }
@@ -1069,7 +1552,8 @@
             async function renderWall(catKey){
                 teardownWall();
                 hideHero();
-                currentRoute = catKey === 'tv' ? 'series' : catKey;
+                const routeMap = { movies: 'movies', tv: 'series', new: 'new' };
+                currentRoute = routeMap[catKey] || catKey;
                 renderContinueWatching();
                 const cfg = WALLS[catKey];
                 const container=document.getElementById('sectionsContainer');
@@ -1078,6 +1562,8 @@
                 await loadWallPage();
                 if(wallState){ const sentinel = document.getElementById('wallSentinel'); wallState.observer = new IntersectionObserver(entries=>{ if(entries[0].isIntersecting) loadWallPage(); },{ rootMargin:'600px' }); wallState.observer.observe(sentinel); }
                 showHideFooter();
+                updateNavActive(currentRoute);
+                saveAppState();
             }
 
             async function loadWallPage(){
@@ -1107,12 +1593,24 @@
                 if (watchlist.length === 0) { 
                     container.innerHTML = `<div class="empty-state"><i class="fas fa-heart"></i><h2>Your list is empty</h2><p>Add movies and shows to your list to watch them later.</p></div>`; 
                     showHideFooter();
+                    updateNavActive('my-list');
+                    saveAppState();
                     return; 
                 }
                 const sec = document.createElement('div'); sec.className = 'section'; sec.innerHTML = `<h2 class="section-title">My List</h2><div class="grid-wall" id="grid-mylist"></div>`; container.appendChild(sec);
                 const grid = document.getElementById('grid-mylist');
                 watchlist.forEach(item => { const card=createCard({ id:item.id, title:item.title, poster_path:null, backdrop_path:null, release_date:(item.year||'')+'-01-01', vote_average:0 }, item.type); if(!card) return; const img=card.querySelector('img'); if(item.poster) img.src=item.poster; card.querySelector('.card-rating').innerHTML='<i class="fas fa-heart" style="color:var(--red)"></i>'; grid.appendChild(card); });
                 showHideFooter();
+                updateNavActive('my-list');
+                saveAppState();
+            }
+
+            // ═══════ UPDATE NAV ACTIVE ═══════
+            function updateNavActive(route) {
+                document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+                document.querySelectorAll('.bottom-nav-item').forEach(a => a.classList.remove('active'));
+                const link = document.querySelector(`[data-route="${route}"]`);
+                if (link) link.classList.add('active');
             }
 
             // ═══════ SHOW/HIDE FOOTER ═══════
@@ -1121,13 +1619,11 @@
                 const container = document.getElementById('sectionsContainer');
                 if (!footerWrapper || !container) return;
                 
-                // Check if there's content in the container
                 const hasContent = container.children.length > 0 && container.innerHTML.trim() !== '';
                 const hasEmptyState = container.querySelector('.empty-state') !== null;
                 const hasGrid = container.querySelector('.grid-wall') !== null;
                 const hasGridItems = container.querySelector('.grid-wall')?.children?.length > 0;
                 
-                // Show footer if there's content OR if there are grid items
                 if (hasContent && (hasGridItems || !hasEmptyState)) {
                     footerWrapper.classList.remove('hidden');
                 } else if (hasContent && hasEmptyState && !hasGridItems) {
@@ -1139,32 +1635,42 @@
                 }
             }
 
-            // ═══════ NAVIGATION ═══════
-            function navigateTo(route) {
-                if (route === 'home') window.history.pushState({}, '', '/');
-                else if (route === 'movies') window.history.pushState({}, '', '/movies');
-                else if (route === 'series') window.history.pushState({}, '', '/series');
-                else if (route === 'new') window.history.pushState({}, '', '/new');
-                else if (route === 'my-list') window.history.pushState({}, '', '/my-list');
-                
-                document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-                document.querySelectorAll('.bottom-nav-item').forEach(a => a.classList.remove('active'));
-                document.querySelector(`[data-route="${route}"]`)?.classList.add('active');
-                
+            // ═══════ ROUTE HANDLER ═══════
+            function handleRoute(route) {
                 if (route === 'home') renderHome();
                 else if (route === 'movies') renderWall('movies');
                 else if (route === 'series') renderWall('tv');
                 else if (route === 'new') renderWall('new');
                 else if (route === 'my-list') renderMyList();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
+                saveAppState();
+            }
+
+            // ═══════ NAVIGATION ═══════
+            function navigateTo(route) {
+                const routeMap = {
+                    'home': '/',
+                    'movies': '/movies',
+                    'series': '/series',
+                    'new': '/new',
+                    'my-list': '/my-list'
+                };
+                window.history.pushState({ route: route }, '', routeMap[route] || '/');
+                handleRoute(route);
             }
 
             document.querySelectorAll('.nav-links a').forEach(link => {
-                link.addEventListener('click', (e) => { e.preventDefault(); navigateTo(link.dataset.route); });
+                link.addEventListener('click', (e) => { 
+                    e.preventDefault(); 
+                    navigateTo(link.dataset.route); 
+                });
             });
 
             document.querySelectorAll('.bottom-nav-item').forEach(item => {
-                item.addEventListener('click', (e) => { e.preventDefault(); navigateTo(item.dataset.route); });
+                item.addEventListener('click', (e) => { 
+                    e.preventDefault(); 
+                    navigateTo(item.dataset.route); 
+                });
             });
 
             // ═══════ BACK TO TOP ═══════
@@ -1183,20 +1689,44 @@
                 toast('Watch history cleared');
             });
 
+            // ═══════ BROWSER BACK/FORWARD ═══════
+            window.addEventListener('popstate', (e) => {
+                const route = e.state?.route || 'home';
+                handleRoute(route);
+            });
+
+            // ═══════ AD BLOCKER STATUS ═══════
+            // Update ad blocker stats in console
+            setInterval(() => {
+                const stats = adBlocker.getStats();
+                console.log(`[AdBlocker] Stats: ${stats.totalBlocked} total (${stats.popupsBlocked} popups, ${stats.scriptsBlocked} scripts, ${stats.iframesBlocked} iframes)`);
+            }, 30000);
+
             // ═══════ INIT ═══════
             async function init() {
                 loadStorage();
                 if (watchlist.length > 0) document.getElementById('watchlistBtnNav').querySelector('i').className = 'fas fa-heart';
                 await loadConfiguration();
                 renderContinueWatching();
-                await renderHome();
+                
+                // Parse URL to determine initial route
+                const path = window.location.pathname;
+                let initialRoute = 'home';
+                if (path === '/movies') initialRoute = 'movies';
+                else if (path === '/series') initialRoute = 'series';
+                else if (path === '/new') initialRoute = 'new';
+                else if (path === '/my-list') initialRoute = 'my-list';
+                else if (path === '/') initialRoute = 'home';
+                
+                currentRoute = initialRoute;
+                await handleRoute(initialRoute);
+                
                 setTimeout(() => { 
                     document.getElementById('loadingScreen').classList.add('hidden'); 
                     setTimeout(() => { const ls = document.getElementById('loadingScreen'); if (ls) ls.remove(); }, 600); 
                 }, 2600);
                 refreshHearts();
                 
-                // Watch for DOM changes to update footer visibility
                 const observer = new MutationObserver(() => {
                     showHideFooter();
                 });
@@ -1204,6 +1734,13 @@
                     childList: true, 
                     subtree: true 
                 });
+                
+                window.addEventListener('beforeunload', () => {
+                    saveAppState();
+                });
+                
+                console.log('🔒 HR OTT AdBlocker Active - Blocking ads on all players');
+                console.log(`📊 AdBlocker loaded with ${adBlocker.adDomains.length} domains in blocklist`);
             }
             init();
         })();
