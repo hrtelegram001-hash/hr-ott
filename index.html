@@ -242,10 +242,10 @@
         .ott-filter-bar {
             position: sticky; top: 80px; z-index: 95;
             background: linear-gradient(180deg, rgba(11,11,15,0.95) 0%, rgba(11,11,15,0.8) 100%);
-            padding: 12px var(--pad);
+            padding: 14px var(--pad);
             display: none;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
             border-bottom: 1px solid rgba(255,255,255,0.05);
             backdrop-filter: blur(10px);
             overflow-x: auto;
@@ -256,18 +256,27 @@
         .ott-filter-bar::-webkit-scrollbar { display: none; }
         .ott-filter-bar.visible { display: flex; }
         
+        .ott-filter-label {
+            font-size: 0.75rem; font-weight: 700; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            align-self: center; margin-right: 6px;
+        }
+        
         .ott-filter-btn {
             flex: 0 0 auto;
-            padding: 6px 14px;
-            border: 1px solid rgba(255,255,255,0.15);
+            padding: 8px 16px;
+            border: 1.5px solid rgba(255,255,255,0.15);
             background: rgba(30,30,36,0.6);
             color: var(--text-muted);
-            border-radius: 20px;
+            border-radius: 22px;
             cursor: pointer;
             font-size: 0.85rem;
             font-weight: 600;
             transition: all 0.2s ease;
             white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .ott-filter-btn:hover {
             border-color: rgba(255,255,255,0.3);
@@ -278,15 +287,17 @@
             background: var(--red);
             border-color: var(--red);
             color: white;
+            box-shadow: 0 0 16px var(--red-glow);
         }
 
         /* ── Top 10 Badge ── */
-        .top10-indicator {
-            position: absolute; top: 8px; right: 8px; z-index: 4;
-            background: linear-gradient(135deg, var(--gold), #ffb700);
-            color: #000; font-size: 0.65rem; font-weight: 900;
-            letter-spacing: 0.5px; padding: 4px 7px; border-radius: 4px;
-            text-transform: uppercase; display: flex; align-items: center; gap: 3px;
+        .top10-badge {
+            position: absolute; top: 8px; left: 8px; z-index: 4;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000; font-size: 0.7rem; font-weight: 900;
+            letter-spacing: 0.8px; padding: 4px 8px; border-radius: 4px;
+            text-transform: uppercase; display: flex; align-items: center; gap: 4px;
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
         }
 
         /* ── Hero ── */
@@ -394,15 +405,11 @@
         .card:hover .card-thumb img { transform: scale(1.06); }
 
         .card-rating {
-            position: absolute; top: 8px; left: 8px; z-index: 4;
+            position: absolute; top: 8px; right: 8px; z-index: 4;
             display: flex; align-items: center; gap: 4px;
             background: rgba(0,0,0,0.72); backdrop-filter: blur(4px);
-            padding: 3px 7px; border-radius: 5px; font-size: 0.72rem; font-weight: 700;
-        }
-        .card-toplist {
-            position: absolute; top: 8px; right: 8px; z-index: 4;
-            background: var(--red); color: #fff; font-size: 0.62rem; font-weight: 800;
-            letter-spacing: 0.5px; padding: 3px 6px; border-radius: 5px; text-transform: uppercase;
+            padding: 4px 8px; border-radius: 5px; font-size: 0.75rem; font-weight: 700;
+            color: var(--green);
         }
 
         .card-overlay {
@@ -497,22 +504,38 @@
         .modal-watchlist-btn:hover { border-color: rgba(229,9,20,0.8); background: rgba(229,9,20,0.12); }
         .modal-watchlist-btn.active { background: rgba(229,9,20,0.16); border-color: rgba(229,9,20,0.8); }
         
+        .modal-ott-section {
+            margin: 18px 0; padding: 14px; background: rgba(22,22,28,0.6); border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .modal-ott-label {
+            font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;
+            letter-spacing: 0.5px; margin-bottom: 10px; display: block;
+        }
+
         .modal-ott-providers {
-            display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0;
+            display: flex; gap: 10px; flex-wrap: wrap;
         }
         .modal-ott-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 6px 12px; border-radius: 6px;
-            background: rgba(229,9,20,0.1); border: 1px solid rgba(229,9,20,0.3);
-            font-size: 0.8rem; font-weight: 600; color: #fff;
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 14px; border-radius: 6px;
+            background: rgba(229,9,20,0.1); border: 1.5px solid rgba(229,9,20,0.3);
+            font-size: 0.82rem; font-weight: 600; color: #fff;
+            cursor: pointer; transition: all 0.2s ease;
+        }
+        .modal-ott-badge:hover {
+            background: rgba(229,9,20,0.2);
+            border-color: rgba(229,9,20,0.6);
+            transform: translateY(-2px);
         }
         .modal-ott-badge img {
-            width: 20px; height: 20px; border-radius: 3px; object-fit: cover;
+            width: 22px; height: 22px; border-radius: 3px; object-fit: cover;
         }
 
         .modal-body { padding: 22px var(--pad) 40px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; }
         .modal-body p { font-size: 1rem; line-height: 1.55; color: #fff; margin-bottom: 16px; }
-        .modal-body span.label { color: var(--text-dim); display: block; font-size: 0.85rem; margin-bottom: 4px; }
+        .modal-body span.label { color: var(--text-dim); display: block; font-size: 0.85rem; margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
         .modal-body span.value { color: #fff; font-size: 0.95rem; }
         .modal-meta { display: flex; gap: 14px; align-items: center; font-size: 0.9rem; margin-bottom: 16px; flex-wrap: wrap; }
 
@@ -562,7 +585,7 @@
             .modal-body { grid-template-columns: 1fr; padding: 20px; }
             .modal-title { font-size: 1.7rem; }
             .ott-filter-bar { padding: 10px var(--pad); }
-            .ott-filter-btn { padding: 5px 10px; font-size: 0.75rem; }
+            .ott-filter-btn { padding: 6px 12px; font-size: 0.75rem; }
         }
     </style>
 </head>
@@ -599,7 +622,9 @@
     </nav>
 
     <!-- OTT Filter Bar -->
-    <div class="ott-filter-bar" id="ottFilterBar"></div>
+    <div class="ott-filter-bar" id="ottFilterBar">
+        <span class="ott-filter-label">Stream on:</span>
+    </div>
 
     <!-- Hero -->
     <div class="hero" id="hero"><div class="hero-dots" id="heroDots"></div></div>
@@ -629,7 +654,7 @@
             </div>
             <div class="modal-body">
                 <div>
-                    <div id="modalOttProviders" class="modal-ott-providers"></div>
+                    <div id="modalOttProviders"></div>
                     <div class="modal-meta" id="modalMeta"></div>
                     <p id="modalDesc"></p>
                 </div>
@@ -662,7 +687,7 @@
 
     <script>
         // ═════════════════════════════════════════════════════════════════════════
-        // PERFORMANCE OPTIMIZATION & FEATURE-RICH OTT PLATFORM
+        // FIXED: Top 10 API + OTT Provider Filter + UI Improvements
         // ═════════════════════════════════════════════════════════════════════════
 
         class AdvancedAdBlocker {
@@ -809,9 +834,9 @@
         const TMDB_BACK = 'https://image.tmdb.org/t/p/original';
         const WATCH_REGION = 'IN';
         const API_CACHE = new Map();
-        const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+        const CACHE_TTL = 60 * 60 * 1000;
 
-        // ═══════ Performance: Request Deduplication & Caching ═══════
+        // ═══════ Fetch with Auth ═══════
         async function tmdbFetch(endpoint) {
             const cacheKey = endpoint;
             const cached = API_CACHE.get(cacheKey);
@@ -826,7 +851,7 @@
                         'accept': 'application/json'
                     }
                 });
-                if(!res.ok) throw new Error('API fail');
+                if(!res.ok) throw new Error('API fail: ' + res.status);
                 const data = await res.json();
                 API_CACHE.set(cacheKey, { data, time: Date.now() });
                 return data;
@@ -836,7 +861,7 @@
             }
         }
 
-        // ═══════ OTT Providers Data ═══════
+        // ═══════ OTT Providers Management ═══════
         let allOttProviders = [];
         let selectedOttProvider = null;
 
@@ -848,7 +873,6 @@
                 const movieProviders = movieData.results || [];
                 const tvProviders = tvData.results || [];
                 
-                // Merge and deduplicate
                 const merged = {};
                 [...movieProviders, ...tvProviders].forEach(p => {
                     if(!merged[p.provider_id]) {
@@ -856,7 +880,10 @@
                     }
                 });
                 
-                allOttProviders = Object.values(merged).sort((a, b) => a.display_priority - b.display_priority).slice(0, 12);
+                allOttProviders = Object.values(merged)
+                    .sort((a, b) => a.display_priority - b.display_priority)
+                    .slice(0, 12);
+                
                 renderOttFilterBar();
             } catch(e) {
                 console.error('Failed to fetch OTT providers:', e);
@@ -865,25 +892,35 @@
 
         function renderOttFilterBar() {
             const bar = document.getElementById('ottFilterBar');
-            bar.innerHTML = '<button class="ott-filter-btn active" data-provider="">All Platforms</button>';
+            bar.innerHTML = '<span class="ott-filter-label">Stream on:</span><button class="ott-filter-btn active" data-provider="">All Platforms</button>';
+            
             allOttProviders.forEach(p => {
                 const btn = document.createElement('button');
                 btn.className = 'ott-filter-btn';
                 btn.dataset.provider = p.provider_id;
+                btn.dataset.providername = p.provider_name;
                 btn.textContent = p.provider_name;
-                btn.addEventListener('click', () => selectOttProvider(p.provider_id));
+                btn.addEventListener('click', () => selectOttProvider(p.provider_id, p.provider_name, btn));
                 bar.appendChild(btn);
             });
         }
 
-        function selectOttProvider(providerId) {
+        function selectOttProvider(providerId, providerName, btnEl) {
             selectedOttProvider = providerId;
             document.querySelectorAll('.ott-filter-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.provider === providerId);
+                btn.classList.remove('active');
             });
+            btnEl.classList.add('active');
+            
+            // Reload current category with provider filter
+            const activeLink = document.querySelector('[data-cat].active');
+            if (activeLink && (activeLink.dataset.cat === 'movies' || activeLink.dataset.cat === 'tv')) {
+                const cat = activeLink.dataset.cat;
+                renderWall(cat);
+            }
         }
 
-        // ═══════ OTT in Modal ═══════
+        // ═══════ Get OTT Providers for Modal ═══════
         async function getOttProviders(id, type) {
             try {
                 const endpoint = `/movie/${id}/watch/providers`;
@@ -896,33 +933,30 @@
             return [];
         }
 
-        // ═══════ Home Rows Config ═══════
+        // ═══════ Home Rows Config - FIXED TOP 10 ═══════
         const HOME_ROWS = [
-            { key:'trending',   title:'Trending Now',         ep:'/trending/movie/week?page=', type:'movie', hero:true },
-            { key:'toprated',   title:'Top Rated',            ep:'/movie/top_rated?page=', type:'movie' },
-            { key:'action',     title:'Action & Adventure',   ep:'/discover/movie?with_genres=28&sort_by=popularity.desc&page=', type:'movie' },
-            { key:'scifi',      title:'Sci-Fi & Fantasy',     ep:'/discover/movie?with_genres=878&sort_by=popularity.desc&page=', type:'movie' },
-            { key:'horror',     title:'Horror & Thrillers',   ep:'/discover/movie?with_genres=27&sort_by=popularity.desc&page=', type:'movie' },
-            { key:'comedy',     title:'Comedy',               ep:'/discover/movie?with_genres=35&sort_by=popularity.desc&page=', type:'movie' },
-            { key:'animation',  title:'Animation',            ep:'/discover/movie?with_genres=16&sort_by=popularity.desc&page=', type:'movie' },
-            { key:'romance',    title:'Romance',              ep:'/discover/movie?with_genres=10749&sort_by=popularity.desc&page=', type:'movie' },
-            { key:'bollywood',  title:'Bollywood',            ep:'/discover/movie?with_original_language=hi&sort_by=popularity.desc&page=', type:'movie' },
-            { key:'documentary',title:'Documentaries',        ep:'/discover/movie?with_genres=99&sort_by=popularity.desc&page=', type:'movie' },
-            { key:'tvshows',    title:'Trending TV Shows',    ep:'/trending/tv/week?page=', type:'tv' },
-            { key:'top10today', title:'🔥 Top 10 Today',      ep:'/trending/all/day?page=', type:'mixed' },
-            { key:'top10week',  title:'📈 Top 10 This Week',  ep:'/trending/all/week?page=', type:'mixed' },
+            { key:'trending',   title:'🔥 Trending Now',      ep:'/trending/movie/week?page=', type:'movie', hero:true },
+            { key:'toptoday',   title:'📊 Top 10 Today',      ep:'/trending/all/day?page=', type:'mixed', top10:true },
+            { key:'topweek',    title:'📈 Top 10 This Week',  ep:'/trending/all/week?page=', type:'mixed', top10:true },
+            { key:'toprated',   title:'⭐ Top Rated',         ep:'/movie/top_rated?page=', type:'movie' },
+            { key:'action',     title:'💥 Action & Adventure',ep:'/discover/movie?with_genres=28&sort_by=popularity.desc&page=', type:'movie' },
+            { key:'scifi',      title:'🚀 Sci-Fi & Fantasy',  ep:'/discover/movie?with_genres=878&sort_by=popularity.desc&page=', type:'movie' },
+            { key:'horror',     title:'👻 Horror & Thrillers',ep:'/discover/movie?with_genres=27&sort_by=popularity.desc&page=', type:'movie' },
+            { key:'comedy',     title:'😂 Comedy',            ep:'/discover/movie?with_genres=35&sort_by=popularity.desc&page=', type:'movie' },
+            { key:'animation',  title:'🎨 Animation',         ep:'/discover/movie?with_genres=16&sort_by=popularity.desc&page=', type:'movie' },
+            { key:'tvshows',    title:'📺 Trending TV Shows', ep:'/trending/tv/week?page=', type:'tv' },
         ];
 
         const WALLS = {
-            movies: { title:'Movies',        ep:'/discover/movie?sort_by=popularity.desc&vote_count.gte=50&page=', type:'movie' },
-            tv:     { title:'TV Shows',       ep:'/discover/tv?sort_by=popularity.desc&vote_count.gte=50&page=', type:'tv' },
-            new:    { title:'New & Popular',  ep:'/trending/all/week?page=', type:'mixed' },
+            movies: { title:'🎬 Movies',      ep:'/discover/movie?sort_by=popularity.desc&vote_count.gte=50&page=', type:'movie' },
+            tv:     { title:'📺 TV Shows',    ep:'/discover/tv?sort_by=popularity.desc&vote_count.gte=50&page=', type:'tv' },
+            new:    { title:'✨ New & Popular',ep:'/trending/all/week?page=', type:'mixed' },
         };
 
         let watchlist=[], recent=[], heroMovies=[], heroIdx=0, heroTimer;
         let wallState = null, watchProgress = {}, recommendations = {};
 
-        // ═══════ LocalStorage (Optimized) ═══════
+        // ═══════ LocalStorage ═══════
         function loadStorage() {
             try { 
                 watchlist = JSON.parse(localStorage.HR_wl || '[]'); 
@@ -982,7 +1016,7 @@
         }
 
         // ═══════ Create Card ═══════
-        function createCard(item, forcedType, showProgress=false) {
+        function createCard(item, forcedType, showProgress=false, top10Rank=null) {
             const type = forcedType || item.media_type || 'movie';
             if(type !== 'movie' && type !== 'tv') return null;
             
@@ -1004,7 +1038,8 @@
                 <div class="card-thumb">
                     <img src="${posterPath}" loading="lazy" alt="${esc(title)}" decoding="async" onerror="this.style.opacity='0';">
                     <div class="card-rating"><i class="fas fa-star"></i>${rating}</div>
-                    ${top ? '<div class="card-toplist">Top</div>' : ''}
+                    ${top10Rank ? `<div class="top10-badge">#${top10Rank}</div>` : ''}
+                    ${top ? '<div style="position:absolute;top:8px;right:8px;background:var(--gold);color:#000;font-size:0.65rem;font-weight:900;letter-spacing:0.5px;padding:4px 7px;border-radius:4px;text-transform:uppercase;"><i class="fas fa-crown"></i> Top</div>' : ''}
                     ${progress ? `<div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(0,0,0,0.3);"><div style="height:100%;background:var(--red);width:${progress.pct}%;"></div></div>` : ''}
                     <div class="card-overlay">
                         <div class="card-name">${esc(title)}</div>
@@ -1055,7 +1090,7 @@
             saveWl();
             document.getElementById('watchlistBtnNav').querySelector('i').className = watchlist.length > 0 ? 'fas fa-heart' : 'fas fa-bell';
             refreshHearts();
-            const activeLink = document.querySelector('.nav-links a.active');
+            const activeLink = document.querySelector('[data-cat].active');
             if (activeLink && activeLink.dataset.cat === 'mylist') renderMyList();
         }
 
@@ -1076,7 +1111,7 @@
         }
 
         // ═══════ Build Personalized Rows ═══════
-        function buildPersonalizedRow(title, items, rowKey, showProgress=false) {
+        function buildPersonalizedRow(title, items, rowKey, showProgress=false, top10=false) {
             const section = document.createElement('div');
             section.className = 'section personalized-row';
             section.innerHTML = `
@@ -1095,8 +1130,10 @@
                 track.scrollBy({ left: track.clientWidth * 0.85, behavior: 'smooth' })
             );
 
-            items.slice(0, 18).forEach(item => {
-                const card = createCard(item, item.type || item.media_type || 'movie', showProgress);
+            const displayItems = top10 ? items.slice(0, 10) : items.slice(0, 18);
+            displayItems.forEach((item, idx) => {
+                const rank = top10 ? idx + 1 : null;
+                const card = createCard(item, item.type || item.media_type || 'movie', showProgress, rank);
                 if(card) track.appendChild(card);
             });
 
@@ -1189,14 +1226,25 @@
                 const providers = await getOttProviders(id, type);
                 const providersContainer = document.getElementById('modalOttProviders');
                 if (providers.length > 0) {
-                    providersContainer.innerHTML = '<div style="font-size:0.9rem;font-weight:600;color:var(--text-muted);margin-bottom:8px;">Available on:</div>';
-                    providers.slice(0, 5).forEach(p => {
-                        const badge = document.createElement('div');
-                        badge.className = 'modal-ott-badge';
-                        const logoPath = p.logo_path ? TMDB_IMG + p.logo_path : '';
-                        badge.innerHTML = `${logoPath ? `<img src="${logoPath}">` : ''}<span>${p.provider_name}</span>`;
-                        providersContainer.appendChild(badge);
-                    });
+                    providersContainer.innerHTML = `
+                        <div class="modal-ott-section">
+                            <span class="modal-ott-label">Streaming On</span>
+                            <div class="modal-ott-providers">
+                                ${providers.slice(0, 5).map(p => {
+                                    const logoPath = p.logo_path ? TMDB_IMG + p.logo_path : '';
+                                    return `<div class="modal-ott-badge" title="${p.provider_name}">
+                                        ${logoPath ? `<img src="${logoPath}" alt="${p.provider_name}">` : ''}
+                                        <span>${p.provider_name}</span>
+                                    </div>`;
+                                }).join('')}
+                            </div>
+                        </div>`;
+                } else {
+                    providersContainer.innerHTML = `
+                        <div class="modal-ott-section" style="opacity:0.6;">
+                            <span class="modal-ott-label">Streaming Information</span>
+                            <p style="font-size:0.9rem;color:var(--text-muted);">Stream availability may vary by region.</p>
+                        </div>`;
                 }
 
                 modalPlayBtn.onclick = () => {
@@ -1389,8 +1437,10 @@
             results.forEach(r => {
                 const grid = document.getElementById('grid-' + r.cfg.key);
                 if(!grid) return;
-                r.data.slice(0, 18).forEach(m => {
-                    const card = createCard(m, r.cfg.type);
+                const displayCount = r.cfg.top10 ? 10 : 18;
+                r.data.slice(0, displayCount).forEach((m, idx) => {
+                    const rank = r.cfg.top10 ? idx + 1 : null;
+                    const card = createCard(m, r.cfg.type, false, rank);
                     if(card) grid.appendChild(card);
                 });
             });
@@ -1402,7 +1452,7 @@
             renderRecent();
         }
 
-        // ═══════ WALL: infinite poster grid ═══════
+        // ═══════ WALL: infinite poster grid with OTT filtering ═══════
         function teardownWall() {
             if(wallState && wallState.observer) wallState.observer.disconnect();
             wallState = null;
@@ -1421,7 +1471,14 @@
                     <div class="grid-sentinel" id="wallSentinel"></div>
                 </div>`;
 
-            wallState = { page: 0, ep: cfg.ep, type: cfg.type, loading: false, ended: false, observer: null };
+            // Build endpoint with provider filter if selected
+            let ep = cfg.ep;
+            if (selectedOttProvider) {
+                const ampChar = ep.includes('?') ? '&' : '?';
+                ep += ampChar + `with_watch_providers=${selectedOttProvider}&with_watch_monetization_types=flatrate`;
+            }
+
+            wallState = { page: 0, ep: ep, type: cfg.type, loading: false, ended: false, observer: null };
             await loadWallPage();
 
             if(wallState) {
@@ -1441,7 +1498,7 @@
             const page = wallState.page + 1;
 
             try {
-                const data = await tmdbFetch(wallState.ep + page);
+                const data = await tmdbFetch(wallState.ep + '&page=' + page);
                 const results = (data.results || []).filter(m => m.poster_path);
 
                 if(!grid) return;
@@ -1486,7 +1543,7 @@
 
             const sec = document.createElement('div');
             sec.className = 'section';
-            sec.innerHTML = `<h2 class="section-title">My List</h2><div class="grid-wall" id="grid-mylist"></div>`;
+            sec.innerHTML = `<h2 class="section-title">❤️ My List</h2><div class="grid-wall" id="grid-mylist"></div>`;
             container.appendChild(sec);
 
             const grid = document.getElementById('grid-mylist');
@@ -1517,7 +1574,7 @@
             });
         });
 
-        // ═══════ SEARCH (Optimized) ═══════
+        // ═══════ SEARCH ═══════
         const searchInput = document.getElementById('searchInput');
         const searchDropdown = document.getElementById('searchDropdown');
         const searchClear = document.getElementById('searchClear');
@@ -1630,7 +1687,7 @@
                 refreshHearts();
                 modalEl.remove();
                 toast('Removed from My List');
-                const activeLink = document.querySelector('.nav-links a.active');
+                const activeLink = document.querySelector('[data-cat].active');
                 if (activeLink && activeLink.dataset.cat === 'mylist') renderMyList();
             }));
 
