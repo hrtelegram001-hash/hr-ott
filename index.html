@@ -583,11 +583,11 @@
                 const id = item.id;
                 const top = item.vote_average >= 8;
                 const detailPath = type === 'movie' ? `/movie/${id}` : `/series/${id}`;
-                const playerPath = `/player/${id}/${type}`;
+                const playerPath = `/player.html?id=${id}&type=${type}`;
                 
                 const card = document.createElement('a');
                 card.className='card'; 
-                card.href = detailPath;
+                card.href = playerPath;
                 card.dataset.id = id; 
                 card.dataset.type = type;
                 
@@ -601,7 +601,7 @@
                             <div class="card-name">${esc(title)}</div>
                             <div class="card-sub"><span class="match">${match}% Match</span><span>${year||''}</span><span>${type === 'movie' ? 'Movie' : 'TV'}</span></div>
                             <div class="card-buttons">
-                                <a class="circle-btn play-btn" href="${playerPath}" title="Play" onclick="event.stopPropagation();"><i class="fas fa-play"></i></a>
+                                <a class="circle-btn play-btn" href="${playerPath}" title="Play"><i class="fas fa-play"></i></a>
                                 <button class="circle-btn card-heart" title="My List" onclick="event.preventDefault(); event.stopPropagation();"><i class="far fa-heart"></i></button>
                                 <button class="circle-btn info-btn" title="More Info" onclick="event.preventDefault(); event.stopPropagation();"><i class="fas fa-chevron-down"></i></button>
                             </div>
@@ -610,7 +610,8 @@
                 
                 card.addEventListener('click', (e) => {
                     e.preventDefault();
-                    openMovieModal(id, type);
+                    addRecent(id, title, posterPath, year, type);
+                    window.location.href = playerPath;
                 });
                 
                 card.querySelector('.play-btn').addEventListener('click', (e) => {
@@ -721,7 +722,7 @@
                     document.getElementById('modalMeta').innerHTML = `<span class="match" style="color: var(--green); font-weight: 700;">${match}% Match</span><span>${currentModalYear}</span><span class="maturity-badge">${rating}</span><span>${runtime} min</span>`;
                     document.getElementById('modalCast').textContent = cast;
                     document.getElementById('modalGenres').textContent = genres;
-                    modalPlayBtn.href = `/player/${id}/${type}`;
+                    modalPlayBtn.href = `/player.html?id=${id}&type=${type}`;
                     updateModalWatchlistBtn();
                 } catch (error) { document.getElementById('modalTitle').textContent = 'Error loading details'; }
             }
@@ -737,7 +738,7 @@
             modalPlayBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 addRecent(currentModalId, currentModalTitle, currentModalPoster, currentModalYear, currentModalType);
-                window.location.href = `/player/${currentModalId}/${currentModalType}`;
+                window.location.href = `/player.html?id=${currentModalId}&type=${currentModalType}`;
             });
             modalWatchlistBtn.addEventListener('click', () => {
                 if (watchlist.some(w=>w.id==currentModalId)) { watchlist = watchlist.filter(w=>w.id!=currentModalId); toast('Removed from My List'); }
@@ -767,7 +768,7 @@
                     const rating = m.vote_average?Number(m.vote_average).toFixed(1):'?';
                     const match = m.vote_average ? Math.round(m.vote_average * 10) : 0;
                     const inWatchlist = watchlist.some(w=>w.id==m.id);
-                    const playerPath = `/player/${m.id}/${type}`;
+                    const playerPath = `/player.html?id=${m.id}&type=${type}`;
                     slide.innerHTML=`
                         <div class="hero-overlay"></div>
                         <div class="hero-content">
@@ -942,8 +943,8 @@
                     const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '?';
                     const type = getMediaType(item, searchTypeFilter.value !== 'multi' ? searchTypeFilter.value : null);
                     const typeLabel = type === 'movie' ? 'Movie' : 'TV';
-                    const detailPath = type === 'movie' ? `/movie/${item.id}` : `/series/${item.id}`;
-                    return `<a class="search-result-card" href="${detailPath}" data-id="${item.id}" data-type="${type}">
+                    const playerPath = `/player.html?id=${item.id}&type=${type}`;
+                    return `<a class="search-result-card" href="${playerPath}" data-id="${item.id}" data-type="${type}">
                         <img src="${poster}" alt="${esc(title)}" onerror="this.style.background='#222';this.style.opacity='0.5';">
                         <div class="search-result-info">
                             <div class="search-result-title">${esc(title)}</div>
@@ -958,7 +959,7 @@
                     card.addEventListener('click', (e) => {
                         e.preventDefault();
                         closeSearch();
-                        openMovieModal(card.dataset.id, card.dataset.type);
+                        window.location.href = card.href;
                     });
                 });
             }
