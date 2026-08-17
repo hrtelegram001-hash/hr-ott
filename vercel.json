@@ -1,8 +1,10 @@
 {
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/search", "destination": "/index.html" },
+    { "source": "/movies", "destination": "/index.html" },
+    { "source": "/series", "destination": "/index.html" },
+    { "source": "/new", "destination": "/index.html" },
+    { "source": "/my-list", "destination": "/index.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
