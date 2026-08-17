@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --bg: #0b0b0f; --bg-2: #101015; --bg-card: #16161c; --bg-elevated: #23232c; --red: #E50914; --red-dark: #B20710; --red-glow: rgba(229,9,20,0.45); --gold: #f5c518; --text: #ffffff; --text-muted: #b3b3b3; --text-dim: #7c7c85; --green: #46d369; --poster-min: clamp(104px, 14vw, 172px); }
+        :root { --bg: #0b0b0f; --bg-2: #101015; --bg-card: #16161c; --bg-elevated: #23232c; --red: #E50914; --red-dark: #B20710; --red-glow: rgba(229,9,20,0.45); --gold: #f5c518; --text: #ffffff; --text-muted: #b3b3b3; --text-dim: #7c7c85; --green: #46d369; --poster-min: clamp(104px, 14vw, 172px); --bottom-nav-height: 65px; }
         * { margin:0; padding:0; box-sizing:border-box; }
         html { scroll-behavior:smooth; -webkit-tap-highlight-color:transparent; }
         body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; overflow-x: hidden; min-height: 100vh; -webkit-font-smoothing: antialiased; }
@@ -72,7 +72,6 @@
         .details-section { margin: 60px 0 40px 0; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); }
         .details-section p { color: rgba(255,255,255,0.8); font-size: 1rem; line-height: 1.8; max-width: 900px; }
         
-        /* Similar Section (Movies & TV) */
         .similar-section { margin: 60px 0 40px 0; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); }
         .similar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--poster-min), 1fr)); gap: 10px; }
         .similar-card { position: relative; cursor: pointer; border-radius: 8px; overflow: hidden; background: var(--bg-card); transition: transform 0.3s ease, box-shadow 0.3s ease; }
@@ -133,9 +132,9 @@
 </head>
 <body>
     <nav class="nav" id="mainNav">
-        <a href="index.html" class="nav-logo">HR OTT</a>
+        <a href="/" class="nav-logo">HR OTT</a>
         <div class="nav-right">
-            <a href="index.html" class="btn-back"><i class="fas fa-arrow-left"></i><span>Back</span></a>
+            <a href="/" class="btn-back"><i class="fas fa-arrow-left"></i><span>Back</span></a>
             <div class="adblock-status"><i class="fas fa-shield-alt"></i><span id="adblockText">Ad Block: ON</span></div>
             <div class="profile-avatar">HR</div>
         </div>
@@ -201,7 +200,6 @@
                 <div class="episodes-grid" id="episodesGrid"></div>
             </div>
 
-            <!-- Similar Section (Dynamic for Movies & TV) -->
             <div class="similar-section" id="similarSection">
                 <h3 id="similarTitle"><i class="fas fa-film"></i> Similar Content</h3>
                 <div class="similar-grid" id="similarGrid"></div>
@@ -222,11 +220,13 @@
             const TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
             const TMDB_BACKDROP = 'https://image.tmdb.org/t/p/w1280';
 
-            const params = new URLSearchParams(window.location.search);
-            const id = params.get('id');
-            const type = (params.get('type') || 'movie').toLowerCase();
-            let season = parseInt(params.get('s') || '1');
-            let episode = parseInt(params.get('e') || '1');
+            // Parse URL: /player/:id/:type
+            const pathParts = window.location.pathname.split('/').filter(p => p);
+            const id = pathParts[1] || new URLSearchParams(window.location.search).get('id');
+            const type = (pathParts[2] || new URLSearchParams(window.location.search).get('type') || 'movie').toLowerCase();
+            
+            let season = parseInt(new URLSearchParams(window.location.search).get('s') || '1');
+            let episode = parseInt(new URLSearchParams(window.location.search).get('e') || '1');
             let isLoading = false;
             let currentSource = 1;
             const playerSources = {};
@@ -242,6 +242,9 @@
                 { id: 8, displayName: 'VidSrc-RU', movie: t => `https://vidsrc-embed.ru/embed/movie?tmdb=${t}`, tv: (t,s,e) => `https://vidsrc-embed.ru/embed/tv?tmdb=${t}&season=${s}&episode=${e}` },
                 { id: 9, displayName: '2Embed', movie: t => `https://www.2embed.cc/embed/${t}`, tv: (t,s,e) => `https://www.2embed.cc/embedtv/${t}&s=${s}&e=${e}` }
             ];
+
+            function getTitle(item) { return item.title || item.name || 'Untitled'; }
+            function getYear(item) { return (item.release_date || item.first_air_date || '').substring(0, 4); }
 
             function refreshPlayerSources() {
                 Object.keys(playerSources).forEach(k => delete playerSources[k]);
@@ -321,7 +324,6 @@
                 });
             }
 
-            // Load Similar Content (Movies OR TV Shows)
             async function loadSimilarContent() {
                 const similarGrid = document.getElementById('similarGrid');
                 const similarSection = document.getElementById('similarSection');
@@ -330,16 +332,13 @@
                 
                 let endpoint = '';
                 let titleText = '';
-                let contentTitle = '';
                 
                 if (type === 'movie') {
-                    endpoint = `/movie/${id}/similar?api_key=${TMDB_KEY}`;
+                    endpoint = `/movie/${id}/similar`;
                     titleText = '<i class="fas fa-film"></i> Similar Movies';
-                    contentTitle = 'title';
                 } else if (type === 'tv') {
-                    endpoint = `/tv/${id}/similar?api_key=${TMDB_KEY}`;
+                    endpoint = `/tv/${id}/similar`;
                     titleText = '<i class="fas fa-tv"></i> Similar TV Shows';
-                    contentTitle = 'name';
                 } else {
                     similarSection.style.display = 'none';
                     return;
@@ -348,32 +347,24 @@
                 if (similarTitle) similarTitle.innerHTML = titleText;
                 
                 try {
-                    const res = await fetch(`${TMDB_BASE}${endpoint}`);
-                    if (!res.ok) {
-                        similarSection.style.display = 'none';
-                        return;
-                    }
+                    const res = await fetch(`${TMDB_BASE}${endpoint}?api_key=${TMDB_KEY}`);
+                    if (!res.ok) { similarSection.style.display = 'none'; return; }
                     const data = await res.json();
                     const similar = (data.results || []).filter(m => m.poster_path).slice(0, 12);
                     
-                    if (similar.length === 0) {
-                        similarSection.style.display = 'none';
-                        return;
-                    }
+                    if (similar.length === 0) { similarSection.style.display = 'none'; return; }
                     
                     similarSection.style.display = 'block';
                     similarGrid.innerHTML = '';
                     
                     similar.forEach(item => {
-                        const card = document.createElement('div');
+                        const card = document.createElement('a');
                         card.className = 'similar-card';
-                        card.onclick = () => {
-                            window.location.href = `player.html?id=${item.id}&type=${type}`;
-                        };
+                        card.href = `/player/${item.id}/${type}`;
                         const poster = item.poster_path ? TMDB_IMG + item.poster_path : '';
                         const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '?';
-                        const title = item.title || item.name || 'Untitled';
-                        const year = (item.release_date || item.first_air_date || '').substring(0, 4);
+                        const title = getTitle(item);
+                        const year = getYear(item);
                         const typeLabel = type === 'movie' ? 'Movie' : 'TV';
                         
                         card.innerHTML = `
@@ -386,10 +377,7 @@
                         `;
                         similarGrid.appendChild(card);
                     });
-                } catch (e) {
-                    console.error('Similar content error:', e);
-                    similarSection.style.display = 'none';
-                }
+                } catch (e) { similarSection.style.display = 'none'; }
             }
 
             async function loadEpisodeGuide() {
@@ -397,7 +385,7 @@
                 const guide = document.getElementById('episodeGuide');
                 if (!guide) return;
                 try {
-                    const res = await fetch(`${TMDB_BASE}/tv/${id}?api_key=${TMDB_KEY}`);
+                    const res = await fetch(`${TMDB_BASE}/tv/${id}?api_key=${TMDB_KEY}&append_to_response=external_ids`);
                     if (!res.ok) return;
                     const data = await res.json();
                     const seasons = data.seasons || [];
@@ -444,7 +432,7 @@
 
             async function loadSeasonEpisodes(s, tvId) {
                 try {
-                    const res = await fetch(`${TMDB_BASE}/tv/${tvId}/season/${s}?api_key=${TMDB_KEY}`);
+                    const res = await fetch(`${TMDB_BASE}/tv/${tvId}/season/${s}?api_key=${TMDB_KEY}&append_to_response=external_ids`);
                     if (!res.ok) return;
                     const data = await res.json();
                     const eps = data.episodes || [];
@@ -471,7 +459,9 @@
 
             async function fetchMediaDetails() {
                 try {
-                    const endpoint = type === 'movie' ? `/movie/${id}?append_to_response=credits` : `/tv/${id}?append_to_response=credits`;
+                    const endpoint = type === 'movie' 
+                        ? `/movie/${id}?append_to_response=credits,external_ids,similar,videos,recommendations` 
+                        : `/tv/${id}?append_to_response=credits,external_ids,similar,videos,recommendations`;
                     const res = await fetch(`${TMDB_BASE}${endpoint}&api_key=${TMDB_KEY}`);
                     if (!res.ok) {
                         document.getElementById('titleText').textContent = 'Error: Media not found';
@@ -479,8 +469,8 @@
                         return;
                     }
                     const data = await res.json();
-                    const title = data.title || data.name || 'Untitled';
-                    const year = (data.release_date || data.first_air_date || '').substring(0, 4);
+                    const title = getTitle(data);
+                    const year = getYear(data);
                     const match = data.vote_average ? Math.round(data.vote_average * 10) : 0;
                     const rating = data.vote_average ? Number(data.vote_average).toFixed(1) : '?';
                     const runtime = data.runtime || (data.episode_run_time?.[0]) || '?';
@@ -489,13 +479,16 @@
                     const overview = data.overview || 'No description available.';
                     const genres = data.genres || [];
                     const cast = data.credits?.cast?.slice(0, 12) || [];
+                    
                     document.title = `${title} - HR OTT`;
                     document.getElementById('titleText').textContent = title;
                     if (poster) document.getElementById('posterImg').src = poster;
                     document.getElementById('overviewText').textContent = overview;
                     document.getElementById('descText').textContent = overview;
+                    
                     const backdropEl = document.getElementById('heroBackdrop');
                     if (backdropEl && backdrop) backdropEl.style.backgroundImage = `url('${backdrop}')`;
+                    
                     document.getElementById('metaRow').innerHTML = `
                         <div class="meta-item match">${match}% Match</div>
                         <div class="meta-item">${year}</div>
@@ -504,9 +497,9 @@
                         <div class="meta-item"><i class="fas fa-hd"></i> HD</div>
                     `;
                     document.getElementById('genresRow').innerHTML = genres.map(g => `<div class="genre-tag">${g.name}</div>`).join('') || '<div class="genre-tag">N/A</div>';
+                    
                     if (cast.length > 0) renderCast(cast);
                     
-                    // Load episode guide for TV or similar content for both
                     if (type === 'tv') {
                         await loadEpisodeGuide();
                     }
