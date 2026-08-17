@@ -961,8 +961,6 @@
             
             return [
                 { key:'trending',   title:'🔥 Trending Now',          ep:'/trending/movie/week?page=', type:'movie', hero:true },
-                { key:'toptoday',   title:'📊 Top 10 Today',          ep:'/trending/all/day?page=', type:'mixed', top10:true },
-                { key:'topweek',    title:'📈 Top 10 This Week',      ep:'/trending/all/week?page=', type:'mixed', top10:true },
                 { key:'upcoming',   title:'🎬 Coming Soon',           ep:`/discover/movie?include_adult=false&include_video=false&sort_by=popularity.desc&with_release_type=2|3&release_date.gte=${today}&release_date.lte=${in30Days}&page=`, type:'movie', upcoming:true },
                 { key:'toprated',   title:'⭐ Top Rated',             ep:'/movie/top_rated?page=', type:'movie' },
                 { key:'action',     title:'💥 Action & Adventure',    ep:'/discover/movie?with_genres=28&sort_by=popularity.desc&page=', type:'movie' },
