@@ -420,6 +420,50 @@
         }
 
         /* ── Player Container ── */
+        .player-wrapper-outer {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .player-controls-top {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 25;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            contain: layout style;
+        }
+
+        .player-fullscreen-btn {
+            appearance: none;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(11, 11, 15, 0.82);
+            color: var(--text);
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(12px);
+            transition: all 0.2s ease;
+            will-change: background;
+            white-space: nowrap;
+            height: fit-content;
+        }
+
+        .player-fullscreen-btn:hover {
+            background: rgba(229, 9, 20, 0.85);
+            border-color: rgba(229, 9, 20, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(229, 9, 20, 0.25);
+        }
+
         .player-container {
             width: 100%;
             max-width: 100%;
@@ -428,7 +472,6 @@
             overflow: hidden;
             position: relative;
             box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-            margin-bottom: 30px;
             border: 1px solid rgba(255,255,255,0.08);
             aspect-ratio: 16 / 9;
             contain: layout style paint;
@@ -448,44 +491,6 @@
             border: none;
             background: #000;
             will-change: auto;
-        }
-
-        .player-controls {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            z-index: 12;
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            contain: layout style;
-        }
-
-        .player-fullscreen-btn {
-            appearance: none;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(11, 11, 15, 0.72);
-            color: var(--text);
-            border-radius: 999px;
-            padding: 10px 16px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            backdrop-filter: blur(8px);
-            transition: all 0.2s ease;
-            will-change: background;
-            white-space: nowrap;
-            height: fit-content;
-        }
-
-        .player-fullscreen-btn:hover {
-            background: rgba(229, 9, 20, 0.82);
-            border-color: rgba(229, 9, 20, 0.9);
-            transform: translateY(-1px);
         }
 
         /* ── Loading State ── */
@@ -534,7 +539,7 @@
         /* ── Ad Disclaimer ── */
         .ad-disclaimer {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 12px;
             background: rgba(229, 9, 20, 0.08);
             border: 1px solid rgba(229, 9, 20, 0.25);
@@ -543,7 +548,7 @@
             margin-bottom: 28px;
             font-size: 0.9rem;
             color: var(--text-muted);
-            line-height: 1.5;
+            line-height: 1.6;
             contain: layout style;
         }
 
@@ -551,6 +556,22 @@
             color: var(--red);
             font-size: 1.2rem;
             flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .ad-disclaimer-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .ad-disclaimer-content strong {
+            color: var(--text);
+            display: block;
+        }
+
+        .ad-disclaimer-content p {
+            margin: 0;
         }
 
         /* ── Cast Section ── */
@@ -863,6 +884,7 @@
             .hero-poster {
                 width: 150px;
                 height: 225px;
+                margin: 0 auto;
             }
 
             .media-hero {
@@ -883,6 +905,8 @@
             .player-wrapper { 
                 padding-top: 100px;
                 padding-bottom: 40px;
+                padding-left: 12px;
+                padding-right: 12px;
             }
 
             .nav { 
@@ -903,8 +927,16 @@
                 padding: 8px 12px; 
             }
 
+            .btn-back span {
+                display: none;
+            }
+
+            .adblock-status {
+                display: none;
+            }
+
             .server-btn { 
-                padding: 8px 16px; 
+                padding: 8px 14px; 
                 font-size: 0.8rem; 
             }
 
@@ -913,17 +945,70 @@
                 margin-bottom: 20px;
             }
 
+            .player-controls-top {
+                top: 12px;
+                right: 12px;
+                gap: 8px;
+            }
+
+            .player-fullscreen-btn {
+                padding: 8px 12px;
+                font-size: 0.75rem;
+            }
+
+            .player-fullscreen-btn span {
+                display: none;
+            }
+
             .media-hero {
-                height: 320px;
+                height: 300px;
+                margin-bottom: 20px;
+            }
+
+            .hero-content {
+                padding: 20px 12px;
+                gap: 12px;
             }
 
             .hero-poster {
-                width: 120px;
-                height: 180px;
+                width: 100px;
+                height: 150px;
             }
 
             .hero-title {
-                font-size: 1.8rem;
+                font-size: 1.5rem;
+            }
+
+            .hero-meta {
+                font-size: 0.8rem;
+                gap: 8px;
+            }
+
+            .hero-description {
+                font-size: 0.85rem;
+                max-width: 100%;
+            }
+
+            .hero-genres {
+                gap: 6px;
+            }
+
+            .genre-tag {
+                font-size: 0.75rem;
+                padding: 5px 10px;
+            }
+
+            .ad-disclaimer {
+                font-size: 0.85rem;
+                padding: 12px 14px;
+            }
+
+            .ad-disclaimer i {
+                font-size: 1rem;
+            }
+
+            .ad-disclaimer-content {
+                gap: 6px;
             }
 
             .cast-grid {
@@ -948,29 +1033,35 @@
                 grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 max-height: 400px;
             }
+
+            .server-label {
+                font-size: 0.8rem;
+            }
         }
 
         @media (max-width: 480px) {
             .player-wrapper {
-                padding-left: 12px;
-                padding-right: 12px;
                 padding-top: 85px;
+                padding-bottom: 30px;
+                padding-left: 10px;
+                padding-right: 10px;
             }
 
             .nav-right { 
-                gap: 8px; 
+                gap: 6px; 
             }
 
-            .btn-back span { 
-                display: none; 
+            .nav-logo {
+                font-size: 1.2rem;
             }
 
             .btn-back {
                 padding: 6px 10px;
+                font-size: 0.75rem;
             }
 
-            .adblock-status { 
-                display: none; 
+            .btn-back i {
+                font-size: 0.9rem;
             }
 
             .server-tabs { 
@@ -979,70 +1070,105 @@
 
             .server-btn { 
                 padding: 7px 12px; 
-                font-size: 0.75rem; 
+                font-size: 0.7rem; 
             }
 
             .player-container {
                 min-height: 200px;
                 margin-bottom: 16px;
+                border-radius: 6px;
+            }
+
+            .player-controls-top {
+                top: 10px;
+                right: 10px;
+            }
+
+            .player-fullscreen-btn {
+                padding: 7px 10px;
+                font-size: 0.7rem;
+                border-radius: 6px;
+            }
+
+            .player-fullscreen-btn i {
+                font-size: 1rem;
             }
 
             .ad-disclaimer {
                 font-size: 0.8rem;
-                padding: 12px 14px;
+                padding: 10px 12px;
                 gap: 10px;
+                margin-bottom: 20px;
             }
 
             .ad-disclaimer i {
                 font-size: 1rem;
+                margin-top: 1px;
+            }
+
+            .ad-disclaimer-content {
+                gap: 4px;
+            }
+
+            .ad-disclaimer-content strong {
+                font-size: 0.8rem;
+            }
+
+            .ad-disclaimer-content p {
+                font-size: 0.75rem;
+                line-height: 1.4;
             }
 
             .media-hero {
-                height: 280px;
-                margin-bottom: 30px;
+                height: 240px;
+                margin-bottom: 20px;
+                border-radius: 8px;
             }
 
             .hero-content {
-                padding: 20px 16px;
-                gap: 16px;
+                padding: 16px 10px;
+                gap: 12px;
             }
 
             .hero-poster {
-                width: 100px;
-                height: 150px;
-                margin: 0 auto;
+                width: 80px;
+                height: 120px;
             }
 
             .hero-title {
-                font-size: 1.3rem;
+                font-size: 1.2rem;
+                line-height: 1.1;
             }
 
             .hero-meta {
-                font-size: 0.8rem;
-                gap: 8px;
+                font-size: 0.75rem;
+                gap: 6px;
+            }
+
+            .maturity-badge {
+                padding: 3px 8px;
+                font-size: 0.7rem;
             }
 
             .hero-description {
-                font-size: 0.85rem;
+                font-size: 0.8rem;
+                line-height: 1.5;
+                max-width: 100%;
             }
 
-            .toast {
-                bottom: 80px;
-                right: 16px;
-                left: 16px;
-                max-width: calc(100vw - 32px);
-                font-size: 13px;
-                padding: 12px 16px;
+            .genre-tag {
+                font-size: 0.7rem;
+                padding: 4px 8px;
             }
 
             .cast-grid {
-                grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
                 gap: 12px;
             }
 
             .cast-avatar {
-                width: 80px;
-                height: 80px;
+                width: 75px;
+                height: 75px;
             }
 
             .cast-name {
@@ -1054,24 +1180,46 @@
             }
 
             .episodes-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
                 gap: 8px;
             }
 
             .episode-content {
-                padding: 10px;
+                padding: 8px;
             }
 
             .episode-num {
-                font-size: 0.8rem;
-            }
-
-            .episode-name {
                 font-size: 0.75rem;
             }
 
+            .episode-name {
+                font-size: 0.7rem;
+            }
+
             .episode-meta {
-                font-size: 0.65rem;
+                font-size: 0.6rem;
+            }
+
+            .cast-section h3,
+            .details-section h3,
+            .episode-guide h3 {
+                font-size: 1rem;
+                margin-bottom: 12px;
+            }
+
+            .server-label {
+                font-size: 0.75rem;
+                margin-bottom: 10px;
+            }
+
+            .toast {
+                bottom: 70px;
+                right: 10px;
+                left: 10px;
+                max-width: calc(100vw - 20px);
+                font-size: 12px;
+                padding: 10px 14px;
+                gap: 10px;
             }
         }
     </style>
@@ -1121,25 +1269,30 @@
             </div>
         </div>
 
-        <!-- Video Player Container -->
-        <div class="player-container" id="playerContainer">
-            <div class="player-controls">
+        <!-- Video Player Container with Fullscreen Button -->
+        <div class="player-wrapper-outer">
+            <div class="player-controls-top">
                 <button class="player-fullscreen-btn" id="playerFullscreenBtn" type="button" aria-label="Toggle fullscreen">
                     <i class="fas fa-expand"></i>
-                    <span></span>
+                    <span>Fullscreen</span>
                 </button>
             </div>
-            <div class="player-loading" id="playerLoading">
-                <div class="spinner"></div>
-                <div class="loading-text">Loading Player</div>
-                <div class="loading-subtext" id="loadingSubtext">Initializing stream...</div>
+            <div class="player-container" id="playerContainer">
+                <div class="player-loading" id="playerLoading">
+                    <div class="spinner"></div>
+                    <div class="loading-text">Loading Player</div>
+                    <div class="loading-subtext" id="loadingSubtext">Initializing stream...</div>
+                </div>
             </div>
         </div>
 
         <!-- Ad Disclaimer -->
         <div class="ad-disclaimer">
             <i class="fas fa-ban"></i>
-            <span><strong>HR OTT is completely free and we never run ads.</strong> Any ad or new tab you see comes from the video server itself. Keep the ad blocker on for a clean experience.</span>
+            <div class="ad-disclaimer-content">
+                <strong><i class="fas fa-shield-alt"></i> HR OTT is completely ad-free!</strong>
+                <p>Any ads or new tabs you see come from the video server itself, not from us. Keep your ad blocker and pop-up shield ON for a seamless viewing experience. If a server refuses to play with protection enabled, you can disable it temporarily for that server or switch to the next one.</p>
+            </div>
         </div>
 
         <!-- Cast Section -->
