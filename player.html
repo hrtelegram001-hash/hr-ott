@@ -24,10 +24,6 @@
         .adblock-status .blocked-count { color: var(--text-muted); font-weight: 400; font-size: 0.6rem; }
         .profile-avatar { width: 32px; height: 32px; border-radius: 6px; background: linear-gradient(135deg, var(--red), #4a0408); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; box-shadow: 0 4px 14px var(--red-glow); }
         
-        /* Quick loading skeleton */
-        .skeleton { background: linear-gradient(90deg, #1a1a20 25%, #2a2a32 50%, #1a1a20 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
-        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-        
         .player-wrapper { width: 100%; padding-bottom: 60px; margin: 0; display: flex; flex-direction: column; }
         .media-hero { position: relative; width: 100%; height: 65vh; max-height: 65vh; overflow: hidden; display: flex; align-items: flex-end; justify-content: flex-start; padding: 0; margin: 0; min-height: 300px; }
         .hero-backdrop { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; background-repeat: no-repeat; filter: brightness(0.3) blur(1px); z-index: 0; transition: opacity 0.5s ease; }
@@ -58,7 +54,24 @@
         .player-title-bar .title .badge { font-size: 0.55rem; font-weight: 800; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; background: var(--red); color: #fff; letter-spacing: 0.5px; flex-shrink: 0; }
         .player-title-bar .title .episode-badge { font-size: 0.6rem; font-weight: 600; color: var(--text-muted); background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 3px; flex-shrink: 0; }
         .player-title-bar .controls { display: flex; gap: 4px; flex-shrink: 0; }
-        .player-title-bar .controls .player-btn { appearance: none; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); color: var(--text); border-radius: 4px; padding: 4px 10px; font-weight: 600; font-size: 0.7rem; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease; font-family: 'Inter', sans-serif; }
+        .player-title-bar .controls .player-btn { 
+            appearance: none; 
+            border: 1px solid rgba(255,255,255,0.15); 
+            background: rgba(255,255,255,0.06); 
+            color: var(--text); 
+            border-radius: 4px; 
+            padding: 4px 10px; 
+            font-weight: 600; 
+            font-size: 0.7rem; 
+            cursor: pointer; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 4px; 
+            transition: all 0.2s ease; 
+            font-family: 'Inter', sans-serif;
+            min-width: 36px;
+            justify-content: center;
+        }
         .player-title-bar .controls .player-btn:hover { background: var(--red); border-color: var(--red); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3); }
         .player-title-bar .controls .player-btn i { font-size: 0.7rem; }
         
@@ -71,8 +84,26 @@
         .loading-text { font-size: 0.9rem; font-weight: 700; }
         .loading-subtext { font-size: 0.75rem; color: var(--text-muted); }
         
-        .ad-disclaimer { display: flex; align-items: flex-start; gap: 12px; background: rgba(229, 9, 20, 0.1); border: 1px solid rgba(229, 9, 20, 0.3); border-radius: 8px; padding: 12px 16px; margin: 20px 0; font-size: 0.85rem; color: rgba(255,255,255,0.85); line-height: 1.6; }
+        .ad-disclaimer { 
+            display: flex !important; 
+            align-items: flex-start; 
+            gap: 12px; 
+            background: rgba(229, 9, 20, 0.1); 
+            border: 1px solid rgba(229, 9, 20, 0.3); 
+            border-radius: 8px; 
+            padding: 12px 16px; 
+            margin: 20px 0; 
+            font-size: 0.85rem; 
+            color: rgba(255,255,255,0.85); 
+            line-height: 1.6; 
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
         .ad-disclaimer i { color: var(--red); font-size: 1.1rem; flex-shrink: 0; margin-top: 3px; }
+        .ad-disclaimer-content { flex: 1; }
+        .ad-disclaimer-content strong { display: inline-block; margin-bottom: 4px; }
+        .ad-disclaimer-content p { margin: 0; }
+        
         .cast-section { margin: 30px 0 20px 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
         .cast-section h3, .similar-section h3, .details-section h3 { font-size: 1.1rem; margin-bottom: 14px; color: var(--text); font-weight: 800; }
         .cast-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 16px; }
@@ -137,7 +168,7 @@
             .player-title-bar { padding: 6px 10px; flex-direction: column; align-items: stretch; gap: 4px; min-height: 36px; }
             .player-title-bar .title { font-size: 0.8rem; }
             .player-title-bar .controls { justify-content: flex-end; }
-            .player-title-bar .controls .player-btn { padding: 4px 8px; font-size: 0.6rem; }
+            .player-title-bar .controls .player-btn { padding: 4px 8px; font-size: 0.6rem; min-width: 28px; }
             .player-title-bar .controls .player-btn span { display: none; }
             .ad-disclaimer { padding: 10px 12px; font-size: 0.8rem; margin: 16px 0; }
             .cast-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; }
@@ -208,20 +239,21 @@
                 </div>
             </div>
 
-            <div class="ad-disclaimer">
+            <!-- AD DISCLAIMER - Fixed to always show -->
+            <div class="ad-disclaimer" id="adDisclaimer">
                 <i class="fas fa-ban"></i>
                 <div class="ad-disclaimer-content">
                     <strong><i class="fas fa-shield-alt"></i> HR OTT is completely ad-free!</strong>
-                    <p>HR OTT  is completely free and we never run ads. Any ad or new tab you see comes from the video server itself. Keep the pop-up shield on, and use a good ad blocker and redirect blocker in your browser for a clean run. If a server refuses to play with the shield on, turn it off for that server or move to the next one. HR OTT believes in an ad free viewing experience.</p>
+                    <p>Our advanced ad blocker is actively blocking ads, popups, and redirects. If a server doesn't work properly, try switching to another source below.</p>
                 </div>
             </div>
 
-            <div class="cast-section">
+            <div class="cast-section" id="castSection">
                 <h3><i class="fas fa-users"></i> Cast</h3>
                 <div class="cast-grid" id="castGrid"></div>
             </div>
 
-            <div class="details-section">
+            <div class="details-section" id="detailsSection">
                 <h3><i class="fas fa-video"></i> Description</h3>
                 <p id="descText"></p>
             </div>
@@ -284,12 +316,10 @@
                     if (this._initialized) return;
                     this._initialized = true;
                     
-                    // Only intercept essential requests for performance
                     this.interceptFetch();
                     this.interceptXHR();
                     this.blockPopups();
                     
-                    // Clean up less frequently
                     setInterval(() => this.cleanupAdElements(), 10000);
                 }
 
@@ -351,19 +381,14 @@
                         '[id*="ad" i]', '[class*="ad" i]', 
                         '.ad-container', '.ad-wrapper', '.ad-banner',
                         '.advertisement', '.google-ads', '.adsbygoogle',
-                        'iframe[src*="ad"]', 'div[style*="z-index:999"][style*="position:fixed"]'
+                        'iframe[src*="ad"]'
                     ];
                     
                     try {
                         document.querySelectorAll(selectors.join(',')).forEach(el => {
-                            if (el && el.parentNode) {
+                            if (el && el.parentNode && el.id !== 'adDisclaimer' && !el.closest('.ad-disclaimer')) {
                                 el.style.display = 'none';
                                 el.style.pointerEvents = 'none';
-                                if (el.style.position === 'fixed' || el.style.position === 'absolute') {
-                                    setTimeout(() => {
-                                        if (el.parentNode) el.parentNode.removeChild(el);
-                                    }, 300);
-                                }
                             }
                         });
                     } catch(e) {}
@@ -451,7 +476,6 @@
             let isLoading = false;
             let mediaData = null;
             let isInitialLoad = true;
-            let loadStartTime = 0;
             const playerSources = {};
 
             // ═══════ HELPERS ═══════
@@ -540,7 +564,6 @@
                 let loaded = false;
                 let timeoutId = null;
                 
-                // Faster timeout for better UX
                 timeoutId = setTimeout(() => { 
                     if (!loaded) {
                         loading.classList.add('hidden'); 
@@ -879,7 +902,6 @@
                         overview: overview
                     });
                     
-                    // Load episodes and similar in parallel for speed
                     const promises = [];
                     if (type === 'tv') {
                         promises.push(loadEpisodeGuide());
@@ -933,14 +955,11 @@
                 currentEpisode = episode;
                 currentSource = source;
                 
-                // Load player sources immediately
                 refreshPlayerSources();
                 initServerButtons();
                 
-                // Load media details and player in parallel
                 const [detailsSuccess] = await Promise.all([
                     fetchMediaDetails(id, type, season, episode),
-                    // Start loading player after a small delay to let UI update
                     new Promise(resolve => {
                         setTimeout(() => {
                             loadPlayerEmbed(currentSource);
@@ -963,8 +982,10 @@
                 }, 50);
             }, { passive: true });
 
+            // Fullscreen button - Fixed
             document.getElementById('playerFullscreenBtn')?.addEventListener('click', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 const container = document.getElementById('playerContainer');
                 try {
                     if (!document.fullscreenElement) {
@@ -972,24 +993,34 @@
                             container.requestFullscreen();
                         } else if (container.webkitRequestFullscreen) {
                             container.webkitRequestFullscreen();
+                        } else if (container.mozRequestFullScreen) {
+                            container.mozRequestFullScreen();
+                        } else if (container.msRequestFullscreen) {
+                            container.msRequestFullscreen();
                         }
                     } else {
                         if (document.exitFullscreen) {
                             document.exitFullscreen();
                         } else if (document.webkitExitFullscreen) {
                             document.webkitExitFullscreen();
+                        } else if (document.mozCancelFullScreen) {
+                            document.mozCancelFullScreen();
+                        } else if (document.msExitFullscreen) {
+                            document.msExitFullscreen();
                         }
                     }
                 } catch (e) { console.warn('Fullscreen request failed:', e); }
             });
 
+            // Reload button - Fixed
             document.getElementById('playerReloadBtn')?.addEventListener('click', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 loadPlayerEmbed(currentSource);
                 showToast('Reloading player...', 'success');
             });
 
-            // Update ad blocker status less frequently
+            // Update ad blocker status
             setInterval(() => {
                 const stats = adBlocker.getStats();
                 const countEl = document.getElementById('adblockCount');
