@@ -74,7 +74,7 @@
         
         .similar-section { margin: 60px 0 40px 0; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); }
         .similar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--poster-min), 1fr)); gap: 10px; }
-        .similar-card { position: relative; cursor: pointer; border-radius: 8px; overflow: hidden; background: var(--bg-card); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .similar-card { position: relative; cursor: pointer; border-radius: 8px; overflow: hidden; background: var(--bg-card); transition: transform 0.3s ease, box-shadow 0.3s ease; text-decoration: none; color: var(--text); }
         .similar-card:hover { transform: scale(1.05); z-index: 10; box-shadow: 0 12px 30px rgba(0,0,0,0.8), 0 0 0 2px rgba(229,9,20,0.5); }
         .similar-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; }
         .similar-card-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.9) 100%); opacity: 0; transition: opacity 0.3s ease; display: flex; flex-direction: column; justify-content: flex-end; padding: 10px; }
@@ -220,13 +220,14 @@
             const TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
             const TMDB_BACKDROP = 'https://image.tmdb.org/t/p/w1280';
 
-            // Parse URL: /player/:id/:type
+            // Parse URL: /player/:id/:type or ?id=xxx&type=xxx
+            const urlParams = new URLSearchParams(window.location.search);
             const pathParts = window.location.pathname.split('/').filter(p => p);
-            const id = pathParts[1] || new URLSearchParams(window.location.search).get('id');
-            const type = (pathParts[2] || new URLSearchParams(window.location.search).get('type') || 'movie').toLowerCase();
+            const id = pathParts[1] || urlParams.get('id');
+            const type = (pathParts[2] || urlParams.get('type') || 'movie').toLowerCase();
             
-            let season = parseInt(new URLSearchParams(window.location.search).get('s') || '1');
-            let episode = parseInt(new URLSearchParams(window.location.search).get('e') || '1');
+            let season = parseInt(urlParams.get('s') || '1');
+            let episode = parseInt(urlParams.get('e') || '1');
             let isLoading = false;
             let currentSource = 1;
             const playerSources = {};
@@ -253,12 +254,11 @@
                     playerSources[cfg.id] = { displayName: cfg.displayName, url };
                 });
             }
-            refreshPlayerSources();
-
+            
             function showToast(msg, type = 'success') {
                 const t = document.createElement('div');
                 t.className = `toast ${type}`;
-                t.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : 'x'}-circle"></i>${msg}`;
+                t.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}-circle"></i>${msg}`;
                 document.body.appendChild(t);
                 setTimeout(() => t.remove(), 3500);
             }
@@ -266,8 +266,11 @@
             function buildIframe(src) {
                 const i = document.createElement('iframe');
                 i.src = src;
-                i.allow = 'autoplay; fullscreen; encrypted-media';
+                i.allow = 'autoplay; fullscreen; encrypted-media; picture-in-picture';
                 i.allowFullscreen = true;
+                i.setAttribute('allowfullscreen', 'true');
+                i.setAttribute('webkitallowfullscreen', 'true');
+                i.setAttribute('mozallowfullscreen', 'true');
                 return i;
             }
 
@@ -277,15 +280,40 @@
                 const source = playerSources[key];
                 if (!source) return;
                 currentSource = key;
-                const oldIframe = document.querySelector('.player-container iframe');
+                const container = document.getElementById('playerContainer');
+                const oldIframe = container.querySelector('iframe');
                 if (oldIframe) oldIframe.remove();
                 const loading = document.getElementById('playerLoading');
                 loading.classList.remove('hidden');
+                document.getElementById('loadingSubtext').textContent = `Loading ${source.displayName}...`;
                 const iframe = buildIframe(source.url);
-                const timeout = setTimeout(() => { loading.classList.add('hidden'); isLoading = false; }, 15000);
-                iframe.onload = () => { clearTimeout(timeout); loading.classList.add('hidden'); isLoading = false; showToast(`Playing with ${source.displayName}`, 'success'); };
-                iframe.onerror = () => { clearTimeout(timeout); isLoading = false; showToast(`Failed to load ${source.displayName}`, 'error'); loading.classList.add('hidden'); };
-                document.getElementById('playerContainer').appendChild(iframe);
+                let loaded = false;
+                const timeout = setTimeout(() => { 
+                    if (!loaded) {
+                        loading.classList.add('hidden'); 
+                        isLoading = false; 
+                        showToast(`Failed to load ${source.displayName}. Try another server.`, 'error');
+                    }
+                }, 15000);
+                iframe.onload = () => { 
+                    if (!loaded) {
+                        loaded = true;
+                        clearTimeout(timeout); 
+                        loading.classList.add('hidden'); 
+                        isLoading = false; 
+                        showToast(`Playing with ${source.displayName}`, 'success'); 
+                    }
+                };
+                iframe.onerror = () => { 
+                    if (!loaded) {
+                        loaded = true;
+                        clearTimeout(timeout); 
+                        isLoading = false; 
+                        showToast(`Failed to load ${source.displayName}`, 'error'); 
+                        loading.classList.add('hidden'); 
+                    }
+                };
+                container.appendChild(iframe);
                 document.querySelectorAll('.server-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.source) === key));
             }
 
@@ -298,7 +326,7 @@
                     b.className = `server-btn ${parseInt(k) === 1 ? 'active' : ''}`;
                     b.dataset.source = k;
                     b.type = 'button';
-                    b.innerHTML = `Server ${k}`;
+                    b.innerHTML = `<i class="fas fa-server"></i> Server ${k}`;
                     b.title = s.displayName;
                     b.onclick = () => loadPlayerEmbed(parseInt(k));
                     container.appendChild(b);
@@ -360,7 +388,7 @@
                     similar.forEach(item => {
                         const card = document.createElement('a');
                         card.className = 'similar-card';
-                        card.href = `/player/${item.id}/${type}`;
+                        card.href = `/player.html?id=${item.id}&type=${type}`;
                         const poster = item.poster_path ? TMDB_IMG + item.poster_path : '';
                         const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '?';
                         const title = getTitle(item);
@@ -522,9 +550,17 @@
                 const container = document.getElementById('playerContainer');
                 try {
                     if (!document.fullscreenElement) {
-                        await (container.requestFullscreen || container.webkitRequestFullscreen).call(container);
+                        if (container.requestFullscreen) {
+                            await container.requestFullscreen();
+                        } else if (container.webkitRequestFullscreen) {
+                            await container.webkitRequestFullscreen();
+                        }
                     } else {
-                        await (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+                        if (document.exitFullscreen) {
+                            await document.exitFullscreen();
+                        } else if (document.webkitExitFullscreen) {
+                            await document.webkitExitFullscreen();
+                        }
                     }
                 } catch (e) { console.warn('Fullscreen request failed:', e); }
             });
