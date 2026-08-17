@@ -98,24 +98,12 @@
         .search-item-info b { display:block; font-size:0.9rem; color:#fff; }
         .search-item-info span { font-size:0.75rem; color:var(--text-muted); }
         .search-no-results { text-align:center; padding:20px; color:var(--text-muted); }
+        .search-filters { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .filter-mini-select { background: rgba(30,30,36,0.9); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 6px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; outline: none; }
+        .filter-mini-select:hover { border-color: var(--red); }
         .watchlist-btn-nav { background: none; border: none; font-size: 1.3rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
         .watchlist-btn-nav:hover { color: var(--red); }
         .profile-avatar { width: 34px; height: 34px; border-radius: 8px; background: linear-gradient(135deg, var(--red), #4a0408); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 0 4px 14px var(--red-glow); }
-
-        /* Filter Bar */
-        .filter-bar {
-            display: flex; gap: 10px; padding: 0 var(--pad) 15px; flex-wrap: wrap;
-            align-items: center; margin-top: -10px;
-        }
-        .filter-select, .sort-select {
-            background: rgba(30,30,36,0.8); border: 1px solid rgba(255,255,255,0.15);
-            color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem;
-            cursor: pointer; outline: none; font-family: 'Inter', sans-serif;
-            transition: border-color 0.2s;
-        }
-        .filter-select:hover, .sort-select:hover { border-color: rgba(255,255,255,0.5); }
-        .filter-label { font-size: 0.75rem; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-
         .hero { height: 88vh; min-height: 560px; position: relative; overflow: hidden; }
         .hero-slide { position: absolute; inset:0; background-size: cover; background-position: center 20%; opacity: 0; transition: opacity 1.2s ease; will-change: opacity; }
         .hero-slide.active { opacity:1; z-index:2; animation: kenBurns 24s ease-in-out infinite alternate; }
@@ -178,13 +166,7 @@
         .grid-loader { text-align:center; padding: 24px; color: var(--text-dim); font-size: 0.9rem; }
         .grid-loader i { color: var(--red); }
         .recent-wrap { margin: 0 0 26px; display:none; position: relative; }
-        
-        /* Progress bar for continue watching */
-        .progress-bar {
-            position: absolute; bottom: 0; left: 0; height: 3px;
-            background: var(--red); z-index: 5; border-radius: 0 2px 2px 0;
-            transition: width 0.3s ease;
-        }
+        .progress-bar { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--red); z-index: 5; border-radius: 0 2px 2px 0; }
         .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; border-radius: 50%; background: var(--red); display: none; align-items: center; justify-content: center; color: #fff; font-size: 1.2rem; cursor: pointer; z-index: 90; box-shadow: 0 4px 25px var(--red-glow); transition: all 0.3s; border: none; }
         .back-to-top.visible { display:flex; }
         .back-to-top:hover { transform: translateY(-4px); background: var(--red-dark); }
@@ -223,9 +205,9 @@
         ::-webkit-scrollbar-track { background: #0a0a0a; }
         ::-webkit-scrollbar-thumb { background: #2a2a30; border-radius: 5px; }
         ::-webkit-scrollbar-thumb:hover { background: #444; }
-
         @media (max-width: 900px) {
             .nav-links { display: none; }
+            .nav-credits { display: none; }
             .hero { height: 78vh; }
             .hero-content { bottom: 22%; }
             .hero-title { font-size: 2.4rem; }
@@ -236,8 +218,8 @@
             .search-dropdown { min-width: 260px; }
             .modal-body { grid-template-columns: 1fr; padding: 20px; }
             .modal-title { font-size: 1.7rem; }
-            .filter-bar { gap: 6px; padding: 0 10px 10px; }
-            .filter-select, .sort-select { font-size: 0.7rem; padding: 6px 8px; }
+            .search-filters { padding: 8px 10px; }
+            .filter-mini-select { font-size: 0.65rem; padding: 5px 7px; }
         }
     </style>
 </head>
@@ -258,7 +240,7 @@
             <a data-cat="mylist">My List</a>
         </div>
         <div class="nav-right">
-            <div class="search-container">
+            <div class="search-container" id="searchContainer">
                 <input type="text" class="search-input" id="searchInput" placeholder="Titles, genres, people..." autocomplete="off">
                 <button class="search-icon-btn" id="searchIconBtn"><i class="fas fa-search"></i></button>
                 <button class="search-clear" id="searchClear">&times;</button>
@@ -309,17 +291,17 @@
 
     <script>
         (function() {
-            // ═══════ ADVANCED AD BLOCKER (simplified for clarity) ═══════
+            // ═══════ ADVANCED AD BLOCKER (unchanged) ═══════
             class AdvancedAdBlocker {
-                constructor() { this.blockedRequests = 0; this.adDomains = ['googlesyndication.com','doubleclick.net','adservice.google.com','ads-twitter.com','facebook.com/ads','rubiconproject.com','pubmatic.com','openx.net','spotxchange.com','adroll.com','criteo.com','casalemedia.com','amazon-adsystem.com','taboola.com','outbrain.com','exoclick.com','adnxs.com']; this.blockedSourceNames = ['ads','ad','banner','popup','sponsor','promo']; this.init(); }
+                constructor() { this.blockedRequests = 0; this.adDomains = ['googlesyndication.com','googleadservices.com','doubleclick.net','ads.google.com','pagead2.googlesyndication.com','adservice.google.com','adwords.google.com','google-analytics.com','analytics.google.com','googletagmanager.com','ads-twitter.com','static.ads-twitter.com','facebook.com/ads','facebook.net','rubiconproject.com','pubmatic.com','openx.net','spotxchange.com','adroll.com','criteo.com','anetwork.net','serving-sys.com','flashtalking.com','turn.com','adap.tv','pubsub.adap.tv','casalemedia.com','scorecardresearch.com','comscore.com','amazon-adsystem.com','taboola.com','outbrain.com','sharethis.com','polldaddy.com','distene.com','ad-delivery.net','ads.yahoo.com','ads.linkedin.com','adsymptotic.com','adyoulike.com','affiliatex.com','coinzilla.com','revcontent.com','exoclick.com','buysellads.net','adnxs.com','bidswitch.net','smartadserver.com','mopub.com','appnexus.com']; this.blockedSourceNames = ['ads','ad','banner','popup','overlay','sponsor','promo','commercial']; this.init(); }
                 init() { this.interceptFetch(); this.interceptXHR(); this.interceptElementAttributes(); this.blockPageAds(); }
-                interceptFetch() { const originalFetch = window.fetch; const self = this; window.fetch = function(...args) { const url = String(args[0] || ''); if (self.isAdUrl(url)) { self.blockedRequests += 1; return Promise.reject(new Error('Ad blocked')); } return originalFetch.apply(this, args); }; }
+                interceptFetch() { const originalFetch = window.fetch; const self = this; window.fetch = function(...args) { const url = String(args[0] || ''); if (self.isAdUrl(url)) { self.blockedRequests += 1; return Promise.reject(new Error('Ad request blocked')); } return originalFetch.apply(this, args); }; }
                 interceptXHR() { const originalOpen = XMLHttpRequest.prototype.open; const self = this; XMLHttpRequest.prototype.open = function(method, url, ...rest) { if (self.isAdUrl(String(url || ''))) { self.blockedRequests += 1; this._adBlocked = true; return; } return originalOpen.call(this, method, url, ...rest); }; const originalSend = XMLHttpRequest.prototype.send; XMLHttpRequest.prototype.send = function(...args) { if (this._adBlocked) return; return originalSend.apply(this, args); }; }
                 interceptElementAttributes() { const self = this; const originalSetAttribute = Element.prototype.setAttribute; Element.prototype.setAttribute = function(name, value) { if (typeof name === 'string' && self.isAdAttribute(name, value)) { self.blockedRequests += 1; return; } return originalSetAttribute.call(this, name, value); }; }
-                isAdUrl(url) { if (typeof url !== 'string') return false; const low = url.toLowerCase(); for (const domain of this.adDomains) { if (low.includes(domain)) return true; } const patterns = ['/?ad=', '&ad=', '/ads/', '/ad/', '/banner', '/popup', '/track?','/pixel', 'doubleclick', 'googlesyndication']; return patterns.some(pattern => low.includes(pattern)); }
-                isAdAttribute(name, value) { if (!name || !value) return false; const attr = String(name).toLowerCase(); const val = String(value).toLowerCase(); if (['src','href','data','poster','srcdoc'].includes(attr)) return this.isAdUrl(val) || this.blockedSourceNames.some(item => val.includes(item)); return this.blockedSourceNames.some(item => val.includes(item)); }
+                isAdUrl(url) { if (typeof url !== 'string') return false; const low = url.toLowerCase(); if (!low) return false; for (const domain of this.adDomains) { if (low.includes(domain)) return true; } const patterns = ['/?ad=', '&ad=', '/ads/', '/ad/', '/banner', '/popup', '/track?','/pixel', 'doubleclick', 'googlesyndication']; return patterns.some(pattern => low.includes(pattern)); }
+                isAdAttribute(name, value) { if (!name || !value) return false; const attr = String(name).toLowerCase(); const val = String(value).toLowerCase(); if (['src','href','data','poster','srcdoc'].includes(attr)) { return this.isAdUrl(val) || this.blockedSourceNames.some(item => val.includes(item)); } return this.blockedSourceNames.some(item => val.includes(item)); }
                 blockPageAds() { this.removeAds(); if (window.MutationObserver) { const observer = new MutationObserver(() => this.removeAds()); observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['src','href','class','id'] }); } }
-                removeAds() { const selectors = ['iframe[src*="ads"]', 'script[src*="ads"]', 'img[src*="ads"]', '[class*="ad"]', '[id*="ad"]', '[class*="banner"]', '[id*="banner"]', '[class*="popup"]', '[id*="popup"]', '[class*="sponsor"]', '[id*="sponsor"]', 'ins[class*="adsbygoogle"]', '.advertisement', '#advertisement', '.advert', '#advert']; selectors.forEach(selector => { try { document.querySelectorAll(selector).forEach(el => { if (el.closest('#movieModal') || el.closest('.player-container')) return; el.remove(); }); } catch (error) {} }); }
+                removeAds() { const selectors = ['iframe[src*="ads"]', 'iframe[id*="ads"]', 'script[src*="ads"]', 'script[src*="ad"]', 'img[src*="ads"]', 'img[src*="ad"]', 'img[data-ad-slot]', 'img[data-ad-client]', '[class*="ad"]', '[id*="ad"]', '[class*="ads"]', '[id*="ads"]', '[class*="banner"]', '[id*="banner"]', '[class*="popup"]', '[id*="popup"]', '[class*="sponsor"]', '[id*="sponsor"]', '[class*="overlay"]', '[id*="overlay"]', '[class*="modal"]', '[id*="modal"]', '[data-ad-slot]', '[data-ad-client]', 'ins[class*="adsbygoogle"]', '.advertisement', '#advertisement', '.advert', '#advert']; selectors.forEach(selector => { try { document.querySelectorAll(selector).forEach(el => { const idText = (el.id || '').toLowerCase(); const classText = (el.className || '').toString().toLowerCase(); const skip = ['movieModal','playerContainer','modal-overlay','modal-content','modal','player-loading']; if (skip.some(item => idText.includes(item) || classText.includes(item))) return; if (el.closest('#movieModal') || el.closest('.player-container')) return; el.remove(); }); } catch (error) {} }); }
                 getStats() { return this.blockedRequests; }
             }
             const adBlocker = new AdvancedAdBlocker();
@@ -342,13 +324,13 @@
             let rafId=null, mx=0, my=0;
             document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; if(!rafId) rafId = requestAnimationFrame(()=>{ cursorGlow.style.transform = `translate(${mx}px, ${my}px)`; rafId=null; }); });
 
-            // ═══════ CONFIG & API ═══════
-            const TMDB_KEY = 'f4edc50dffd14d155420d0435a4cdd08';
+            // ═══════ CONFIG & API (USE NEW API KEY) ═══════
+            const TMDB_KEY = '3a87b1db63bc74b8e3fe9266ddc75b30';
             const TMDB_BASE = 'https://api.themoviedb.org/3';
             const TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
             const TMDB_BACK = 'https://image.tmdb.org/t/p/original';
 
-            // Updated rows with recommendations
+            // HOME ROWS - updated endpoints
             const HOME_ROWS = [
                 { key:'trending',   title:'Trending Now',         ep:'/trending/all/week?page=', type:'movie', hero:true },
                 { key:'toprated',   title:'Top Rated',            ep:'/movie/top_rated?page=', type:'movie' },
@@ -387,7 +369,7 @@
             function esc(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
             function toast(msg){ const t=document.createElement('div'); t.className='toast show'; t.innerHTML=`<i class="fas fa-check-circle" style="color:#46d369"></i> ${msg}`; document.body.appendChild(t); setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=>t.remove(), 400); },2200); }
 
-            // ═══════ GENRE CACHE ═══════
+            // ═══════ LOAD GENRES ═══════
             async function loadGenres() {
                 try {
                     const movieGenres = await tmdbFetch('/genre/movie/list');
@@ -601,7 +583,7 @@
             function hideHero(){ if(heroTimer) clearInterval(heroTimer); document.getElementById('hero').style.display='none'; }
             function showHero(){ document.getElementById('hero').style.display='block'; }
 
-            // ═══════ FILTERS & SORTING UI ═══════
+            // ═══════ FILTERS & SORTING (for wall) ═══════
             function createFilterBar(container) {
                 const filterDiv = document.createElement('div');
                 filterDiv.className = 'filter-bar';
@@ -675,7 +657,6 @@
                 const sort = document.getElementById('sortSelect')?.value || 'popularity.desc';
                 
                 let endpoint = wallState.ep;
-                // Add filters to discover endpoints
                 if (endpoint.includes('/discover/')) {
                     const params = new URLSearchParams();
                     if(genre !== 'all') params.set('with_genres', genre);
@@ -685,11 +666,9 @@
                     params.set('page', '1');
                     endpoint = endpoint.split('?')[0] + '?' + params.toString() + '&';
                 } else {
-                    // For trending, just reload with sort
                     endpoint = endpoint + '1';
                 }
                 
-                // Clear and reload wall
                 const grid = document.getElementById('wallGrid');
                 if(grid) grid.innerHTML = '';
                 wallState.page = 0;
@@ -763,20 +742,266 @@
                 watchlist.forEach(item => { const card=createCard({ id:item.id, title:item.title, poster_path:null, backdrop_path:null, release_date:(item.year||'')+'-01-01', vote_average:0 }, item.type); if(!card) return; const img=card.querySelector('img'); if(item.poster) img.src=item.poster; card.querySelector('.card-rating').innerHTML='<i class="fas fa-heart" style="color:var(--red)"></i>'; grid.appendChild(card); });
             }
 
-            // ═══════ NAV & SEARCH ═══════
-            document.querySelectorAll('.nav-links a').forEach(link => {
-                link.addEventListener('click', (e) => { e.preventDefault(); const cat = link.dataset.cat; document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active')); link.classList.add('active'); if (cat === 'home') renderHome(); else if (cat === 'mylist') renderMyList(); else renderWall(cat); window.scrollTo({ top: 0, behavior: 'smooth' }); });
-            });
-
+            // ═══════ ENHANCED SEARCH WITH FILTERS ═══════
             const searchInput=document.getElementById('searchInput');
             const searchDropdown=document.getElementById('searchDropdown');
             const searchClear=document.getElementById('searchClear');
             const searchIconBtn=document.getElementById('searchIconBtn');
             let searchTimeout;
-            searchIconBtn.addEventListener('click', () => { searchInput.classList.toggle('active'); if(searchInput.classList.contains('active')) setTimeout(() => searchInput.focus(), 100); else { searchInput.value=''; searchDropdown.classList.remove('active'); } });
-            searchInput.addEventListener('input', function(){ clearTimeout(searchTimeout); const q=this.value.trim(); if(q.length<2){ searchDropdown.classList.remove('active'); return; } searchDropdown.classList.add('active'); searchDropdown.innerHTML='<div style="padding:14px;text-align:center;color:var(--text-muted);">Searching...</div>'; searchTimeout = setTimeout(async ()=>{ if(searchInput.value.trim()!==q) return; try{ const data=await tmdbFetch('/search/multi?query='+encodeURIComponent(q)); const items=(data.results||[]).filter(r=>['movie','tv'].includes(r.media_type)).slice(0,8); if(items.length){ searchDropdown.innerHTML=items.map(item=>{ const poster=item.poster_path?TMDB_IMG+item.poster_path:''; const title=item.title||item.name||'Untitled'; const year=(item.release_date||item.first_air_date||'').substring(0,4); const rating=item.vote_average?Number(item.vote_average).toFixed(1):'?'; const typeLabel=item.media_type==='movie'?'Movie':'TV'; return `<div class="search-item" data-id="${item.id}" data-type="${item.media_type}">${poster?`<img src="${poster}" alt="">`:'<div style="width:40px;height:60px;background:#222;border-radius:3px;"></div>'}<div class="search-item-info"><b>${esc(title)}</b><span>★ ${rating} · ${year} · ${typeLabel}</span></div></div>`; }).join(''); document.querySelectorAll('.search-item').forEach(el=>el.addEventListener('click',()=> { searchDropdown.classList.remove('active'); searchInput.value=''; searchInput.classList.remove('active'); openMovieModal(el.dataset.id, el.dataset.type); })); } else { searchDropdown.innerHTML='<div class="search-no-results">No results found</div>'; } }catch(e){ searchDropdown.innerHTML='<div class="search-no-results">Search error</div>'; } },350); });
-            searchClear.addEventListener('click',()=>{ searchInput.value=''; searchDropdown.classList.remove('active'); searchInput.focus(); });
-            document.addEventListener('click',e=>{ if(!e.target.closest('.search-container')) searchDropdown.classList.remove('active'); });
+            let currentSearchMode = 'text'; // 'text' or 'filters'
+            let searchFilters = { genre: 'all', year: 'all', language: 'all', sort: 'popularity.desc', type: 'multi' };
+
+            // Function to populate filter selects inside search dropdown
+            function createSearchFilters() {
+                const filterDiv = document.createElement('div');
+                filterDiv.className = 'search-filters';
+                filterDiv.id = 'searchFilterControls';
+                filterDiv.innerHTML = `
+                    <select class="filter-mini-select" id="searchTypeSelect">
+                        <option value="multi" selected>All</option>
+                        <option value="movie">Movies</option>
+                        <option value="tv">TV Shows</option>
+                    </select>
+                    <select class="filter-mini-select" id="searchGenreSelect"><option value="all">All Genres</option></select>
+                    <select class="filter-mini-select" id="searchYearSelect"><option value="all">All Years</option></select>
+                    <select class="filter-mini-select" id="searchLanguageSelect"><option value="all">All Languages</option></select>
+                    <select class="filter-mini-select" id="searchSortSelect">
+                        <option value="popularity.desc">Popularity</option>
+                        <option value="vote_average.desc">Rating</option>
+                        <option value="primary_release_date.desc">Release Date</option>
+                        <option value="original_title.asc">Title A-Z</option>
+                    </select>
+                `;
+                return filterDiv;
+            }
+
+            function populateSearchFilters() {
+                const genreSelect = document.getElementById('searchGenreSelect');
+                const yearSelect = document.getElementById('searchYearSelect');
+                const langSelect = document.getElementById('searchLanguageSelect');
+                
+                if (genreSelect && allGenres.length) {
+                    genreSelect.innerHTML = '<option value="all">All Genres</option>';
+                    allGenres.forEach(g => {
+                        const opt = document.createElement('option');
+                        opt.value = g.id;
+                        opt.textContent = g.name;
+                        genreSelect.appendChild(opt);
+                    });
+                }
+                if (yearSelect) {
+                    yearSelect.innerHTML = '<option value="all">All Years</option>';
+                    const currentYear = new Date().getFullYear();
+                    for (let y = currentYear; y >= 1950; y--) {
+                        const opt = document.createElement('option');
+                        opt.value = y;
+                        opt.textContent = y;
+                        yearSelect.appendChild(opt);
+                    }
+                }
+                if (langSelect) {
+                    langSelect.innerHTML = '<option value="all">All Languages</option>';
+                    const languages = ['en','hi','es','fr','de','it','ja','ko','zh','pt','ru','ar'];
+                    const names = ['English','Hindi','Spanish','French','German','Italian','Japanese','Korean','Chinese','Portuguese','Russian','Arabic'];
+                    languages.forEach((code, i) => {
+                        const opt = document.createElement('option');
+                        opt.value = code;
+                        opt.textContent = names[i];
+                        langSelect.appendChild(opt);
+                    });
+                }
+            }
+
+            function getSearchEndpoint() {
+                const type = searchFilters.type;
+                const genre = searchFilters.genre;
+                const year = searchFilters.year;
+                const lang = searchFilters.language;
+                const sort = searchFilters.sort;
+                const query = searchInput.value.trim();
+                
+                if (currentSearchMode === 'text' && query.length > 0) {
+                    return `/search/multi?query=${encodeURIComponent(query)}`;
+                } else {
+                    // filter mode, use discover
+                    let base = type === 'movie' ? '/discover/movie' : type === 'tv' ? '/discover/tv' : '/discover/movie'; // default to movie if multi but no text? Actually we can't discover both, so if multi and no text, we can't. So we force movie if multi and no text? Better to alert.
+                    if (type === 'multi') {
+                        // If no type selected, default to movie? We'll use movie but show note.
+                        base = '/discover/movie';
+                    }
+                    const params = new URLSearchParams();
+                    if (genre !== 'all') params.set('with_genres', genre);
+                    if (year !== 'all') params.set('primary_release_year', year);
+                    if (lang !== 'all') params.set('with_original_language', lang);
+                    params.set('sort_by', sort);
+                    params.set('page', '1');
+                    return `${base}?${params.toString()}&`;
+                }
+            }
+
+            async function performSearch() {
+                const query = searchInput.value.trim();
+                if (currentSearchMode === 'text' && query.length < 2) {
+                    searchDropdown.classList.remove('active');
+                    return;
+                }
+                
+                searchDropdown.classList.add('active');
+                searchDropdown.innerHTML = '';
+                
+                // Always add filter controls at top
+                const filterDiv = createSearchFilters();
+                searchDropdown.appendChild(filterDiv);
+                populateSearchFilters();
+                
+                // Add event listeners to filter selects
+                const typeSelect = document.getElementById('searchTypeSelect');
+                const genreSelect = document.getElementById('searchGenreSelect');
+                const yearSelect = document.getElementById('searchYearSelect');
+                const langSelect = document.getElementById('searchLanguageSelect');
+                const sortSelect = document.getElementById('searchSortSelect');
+                
+                function updateFilters() {
+                    searchFilters.type = typeSelect?.value || 'multi';
+                    searchFilters.genre = genreSelect?.value || 'all';
+                    searchFilters.year = yearSelect?.value || 'all';
+                    searchFilters.language = langSelect?.value || 'all';
+                    searchFilters.sort = sortSelect?.value || 'popularity.desc';
+                    currentSearchMode = 'filters';
+                    searchInput.value = ''; // clear text when filters change? Maybe keep text but switch mode? We'll keep text but ignore it in filter mode.
+                    performSearch();
+                }
+                
+                [typeSelect, genreSelect, yearSelect, langSelect, sortSelect].forEach(sel => {
+                    if (sel) sel.addEventListener('change', updateFilters);
+                });
+                
+                // If text mode and query exists, fetch search results
+                if (currentSearchMode === 'text' && query.length >= 2) {
+                    searchDropdown.innerHTML += '<div style="padding:10px 14px;color:var(--text-dim);font-size:0.8rem;">Search results for "' + esc(query) + '"</div>';
+                    try {
+                        const data = await tmdbFetch(`/search/multi?query=${encodeURIComponent(query)}`);
+                        const items = (data.results||[]).filter(r => ['movie','tv'].includes(r.media_type)).slice(0,8);
+                        if (items.length) {
+                            const resultsHtml = items.map(item => {
+                                const poster = item.poster_path ? TMDB_IMG + item.poster_path : '';
+                                const title = item.title || item.name || 'Untitled';
+                                const year = (item.release_date || item.first_air_date || '').substring(0,4);
+                                const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '?';
+                                const typeLabel = item.media_type === 'movie' ? 'Movie' : 'TV';
+                                return `<div class="search-item" data-id="${item.id}" data-type="${item.media_type}">
+                                    ${poster ? `<img src="${poster}" alt="">` : '<div style="width:40px;height:60px;background:#222;border-radius:3px;"></div>'}
+                                    <div class="search-item-info"><b>${esc(title)}</b><span>★ ${rating} · ${year} · ${typeLabel}</span></div>
+                                </div>`;
+                            }).join('');
+                            searchDropdown.innerHTML += resultsHtml;
+                            document.querySelectorAll('.search-item').forEach(el => el.addEventListener('click', () => {
+                                searchDropdown.classList.remove('active');
+                                searchInput.value = '';
+                                searchInput.classList.remove('active');
+                                openMovieModal(el.dataset.id, el.dataset.type);
+                            }));
+                        } else {
+                            searchDropdown.innerHTML += '<div class="search-no-results">No results found</div>';
+                        }
+                    } catch(e) {
+                        searchDropdown.innerHTML += '<div class="search-no-results">Search error</div>';
+                    }
+                } else if (currentSearchMode === 'filters') {
+                    // Filter mode: fetch discover results
+                    try {
+                        const endpoint = getSearchEndpoint();
+                        const data = await tmdbFetch(endpoint + '1');
+                        const items = (data.results||[]).filter(m => m.poster_path).slice(0,12);
+                        if (items.length) {
+                            const resultsHtml = items.map(item => {
+                                const poster = item.poster_path ? TMDB_IMG + item.poster_path : '';
+                                const title = item.title || item.name || 'Untitled';
+                                const year = (item.release_date || item.first_air_date || '').substring(0,4);
+                                const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '?';
+                                const type = item.media_type || (searchFilters.type === 'tv' ? 'tv' : 'movie');
+                                const typeLabel = type === 'movie' ? 'Movie' : 'TV';
+                                return `<div class="search-item" data-id="${item.id}" data-type="${type}">
+                                    ${poster ? `<img src="${poster}" alt="">` : '<div style="width:40px;height:60px;background:#222;border-radius:3px;"></div>'}
+                                    <div class="search-item-info"><b>${esc(title)}</b><span>★ ${rating} · ${year} · ${typeLabel}</span></div>
+                                </div>`;
+                            }).join('');
+                            searchDropdown.innerHTML += resultsHtml;
+                            document.querySelectorAll('.search-item').forEach(el => el.addEventListener('click', () => {
+                                searchDropdown.classList.remove('active');
+                                searchInput.value = '';
+                                searchInput.classList.remove('active');
+                                openMovieModal(el.dataset.id, el.dataset.type);
+                            }));
+                        } else {
+                            searchDropdown.innerHTML += '<div class="search-no-results">No results found for selected filters</div>';
+                        }
+                    } catch(e) {
+                        searchDropdown.innerHTML += '<div class="search-no-results">Filter search error</div>';
+                    }
+                }
+            }
+
+            // Search icon toggle
+            searchIconBtn.addEventListener('click', () => {
+                searchInput.classList.toggle('active');
+                if (searchInput.classList.contains('active')) {
+                    setTimeout(() => searchInput.focus(), 100);
+                    if (searchInput.value.trim().length < 2) {
+                        // Show filters immediately
+                        currentSearchMode = 'filters';
+                        performSearch();
+                    } else {
+                        currentSearchMode = 'text';
+                        performSearch();
+                    }
+                } else {
+                    searchInput.value = '';
+                    searchDropdown.classList.remove('active');
+                }
+            });
+
+            // Input event
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const q = this.value.trim();
+                if (q.length >= 2) {
+                    currentSearchMode = 'text';
+                    searchTimeout = setTimeout(performSearch, 350);
+                } else if (q.length === 0) {
+                    currentSearchMode = 'filters';
+                    searchTimeout = setTimeout(performSearch, 100);
+                }
+            });
+
+            // Clear search
+            searchClear.addEventListener('click', () => {
+                searchInput.value = '';
+                searchDropdown.classList.remove('active');
+                searchInput.focus();
+                currentSearchMode = 'filters';
+            });
+
+            // Close dropdown on outside click
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.search-container')) {
+                    searchDropdown.classList.remove('active');
+                }
+            });
+
+            // ═══════ NAV CATEGORY SWITCHING ═══════
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', (e) => { 
+                    e.preventDefault(); 
+                    const cat = link.dataset.cat; 
+                    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active')); 
+                    link.classList.add('active'); 
+                    if (cat === 'home') renderHome(); 
+                    else if (cat === 'mylist') renderMyList(); 
+                    else renderWall(cat); 
+                    window.scrollTo({ top: 0, behavior: 'smooth' }); 
+                });
+            });
 
             // ═══════ BACK TO TOP & WATCHLIST MODAL ═══════
             const backBtn=document.getElementById('backToTop');
