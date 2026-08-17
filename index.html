@@ -40,7 +40,6 @@
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
             position: relative;
-            padding-bottom: 0;
         }
         #starCanvas { position: fixed; inset:0; z-index:-2; pointer-events:none; opacity:0.28; }
         #cursorGlow {
@@ -219,17 +218,70 @@
         .hero-dots { position: absolute; bottom: 26%; right: var(--pad); z-index: 4; display: flex; gap: 6px; }
         .hero-dot { width: 30px; height: 3px; background: rgba(255,255,255,0.3); cursor: pointer; transition: background 0.3s; border-radius: 2px; }
         .hero-dot.active { background: var(--red); }
-        .rows-wrapper { position: relative; z-index: 5; margin-top: -70px; padding-bottom: 30px; }
+        
+        /* Main Content Area */
+        .main-content {
+            position: relative;
+            z-index: 5;
+            margin-top: -70px;
+            padding-bottom: 30px;
+        }
+        
+        /* Continue Watching Section - Clean & Organized */
+        .continue-watching-section {
+            margin: 0 0 30px;
+            padding: 20px 0;
+            display: none;
+        }
+        .continue-watching-section.visible {
+            display: block;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--pad);
+            margin-bottom: 15px;
+        }
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.3px;
+        }
+        .section-title::before {
+            content:'';
+            width:4px;
+            height:22px;
+            border-radius:2px;
+            background: var(--red);
+            box-shadow: 0 0 12px var(--red-glow);
+        }
+        .section-action {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: color 0.2s;
+            border: none;
+            background: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+        }
+        .section-action:hover {
+            color: var(--red);
+        }
+        
         .section { margin: 0 0 26px; position: relative; }
-        .section-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 12px; padding: 0 var(--pad); color: var(--text); display: flex; align-items: center; gap: 12px; letter-spacing: -0.3px; }
-        .section-title::before { content:''; width:4px; height:22px; border-radius:2px; background: var(--red); box-shadow: 0 0 12px var(--red-glow); }
         .row-scroll-area { position: relative; }
         .row-track { display: flex; gap: var(--gap); padding: 8px var(--pad) 14px; overflow-x: auto; overflow-y: hidden; scroll-behavior: smooth; scrollbar-width: none; -ms-overflow-style: none; }
         .row-track::-webkit-scrollbar { display: none; }
         .scroll-btn { position: absolute; top: 0; bottom: 0; width: 56px; background: linear-gradient(90deg, rgba(11,11,15,0.95), transparent); border: none; color: white; font-size: 2.4rem; cursor: pointer; z-index: 30; opacity: 0; transition: opacity 0.3s, color 0.2s; display: flex; align-items: center; justify-content: center; }
         .scroll-btn.right { right: 0; background: linear-gradient(-90deg, rgba(11,11,15,0.95), transparent); }
         .scroll-btn.left { left: 0; }
-        .section:hover .scroll-btn { opacity: 1; }
+        .section:hover .scroll-btn, .continue-watching-section:hover .scroll-btn { opacity: 1; }
         .scroll-btn:hover { color: var(--red); }
         .grid-wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--poster-min), 1fr)); gap: var(--gap); padding: 8px var(--pad) 20px; }
         .card { flex: 0 0 auto; width: var(--poster-min); position: relative; cursor: pointer; border-radius: 8px; overflow: hidden; background: var(--bg-card); transition: transform 0.35s cubic-bezier(0.5,0,0.1,1), box-shadow 0.35s; box-shadow: 0 4px 14px rgba(0,0,0,0.5); }
@@ -256,8 +308,10 @@
         .grid-sentinel { height: 1px; width: 100%; }
         .grid-loader { text-align:center; padding: 24px; color: var(--text-dim); font-size: 0.9rem; }
         .grid-loader i { color: var(--red); }
-        .recent-wrap { margin: 0 0 26px; display:none; position: relative; }
+        
+        /* Progress Bar for Continue Watching */
         .progress-bar { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--red); z-index: 5; border-radius: 0 2px 2px 0; }
+        
         .back-to-top { position: fixed; bottom: 80px; right: 30px; width: 50px; height: 50px; border-radius: 50%; background: var(--red); display: none; align-items: center; justify-content: center; color: #fff; font-size: 1.2rem; cursor: pointer; z-index: 90; box-shadow: 0 4px 25px var(--red-glow); transition: all 0.3s; border: none; }
         .back-to-top.visible { display:flex; }
         .back-to-top:hover { transform: translateY(-4px); background: var(--red-dark); }
@@ -349,6 +403,10 @@
             .back-to-top { bottom: 80px; }
             .toast { bottom: 80px; }
             body { padding-bottom: var(--bottom-nav-height); }
+            .continue-watching-section {
+                padding: 15px 0;
+                margin-bottom: 20px;
+            }
         }
     </style>
 </head>
@@ -405,11 +463,25 @@
     </nav>
     
     <div class="hero" id="hero"><div class="hero-dots" id="heroDots"></div></div>
-    <div class="recent-wrap" id="recentSection">
-        <h2 class="section-title">Continue Watching</h2>
-        <div class="row-scroll-area"><div class="row-track" id="recentGrid"></div></div>
+    
+    <!-- Main Content Area (Clean & Organized) -->
+    <div class="main-content" id="mainContent">
+        <!-- Continue Watching Section (Only shows when there's history) -->
+        <div class="continue-watching-section" id="continueWatchingSection">
+            <div class="section-header">
+                <h2 class="section-title">Continue Watching</h2>
+                <button class="section-action" id="clearRecentBtn">Clear All</button>
+            </div>
+            <div class="row-scroll-area">
+                <button class="scroll-btn left"><i class="fas fa-chevron-left"></i></button>
+                <div class="row-track" id="recentGrid"></div>
+                <button class="scroll-btn right"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+        
+        <!-- Other Sections Container -->
+        <div id="sectionsContainer"></div>
     </div>
-    <div class="rows-wrapper" id="sectionsContainer"></div>
     
     <div class="modal-overlay" id="movieModal">
         <div class="modal-content">
@@ -523,7 +595,6 @@
             function saveWl(){ localStorage.HR_wl = JSON.stringify(watchlist); }
             function saveRec(){ localStorage.HR_rec = JSON.stringify(recent); }
 
-            // FIXED API FETCH with error handling
             async function tmdbFetch(endpoint) {
                 const sep = endpoint.includes('?') ? '&' : '?';
                 const url = `${TMDB_BASE}${endpoint}${sep}api_key=${TMDB_KEY}`;
@@ -631,24 +702,60 @@
                 recent=recent.filter(r=>r.id!=id);
                 recent.unshift({id,title,poster,year,type, progress: Math.floor(Math.random()*80)+10});
                 if(recent.length>12) recent.pop();
-                saveRec(); renderRecent();
+                saveRec(); renderContinueWatching();
             }
 
-            function renderRecent(){
-                const wrap=document.getElementById('recentSection');
-                if(recent.length===0){ wrap.style.display='none'; return; }
-                wrap.style.display='block';
-                const grid=document.getElementById('recentGrid'); grid.innerHTML='';
-                recent.forEach(r=>{
-                    const c=createCard({ id:r.id, title:r.title, poster_path:null, backdrop_path:null, release_date:(r.year||'')+'-01-01', vote_average:0 }, r.type, r.progress);
-                    if(!c) return;
-                    const img=c.querySelector('img'); if(r.poster) img.src=r.poster;
-                    c.querySelector('.card-rating').innerHTML='<i class="fas fa-clock"></i>';
+            // ═══════ RENDER CONTINUE WATCHING (Clean & Organized) ═══════
+            function renderContinueWatching(){
+                const section = document.getElementById('continueWatchingSection');
+                const grid = document.getElementById('recentGrid');
+                
+                if (!section || !grid) return;
+                
+                // Only show when there's watch history AND we're on home page
+                if (recent.length === 0 || currentCategory !== 'home') {
+                    section.classList.remove('visible');
+                    return;
+                }
+                
+                section.classList.add('visible');
+                grid.innerHTML = '';
+                
+                recent.slice(0, 10).forEach(r => {
+                    const c = createCard({ 
+                        id: r.id, 
+                        title: r.title, 
+                        poster_path: null, 
+                        backdrop_path: null, 
+                        release_date: (r.year || '') + '-01-01', 
+                        vote_average: 0 
+                    }, r.type, r.progress);
+                    
+                    if (!c) return;
+                    const img = c.querySelector('img');
+                    if (r.poster) img.src = r.poster;
+                    c.querySelector('.card-rating').innerHTML = '<i class="fas fa-clock"></i>';
                     grid.appendChild(c);
                 });
+                
+                // Add scroll buttons for continue watching
+                const scrollArea = section.querySelector('.row-scroll-area');
+                const leftBtn = section.querySelector('.scroll-btn.left');
+                const rightBtn = section.querySelector('.scroll-btn.right');
+                
+                if (leftBtn) leftBtn.onclick = () => grid.scrollBy({ left: -grid.clientWidth * 0.8, behavior: 'smooth' });
+                if (rightBtn) rightBtn.onclick = () => grid.scrollBy({ left: grid.clientWidth * 0.8, behavior: 'smooth' });
             }
 
-            // ═══════ MODAL (with full details using append_to_response) ═══════
+            // Clear all recent
+            document.getElementById('clearRecentBtn')?.addEventListener('click', () => {
+                recent = [];
+                saveRec();
+                renderContinueWatching();
+                toast('Watch history cleared');
+            });
+
+            // ═══════ MODAL ═══════
             const modal = document.getElementById('movieModal');
             const modalClose = document.getElementById('modalClose');
             const modalPlayBtn = document.getElementById('modalPlayBtn');
@@ -668,7 +775,6 @@
                 document.getElementById('modalType').textContent = type === 'movie' ? 'Movie' : 'TV Show';
                 updateModalWatchlistBtn();
                 try {
-                    // Use append_to_response for full details
                     const endpoint = type === 'movie' 
                         ? `/movie/${id}?append_to_response=credits,similar,videos,recommendations` 
                         : `/tv/${id}?append_to_response=credits,similar,videos,recommendations`;
@@ -776,8 +882,13 @@
             async function renderHome(){
                 teardownWall();
                 showHero();
+                currentCategory = 'home';
                 const container=document.getElementById('sectionsContainer'); container.innerHTML='';
                 HOME_ROWS.forEach(c=>container.appendChild(createRowSection(c)));
+                
+                // Render continue watching after hero
+                renderContinueWatching();
+                
                 const proms=HOME_ROWS.map(async c=>{ try{ const d=await tmdbFetch(c.ep+'1'); return {cfg:c, data:(d.results||[]).filter(m=>m.poster_path||m.backdrop_path)}; } catch(e){ return {cfg:c, data:[]}; } });
                 const results=await Promise.all(proms);
                 results.forEach(r=>{ const grid=document.getElementById('grid-'+r.cfg.key); if(!grid) return; r.data.slice(0,18).forEach(m=>{ const card=createCard(m, r.cfg.type); if(card) grid.appendChild(card); }); });
@@ -791,6 +902,7 @@
                 teardownWall();
                 hideHero();
                 currentCategory = catKey;
+                renderContinueWatching(); // Hide continue watching on non-home pages
                 const cfg = WALLS[catKey];
                 const container=document.getElementById('sectionsContainer');
                 container.innerHTML = `<div class="section"><h2 class="section-title">${cfg.title}</h2><div class="grid-wall" id="wallGrid"></div><div class="grid-loader" id="wallLoader"><i class="fas fa-circle-notch fa-spin"></i> Loading…</div><div class="grid-sentinel" id="wallSentinel"></div></div>`;
@@ -819,6 +931,8 @@
 
             function renderMyList(){
                 teardownWall(); hideHero();
+                currentCategory = 'mylist';
+                renderContinueWatching(); // Hide continue watching
                 const container = document.getElementById('sectionsContainer');
                 container.innerHTML = '';
                 if (watchlist.length === 0) { container.innerHTML = `<div class="empty-state"><i class="fas fa-heart"></i><h2>Your list is empty</h2><p>Add movies and shows to your list to watch them later.</p></div>`; return; }
@@ -964,7 +1078,7 @@
                 loadStorage();
                 if (watchlist.length > 0) document.getElementById('watchlistBtnNav').querySelector('i').className = 'fas fa-heart';
                 await loadGenres();
-                renderRecent();
+                renderContinueWatching();
                 await renderHome();
                 setTimeout(() => { document.getElementById('loadingScreen').classList.add('hidden'); setTimeout(() => { const ls = document.getElementById('loadingScreen'); if (ls) ls.remove(); }, 600); }, 2600);
                 refreshHearts();
