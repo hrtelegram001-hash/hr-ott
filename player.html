@@ -76,7 +76,6 @@
         .player-title-bar .controls .player-btn:hover { background: var(--red); border-color: var(--red); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3); }
         .player-title-bar .controls .player-btn i { font-size: 0.7rem; }
         .player-title-bar .controls .player-btn.pip-btn:hover { background: #2196F3; border-color: #2196F3; }
-        .player-title-bar .controls .player-btn.skip-btn:hover { background: var(--gold); border-color: var(--gold); color: #000; }
         
         .player-container { width: 100%; max-width: 100%; background: #000; position: relative; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; min-height: 250px; overflow: hidden; }
         .player-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; border: none; background: #000; }
@@ -125,30 +124,6 @@
         .next-episode-overlay .next-buttons .play-next:hover { background: var(--red-dark); transform: scale(1.05); }
         .next-episode-overlay .next-buttons .cancel-next { background: rgba(255,255,255,0.1); color: var(--text-muted); }
         .next-episode-overlay .next-buttons .cancel-next:hover { background: rgba(255,255,255,0.2); }
-        
-        /* Skip Intro Button */
-        .skip-intro-btn {
-            position: absolute;
-            bottom: 80px;
-            right: 30px;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 8px;
-            padding: 10px 18px;
-            color: #fff;
-            font-weight: 700;
-            font-size: 0.85rem;
-            cursor: pointer;
-            z-index: 20;
-            display: none;
-            animation: fadeIn 0.3s ease;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.2s ease;
-        }
-        .skip-intro-btn.visible { display: flex; align-items: center; gap: 8px; }
-        .skip-intro-btn:hover { background: var(--red); border-color: var(--red); transform: scale(1.05); }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
         .ad-disclaimer { 
             display: flex !important; 
@@ -240,9 +215,9 @@
         .episode-content .episode-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
         .episode-num { font-weight: 800; color: var(--red); font-size: 0.75rem; }
         .episode-actions { display: flex; gap: 4px; }
-        .episode-actions button { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.7rem; padding: 2px 4px; border-radius: 3px; transition: all 0.2s ease; }
-        .episode-actions button:hover { color: var(--text); background: rgba(255,255,255,0.1); }
-        .episode-actions button.watched-btn.active { color: var(--green); }
+        .episode-actions button { background: none; border: 1px solid rgba(255,255,255,0.2); color: var(--text-muted); cursor: pointer; font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; transition: all 0.2s ease; }
+        .episode-actions button:hover { color: var(--text); background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.4); }
+        .episode-actions button.watched-btn.active { color: var(--green); border-color: var(--green); background: rgba(70, 211, 105, 0.1); }
         .episode-name { color: var(--text); font-size: 0.8rem; line-height: 1.3; min-height: 2.4em; }
         .episode-meta { color: var(--text-muted); font-size: 0.7rem; margin-top: 4px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
         .episode-meta .resume-link { color: var(--red); font-weight: 700; font-size: 0.65rem; cursor: pointer; }
@@ -341,8 +316,6 @@
                         <div class="loading-text">Loading Player</div>
                         <div class="loading-subtext" id="loadingSubtext">Initializing stream...</div>
                     </div>
-                    <!-- Skip Intro Button -->
-                    <button class="skip-intro-btn" id="skipIntroBtn"><i class="fas fa-forward"></i> Skip Intro</button>
                     <!-- Next Episode Overlay -->
                     <div class="next-episode-overlay" id="nextEpisodeOverlay">
                         <div class="next-title">Up Next</div>
@@ -714,26 +687,6 @@
                 }
             }
 
-            // ═══════ SKIP INTRO ═══════
-            let skipIntroTimer = null;
-            
-            function showSkipIntro() {
-                const btn = document.getElementById('skipIntroBtn');
-                btn.classList.add('visible');
-                if (skipIntroTimer) clearTimeout(skipIntroTimer);
-                skipIntroTimer = setTimeout(() => {
-                    btn.classList.remove('visible');
-                }, 10000);
-            }
-
-            document.getElementById('skipIntroBtn')?.addEventListener('click', function() {
-                this.classList.remove('visible');
-                if (skipIntroTimer) clearTimeout(skipIntroTimer);
-                showToast('Skipping intro...', 'info');
-                // Simulate skipping by reloading player (in real implementation, would seek to 2min)
-                loadPlayerEmbed(currentSource);
-            });
-
             // ═══════ NEXT EPISODE ═══════
             function showNextEpisodeOverlay(episode) {
                 const overlay = document.getElementById('nextEpisodeOverlay');
@@ -867,14 +820,6 @@
                     e.preventDefault();
                     playNextEpisode();
                 }
-                // S = Skip Intro
-                if ((e.key === 's' || e.key === 'S')) {
-                    e.preventDefault();
-                    const skipBtn = document.getElementById('skipIntroBtn');
-                    if (skipBtn.classList.contains('visible')) {
-                        skipBtn.click();
-                    }
-                }
             });
 
             // ═══════ PLAYER LOAD WITH AUTO FALLBACK ═══════
@@ -929,8 +874,6 @@
                         if (!isInitialLoad && !isFallback) {
                             showToast(`Playing with ${source.displayName}`, 'success');
                         }
-                        // Show skip intro after a few seconds
-                        setTimeout(() => showSkipIntro(), 5000);
                     }
                 };
                 
@@ -1096,7 +1039,7 @@
                             <div class="episode-header">
                                 <div class="episode-num">Ep ${ep.episode_number}</div>
                                 <div class="episode-actions">
-                                    <button class="watched-btn ${isWatched ? 'active' : ''}" data-watch title="Mark as watched">
+                                    <button class="watched-btn ${isWatched ? 'active' : ''}" data-watch title="${isWatched ? 'Mark as unwatched' : 'Mark as watched'}">
                                         <i class="fas ${isWatched ? 'fa-check-circle' : 'fa-circle'}"></i>
                                     </button>
                                 </div>
@@ -1127,13 +1070,15 @@
                         updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource);
                     });
                     
-                    // Watch toggle
+                    // Watch toggle - fully clickable to unmark
                     const watchBtn = item.querySelector('.watched-btn');
                     watchBtn?.addEventListener('click', function(e) {
                         e.stopPropagation();
+                        e.preventDefault();
                         const watched = toggleWatched(currentId, currentSeason, ep.episode_number);
                         this.classList.toggle('active', watched);
                         this.innerHTML = `<i class="fas ${watched ? 'fa-check-circle' : 'fa-circle'}"></i>`;
+                        this.title = watched ? 'Mark as unwatched' : 'Mark as watched';
                         item.classList.toggle('watched', watched);
                         showToast(watched ? 'Marked as watched' : 'Unmarked as watched', 'success');
                         renderEpisodes();
@@ -1530,7 +1475,7 @@
                 
                 const stats = adBlocker.getStats();
                 console.log(`🛡️ [AdBlocker] Active - ${stats.totalBlocked} ads blocked`);
-                console.log('🎬 [HR OTT] Player features: Resume, Next Episode, Skip Intro, PiP, Keyboard Shortcuts');
+                console.log('🎬 [HR OTT] Player features: Resume, Next Episode, PiP, Keyboard Shortcuts');
             }
 
             // ═══════ EVENT LISTENERS ═══════
