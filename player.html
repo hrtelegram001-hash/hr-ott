@@ -24,32 +24,32 @@
         .adblock-status .blocked-count { color: var(--text-muted); font-weight: 400; font-size: 0.65rem; }
         .profile-avatar { width: 36px; height: 36px; border-radius: 6px; background: linear-gradient(135deg, var(--red), #4a0408); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; box-shadow: 0 4px 14px var(--red-glow); }
         .player-wrapper { width: 100%; padding-bottom: 80px; margin: 0; display: flex; flex-direction: column; }
-        .media-hero { position: relative; width: 100%; height: 100vh; max-height: 100vh; overflow: hidden; display: flex; align-items: flex-end; justify-content: flex-start; padding: 0; margin: 0; }
+        .media-hero { position: relative; width: 100%; height: 70vh; max-height: 70vh; overflow: hidden; display: flex; align-items: flex-end; justify-content: flex-start; padding: 0; margin: 0; min-height: 400px; }
         .hero-backdrop { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; background-repeat: no-repeat; filter: brightness(0.3) blur(1px); z-index: 0; }
         .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(11, 11, 15, 0) 0%, rgba(11, 11, 15, 0.2) 40%, rgba(11, 11, 15, 0.5) 70%, rgba(11, 11, 15, 0.95) 100%); z-index: 1; }
-        .hero-content { position: relative; z-index: 2; display: grid; grid-template-columns: 280px 1fr; gap: 40px; width: 100%; max-width: 1400px; padding: 60px clamp(20px, 4vw, 80px); padding-bottom: 100px; align-items: flex-end; margin: 0 auto; }
-        .hero-poster { width: 280px; height: 420px; border-radius: 12px; overflow: hidden; box-shadow: 0 30px 90px rgba(0,0,0,0.9); border: 1px solid rgba(255,255,255,0.15); background: var(--bg-card); }
+        .hero-content { position: relative; z-index: 2; display: grid; grid-template-columns: 220px 1fr; gap: 30px; width: 100%; max-width: 1400px; padding: 40px clamp(20px, 4vw, 80px); padding-bottom: 60px; align-items: flex-end; margin: 0 auto; }
+        .hero-poster { width: 220px; height: 330px; border-radius: 12px; overflow: hidden; box-shadow: 0 30px 90px rgba(0,0,0,0.9); border: 1px solid rgba(255,255,255,0.15); background: var(--bg-card); flex-shrink: 0; }
         .hero-poster img { width: 100%; height: 100%; object-fit: cover; }
-        .hero-info { display: flex; flex-direction: column; gap: 28px; flex: 1; max-width: 700px; }
-        .hero-title { font-size: clamp(2.5rem, 7vw, 4.5rem); font-weight: 900; line-height: 1; letter-spacing: -2px; text-shadow: 0 4px 20px rgba(0,0,0,0.8); }
-        .hero-meta { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; font-weight: 600; font-size: 1rem; }
+        .hero-info { display: flex; flex-direction: column; gap: 20px; flex: 1; max-width: 700px; }
+        .hero-title { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; line-height: 1; letter-spacing: -2px; text-shadow: 0 4px 20px rgba(0,0,0,0.8); }
+        .hero-meta { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; font-weight: 600; font-size: 0.95rem; }
         .meta-item { display: flex; align-items: center; gap: 8px; }
-        .meta-item.match { color: var(--green); font-weight: 700; font-size: 1.1rem; }
-        .maturity-badge { border: 2px solid rgba(255,255,255,0.5); padding: 6px 14px; border-radius: 4px; font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-        .hero-genres { display: flex; gap: 12px; flex-wrap: wrap; }
-        .genre-tag { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; padding: 8px 18px; font-size: 0.9rem; font-weight: 600; }
-        .hero-description { max-width: 600px; color: rgba(255,255,255,0.85); line-height: 1.8; font-size: 1rem; }
-        .player-section { background: var(--bg); padding: 40px clamp(20px, 4vw, 80px); max-width: 1400px; margin: 0 auto; width: 100%; }
-        .server-section { margin-bottom: 20px; }
-        .server-label { font-size: 0.85rem; font-weight: 800; color: rgba(255,255,255,0.7); letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 12px; display: block; }
+        .meta-item.match { color: var(--green); font-weight: 700; font-size: 1rem; }
+        .maturity-badge { border: 2px solid rgba(255,255,255,0.5); padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .hero-genres { display: flex; gap: 10px; flex-wrap: wrap; }
+        .genre-tag { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; padding: 6px 14px; font-size: 0.85rem; font-weight: 600; }
+        .hero-description { max-width: 600px; color: rgba(255,255,255,0.85); line-height: 1.8; font-size: 0.95rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .player-section { background: var(--bg); padding: 30px clamp(20px, 4vw, 80px); max-width: 1400px; margin: 0 auto; width: 100%; }
+        .server-section { margin-bottom: 16px; }
+        .server-label { font-size: 0.8rem; font-weight: 800; color: rgba(255,255,255,0.7); letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 10px; display: block; }
         .server-tabs { display: flex; gap: 8px; flex-wrap: wrap; min-height: 36px; align-items: center; width: 100%; overflow-x: auto; padding-bottom: 6px; }
-        .server-btn { background: transparent; border: 1.5px solid rgba(255,255,255,0.2); color: var(--text-muted); padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: all 0.3s ease; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; flex-shrink: 0; }
+        .server-btn { background: transparent; border: 1.5px solid rgba(255,255,255,0.2); color: var(--text-muted); padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 0.75rem; transition: all 0.3s ease; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; flex-shrink: 0; }
         .server-btn:hover { background: rgba(255,255,255,0.08); color: var(--text); border-color: rgba(255,255,255,0.4); }
         .server-btn.active { background: var(--red); border-color: var(--red); color: #fff; box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3); }
         
         .player-wrapper-outer { 
             position: relative; 
-            margin-bottom: 40px; 
+            margin-bottom: 30px; 
             background: #0a0a0e; 
             border-radius: 12px; 
             overflow: hidden; 
@@ -57,31 +57,32 @@
         }
         
         .player-title-bar {
-            padding: 14px 20px;
+            padding: 10px 16px;
             background: rgba(255,255,255,0.03);
             border-bottom: 1px solid rgba(255,255,255,0.06);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
+            min-height: 48px;
         }
         
         .player-title-bar .title {
             font-weight: 700;
-            font-size: 1.05rem;
+            font-size: 0.95rem;
             color: var(--text);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             min-width: 0;
         }
         
         .player-title-bar .title .badge {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: 800;
             text-transform: uppercase;
-            padding: 3px 10px;
+            padding: 2px 8px;
             border-radius: 4px;
             background: var(--red);
             color: #fff;
@@ -90,18 +91,18 @@
         }
         
         .player-title-bar .title .episode-badge {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             color: var(--text-muted);
             background: rgba(255,255,255,0.08);
-            padding: 3px 10px;
+            padding: 2px 8px;
             border-radius: 4px;
             flex-shrink: 0;
         }
         
         .player-title-bar .controls {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-shrink: 0;
         }
         
@@ -111,14 +112,14 @@
             background: rgba(255,255,255,0.06);
             color: var(--text);
             border-radius: 6px;
-            padding: 8px 14px;
+            padding: 6px 12px;
             font-weight: 600;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            transition: all 0.25s ease;
+            gap: 5px;
+            transition: all 0.2s ease;
             font-family: 'Inter', sans-serif;
         }
         
@@ -130,7 +131,7 @@
         }
         
         .player-title-bar .controls .player-btn i {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
         
         .player-container { 
@@ -142,7 +143,7 @@
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            min-height: 360px; 
+            min-height: 300px; 
             overflow: hidden;
         }
         .player-container iframe { 
@@ -162,33 +163,33 @@
             flex-direction: column; 
             align-items: center; 
             justify-content: center; 
-            gap: 24px; 
+            gap: 16px; 
             background: linear-gradient(135deg, #1a1a1f 0%, #2a2a32 100%); 
             z-index: 10; 
-            transition: opacity 0.4s ease; 
+            transition: opacity 0.3s ease; 
         }
         .player-loading.hidden { opacity: 0; pointer-events: none; }
-        .spinner { width: 70px; height: 70px; border: 5px solid rgba(229, 9, 20, 0.15); border-top-color: var(--red); border-radius: 50%; animation: spin 1.2s linear infinite; }
+        .spinner { width: 50px; height: 50px; border: 4px solid rgba(229, 9, 20, 0.15); border-top-color: var(--red); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .loading-text { font-size: 1.1rem; font-weight: 700; }
-        .loading-subtext { font-size: 0.9rem; color: var(--text-muted); }
+        .loading-text { font-size: 1rem; font-weight: 700; }
+        .loading-subtext { font-size: 0.85rem; color: var(--text-muted); }
         
-        .ad-disclaimer { display: flex; align-items: flex-start; gap: 16px; background: rgba(229, 9, 20, 0.1); border: 1px solid rgba(229, 9, 20, 0.3); border-radius: 10px; padding: 18px 24px; margin: 40px 0; font-size: 0.95rem; color: rgba(255,255,255,0.85); line-height: 1.7; }
-        .ad-disclaimer i { color: var(--red); font-size: 1.4rem; flex-shrink: 0; margin-top: 4px; }
-        .cast-section { margin: 60px 0 40px 0; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .cast-section h3, .similar-section h3, .details-section h3 { font-size: 1.4rem; margin-bottom: 24px; color: var(--text); font-weight: 800; }
-        .cast-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 24px; }
-        .cast-member { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; cursor: pointer; transition: transform 0.3s ease; }
-        .cast-member:hover { transform: translateY(-6px); }
-        .cast-avatar { width: 140px; height: 140px; border-radius: 50%; background: var(--bg-card); border: 2px solid rgba(229, 9, 20, 0.2); overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.3s ease; }
+        .ad-disclaimer { display: flex; align-items: flex-start; gap: 14px; background: rgba(229, 9, 20, 0.1); border: 1px solid rgba(229, 9, 20, 0.3); border-radius: 10px; padding: 14px 20px; margin: 30px 0; font-size: 0.9rem; color: rgba(255,255,255,0.85); line-height: 1.7; }
+        .ad-disclaimer i { color: var(--red); font-size: 1.2rem; flex-shrink: 0; margin-top: 4px; }
+        .cast-section { margin: 40px 0 30px 0; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .cast-section h3, .similar-section h3, .details-section h3 { font-size: 1.2rem; margin-bottom: 18px; color: var(--text); font-weight: 800; }
+        .cast-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px; }
+        .cast-member { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; transition: transform 0.3s ease; }
+        .cast-member:hover { transform: translateY(-4px); }
+        .cast-avatar { width: 110px; height: 110px; border-radius: 50%; background: var(--bg-card); border: 2px solid rgba(229, 9, 20, 0.2); overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.3s ease; }
         .cast-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .cast-avatar-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-card) 100%); display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 2.2rem; }
-        .cast-name { font-size: 0.95rem; font-weight: 700; }
-        .cast-character { font-size: 0.85rem; color: var(--text-muted); }
-        .details-section { margin: 60px 0 40px 0; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .details-section p { color: rgba(255,255,255,0.8); font-size: 1rem; line-height: 1.8; max-width: 900px; }
+        .cast-avatar-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-card) 100%); display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 2rem; }
+        .cast-name { font-size: 0.85rem; font-weight: 700; }
+        .cast-character { font-size: 0.75rem; color: var(--text-muted); }
+        .details-section { margin: 40px 0 30px 0; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .details-section p { color: rgba(255,255,255,0.8); font-size: 0.95rem; line-height: 1.8; max-width: 900px; }
         
-        .similar-section { margin: 60px 0 40px 0; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .similar-section { margin: 40px 0 30px 0; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); }
         .similar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--poster-min), 1fr)); gap: 10px; }
         .similar-card { position: relative; cursor: pointer; border-radius: 8px; overflow: hidden; background: var(--bg-card); transition: transform 0.3s ease, box-shadow 0.3s ease; text-decoration: none; color: var(--text); }
         .similar-card:hover { transform: scale(1.05); z-index: 10; box-shadow: 0 12px 30px rgba(0,0,0,0.8), 0 0 0 2px rgba(229,9,20,0.5); }
@@ -198,55 +199,56 @@
         .similar-card-title { font-weight: 700; font-size: 0.8rem; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .similar-card-rating { font-size: 0.7rem; color: var(--gold); margin-bottom: 4px; }
         .similar-card-type { font-size: 0.65rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .similar-empty { grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 40px 20px; font-size: 1rem; }
+        .similar-empty { grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 30px 20px; font-size: 0.95rem; }
         
-        .episode-guide { margin: 60px 0 40px 0; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .season-cards { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 24px; }
-        .season-card { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; min-width: 130px; cursor: pointer; transition: all 0.3s ease; flex-shrink: 0; }
-        .season-card:hover { border-color: var(--red); transform: translateY(-4px); }
+        .episode-guide { margin: 40px 0 30px 0; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .season-cards { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 18px; }
+        .season-card { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; min-width: 120px; cursor: pointer; transition: all 0.3s ease; flex-shrink: 0; }
+        .season-card:hover { border-color: var(--red); transform: translateY(-3px); }
         .season-card.active { border-color: var(--red); box-shadow: 0 12px 32px rgba(229,9,20,0.25); }
-        .season-poster { width: 100%; height: 150px; object-fit: cover; background: rgba(255,255,255,0.05); }
-        .season-label { padding: 12px; font-size: 0.85rem; font-weight: 700; text-align: center; }
-        .seasons-select { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.15); color: var(--text); padding: 12px 16px; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; font-family: 'Inter', sans-serif; margin-bottom: 20px; width: 100%; max-width: 350px; font-weight: 600; }
-        .episodes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; max-height: 550px; overflow-y: auto; }
-        .episode-item { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; cursor: pointer; transition: all 0.3s ease; overflow: hidden; display: flex; flex-direction: column; }
-        .episode-item:hover { border-color: var(--red); background: var(--bg-elevated); transform: translateY(-4px); }
+        .season-poster { width: 100%; height: 130px; object-fit: cover; background: rgba(255,255,255,0.05); }
+        .season-label { padding: 10px; font-size: 0.8rem; font-weight: 700; text-align: center; }
+        .seasons-select { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.15); color: var(--text); padding: 10px 14px; border-radius: 8px; font-size: 0.95rem; cursor: pointer; transition: all 0.3s ease; font-family: 'Inter', sans-serif; margin-bottom: 16px; width: 100%; max-width: 300px; font-weight: 600; }
+        .episodes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; max-height: 500px; overflow-y: auto; }
+        .episode-item { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; cursor: pointer; transition: all 0.3s ease; overflow: hidden; display: flex; flex-direction: column; }
+        .episode-item:hover { border-color: var(--red); background: var(--bg-elevated); transform: translateY(-3px); }
         .episode-item.active { border-color: var(--red); box-shadow: 0 12px 32px rgba(229,9,20,0.25); }
         .episode-thumb { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: rgba(255,255,255,0.04); }
-        .episode-content { padding: 14px; text-align: left; flex: 1; display: flex; flex-direction: column; }
-        .episode-num { font-weight: 800; color: var(--red); font-size: 0.95rem; margin-bottom: 6px; }
-        .episode-name { color: var(--text); font-size: 0.9rem; line-height: 1.35; min-height: 2.7em; }
-        .episode-meta { color: var(--text-muted); font-size: 0.8rem; margin-top: 8px; }
-        .toast { position: fixed; bottom: 30px; right: 30px; background: rgba(11, 11, 15, 0.98); color: white; padding: 16px 24px; border-radius: 8px; border-left: 4px solid var(--red); z-index: 9999; font-size: 14px; font-weight: 600; box-shadow: 0 12px 40px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 12px; animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); max-width: 90vw; backdrop-filter: blur(12px); border: 1px solid rgba(229, 9, 20, 0.3); }
+        .episode-content { padding: 10px 12px; text-align: left; flex: 1; display: flex; flex-direction: column; }
+        .episode-num { font-weight: 800; color: var(--red); font-size: 0.85rem; margin-bottom: 4px; }
+        .episode-name { color: var(--text); font-size: 0.85rem; line-height: 1.3; min-height: 2.6em; }
+        .episode-meta { color: var(--text-muted); font-size: 0.75rem; margin-top: 6px; }
+        .toast { position: fixed; bottom: 30px; right: 30px; background: rgba(11, 11, 15, 0.98); color: white; padding: 14px 20px; border-radius: 8px; border-left: 4px solid var(--red); z-index: 9999; font-size: 13px; font-weight: 600; box-shadow: 0 12px 40px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); max-width: 90vw; backdrop-filter: blur(12px); border: 1px solid rgba(229, 9, 20, 0.3); }
         @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         .toast.error { border-left-color: #ff6b6b; }
         .toast.success { border-left-color: var(--green); }
         
         @media (max-width: 768px) {
-            .nav { padding: 14px 16px; gap: 12px; }
-            .nav-logo { font-size: 1.3rem; }
-            .btn-back { font-size: 0.75rem; padding: 8px 12px; }
+            .nav { padding: 12px 14px; gap: 10px; }
+            .nav-logo { font-size: 1.2rem; }
+            .btn-back { font-size: 0.7rem; padding: 6px 10px; }
             .btn-back span { display: none; }
             .adblock-status { display: none; }
-            .media-hero { height: 70vh; }
-            .hero-content { grid-template-columns: 1fr; gap: 20px; padding: 30px 16px 50px; }
-            .hero-poster { width: 180px; height: 270px; margin: 0 auto; }
-            .hero-title { font-size: 2rem; }
-            .player-section { padding: 30px 16px; }
-            .server-btn { padding: 5px 10px; font-size: 0.75rem; }
-            .player-container { min-height: 220px; }
-            .player-title-bar { padding: 10px 14px; flex-direction: column; align-items: stretch; gap: 8px; }
-            .player-title-bar .title { font-size: 0.9rem; }
+            .media-hero { height: 60vh; min-height: 300px; }
+            .hero-content { grid-template-columns: 1fr; gap: 16px; padding: 20px 14px 40px; }
+            .hero-poster { width: 140px; height: 210px; margin: 0 auto; }
+            .hero-title { font-size: 1.8rem; }
+            .hero-description { -webkit-line-clamp: 2; font-size: 0.85rem; }
+            .player-section { padding: 20px 14px; }
+            .server-btn { padding: 4px 8px; font-size: 0.7rem; }
+            .player-container { min-height: 180px; }
+            .player-title-bar { padding: 8px 12px; flex-direction: column; align-items: stretch; gap: 6px; }
+            .player-title-bar .title { font-size: 0.85rem; }
             .player-title-bar .controls { justify-content: flex-end; }
-            .player-title-bar .controls .player-btn { padding: 6px 10px; font-size: 0.7rem; }
+            .player-title-bar .controls .player-btn { padding: 5px 8px; font-size: 0.65rem; }
             .player-title-bar .controls .player-btn span { display: none; }
-            .ad-disclaimer { padding: 14px 16px; font-size: 0.9rem; margin: 30px 0; }
-            .cast-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 18px; }
-            .cast-avatar { width: 100px; height: 100px; }
-            .cast-name { font-size: 0.85rem; }
-            .cast-character { font-size: 0.75rem; }
-            .episodes-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-            .similar-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+            .ad-disclaimer { padding: 12px 14px; font-size: 0.85rem; margin: 20px 0; }
+            .cast-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 14px; }
+            .cast-avatar { width: 80px; height: 80px; }
+            .cast-name { font-size: 0.8rem; }
+            .cast-character { font-size: 0.7rem; }
+            .episodes-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+            .similar-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
         }
     </style>
 </head>
@@ -265,12 +267,12 @@
             <div class="hero-backdrop" id="heroBackdrop"></div>
             <div class="hero-overlay"></div>
             <div class="hero-content">
-                <div class="hero-poster"><img id="posterImg" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 280 420%22%3E%3Crect fill=%22%23222%22 width=%22280%22 height=%22420%22/%3E%3C/svg%3E" alt="Poster"></div>
+                <div class="hero-poster"><img id="posterImg" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 280 420%22%3E%3Crect fill=%22%23222%22 width=%22280%22 height=%22420%22/%3E%3C/svg%3E" alt="Poster" loading="lazy"></div>
                 <div class="hero-info">
                     <h1 class="hero-title" id="titleText">Loading...</h1>
                     <div class="hero-meta" id="metaRow"></div>
                     <div class="hero-genres" id="genresRow"></div>
-                    <p class="hero-description" id="overviewText">Discover an amazing story...</p>
+                    <p class="hero-description" id="overviewText">Loading description...</p>
                 </div>
             </div>
         </div>
@@ -345,7 +347,7 @@
         'use strict';
         (function() {
             // ═══════════════════════════════════════════════
-            // ═══ ENHANCED AD BLOCKER - Fixed Redirects ═══
+            // ═══ ENHANCED AD BLOCKER - Performance Optimized ═══
             // ═══════════════════════════════════════════════
             class EnhancedAdBlocker {
                 constructor() {
@@ -353,60 +355,51 @@
                     this.popupBlocked = 0;
                     this.redirectBlocked = 0;
                     this.iframeBlocked = 0;
+                    this._initialized = false;
                     
-                    // Comprehensive ad domain list
                     this.adDomains = [
                         'googlesyndication.com', 'doubleclick.net', 'adservice.google.com',
                         'googleads.g.doubleclick.net', 'googleadservices.com',
                         'ads-twitter.com', 'facebook.com/ads', 'fbcdn.net',
                         'rubiconproject.com', 'pubmatic.com', 'openx.net',
                         'spotxchange.com', 'adroll.com', 'criteo.com',
-                        'casalemedia.com', 'amazon-adsystem.com',
-                        'taboola.com', 'outbrain.com', 'exoclick.com',
-                        'adnxs.com', 'adsrvr.org', 'adzerk.net',
-                        'adform.net', 'bidswitch.net', 'bluekai.com',
+                        'casalemedia.com', 'amazon-adsystem.com', 'taboola.com',
+                        'outbrain.com', 'exoclick.com', 'adnxs.com', 'adsrvr.org',
+                        'adzerk.net', 'adform.net', 'bidswitch.net', 'bluekai.com',
                         'contextweb.com', 'doubleverify.com', 'eplanning.net',
                         'eyeota.net', 'flashtalking.com', 'google-analytics.com',
-                        'googletagmanager.com', 'googletagservices.com',
-                        'gumgum.com', 'indexexchange.com', 'lijit.com',
-                        'lotame.com', 'mopub.com', 'quantcast.com',
-                        'scorecardresearch.com', 'sharethrough.com',
-                        'smartadserver.com', 'sovrn.com', 'spotx.tv',
-                        'tremorhub.com', 'turn.com', 'yieldmo.com',
-                        'zedo.com', 'vidoomy.com', 'adserver.video',
-                        'video-ad.com', 'prebid.org', 'vast.ad',
+                        'googletagmanager.com', 'googletagservices.com', 'gumgum.com',
+                        'indexexchange.com', 'lijit.com', 'lotame.com', 'mopub.com',
+                        'quantcast.com', 'scorecardresearch.com', 'sharethrough.com',
+                        'smartadserver.com', 'sovrn.com', 'spotx.tv', 'tremorhub.com',
+                        'turn.com', 'yieldmo.com', 'zedo.com', 'vidoomy.com',
+                        'adserver.video', 'video-ad.com', 'prebid.org', 'vast.ad',
                         'vpaid.com', 'ima3.video', 'adserver-video.com',
-                        'video-advertising.com', 'video-ads.com',
-                        'ad-video.com', 'videos-ad.com', 'vast-player.com',
-                        'vpaid-player.com', 'video-ad-sdk.com', 'ad-video-sdk.com',
-                        'popads.net', 'popcash.net', 'popunder.com',
-                        'popup-ad.com', 'pop-under.com', 'adpop.com',
-                        'popad.net', 'popunder.io', 'popup-service.com',
+                        'video-advertising.com', 'video-ads.com', 'ad-video.com',
+                        'videos-ad.com', 'vast-player.com', 'vpaid-player.com',
+                        'video-ad-sdk.com', 'ad-video-sdk.com', 'popads.net',
+                        'popcash.net', 'popunder.com', 'popup-ad.com', 'pop-under.com',
+                        'adpop.com', 'popad.net', 'popunder.io', 'popup-service.com',
                         'adware.com', 'malware.com', 'redirectingat.com',
                         'redirect-tracker.com', 'ad-redirect.com', 'tracking-ad.com',
                         'ad-tracking.com', 'tracking-service.com', 'redirect-ad.com',
                         'ad-traffic.com', 'clicktracking.com', 'ad-track.com',
                         'streaming-ads.com', 'stream-ad.com', 'streaming-ad.com',
-                        'ad-stream.com', 'streamingad.com', 'streamad.com',
-                        'live-ad.com', 'outlookads.com', 'adexchange.com',
-                        'adserver.com', 'adtech.com', 'advertising.com',
-                        'adx.com', 'bidder.com', 'exelator.com',
+                        'ad-stream.com', 'streamingad.com', 'streamad.com', 'live-ad.com',
+                        'outlookads.com', 'adexchange.com', 'adserver.com', 'adtech.com',
+                        'advertising.com', 'adx.com', 'bidder.com', 'exelator.com',
                         'gravity.com', 'imrworldwide.com', 'insightexpress.com',
-                        'leadbolt.net', 'liveperson.net', 'ml314.com',
-                        'moatads.com', 'neustar.biz', 'onclickads.net',
-                        'pointroll.com', 'poptm.com', 'pulsemgr.com',
-                        'revsci.net', 'rhythmone.com', 'sitescout.com',
+                        'leadbolt.net', 'liveperson.net', 'ml314.com', 'moatads.com',
+                        'neustar.biz', 'onclickads.net', 'pointroll.com', 'poptm.com',
+                        'pulsemgr.com', 'revsci.net', 'rhythmone.com', 'sitescout.com',
                         'specificmedia.com', 'tradedoubler.com', 'trafficfactory.biz',
                         'tremorvideo.com', 'undertone.com', 'vibrantmedia.com',
-                        'videoegg.com', 'vidiem.com', 'virool.com',
-                        'weborama.com', 'yieldmanager.com',
-                        // Redirect domains
-                        'go.redirectingat.com', 'click.linksynergy.com',
+                        'videoegg.com', 'vidiem.com', 'virool.com', 'weborama.com',
+                        'yieldmanager.com', 'go.redirectingat.com', 'click.linksynergy.com',
                         'ad.doubleclick.net', 'adclick.g.doubleclick.net',
                         'googleads.g.doubleclick.net', 'pubads.g.doubleclick.net'
                     ];
                     
-                    // Ad URL patterns
                     this.adPatterns = [
                         /[/?&]ad(=|_|\.)/i, /[/?&]advert/i, /[/?&]banner/i,
                         /[/?&]sponsor/i, /[/?&]promo/i, /[/?&]affiliate/i,
@@ -420,48 +413,32 @@
                         /adform\.net/i, /smartadserver\.com/i, /yieldmo\.com/i,
                         /zedo\.com/i, /spotx\.tv/i, /adserver\.video/i,
                         /vast\.ad/i, /vpaid/i, /ima3\.video/i, /prebid\.org/i,
-                        /redirect/i, /click\.php/i, /track\.php/i,
-                        /affiliate/i, /partner/i, /promo/i
+                        /redirect/i, /click\.php/i, /track\.php/i, /affiliate/i,
+                        /partner/i, /promo/i
                     ];
                     
                     this.init();
                 }
 
                 init() {
-                    // Block fetch requests
+                    if (this._initialized) return;
+                    this._initialized = true;
+                    
                     this.interceptFetch();
-                    
-                    // Block XHR requests
                     this.interceptXHR();
-                    
-                    // Block popups and redirects
                     this.blockPopupsAndRedirects();
-                    
-                    // Block iframe creation
                     this.blockIframes();
-                    
-                    // Block script injection
                     this.blockScripts();
-                    
-                    // Block image requests
                     this.blockImages();
-                    
-                    // Block WebSocket connections
                     this.blockWebSockets();
-                    
-                    // Block navigator.sendBeacon
                     this.blockBeacon();
-                    
-                    // Block meta refresh redirects
                     this.blockMetaRedirects();
-                    
-                    // Block window.location redirects
                     this.blockLocationRedirects();
                     
-                    // Clean up ad elements periodically
-                    setInterval(() => this.cleanupAdElements(), 5000);
+                    // Clean up less frequently for performance
+                    setInterval(() => this.cleanupAdElements(), 8000);
                     
-                    console.log('🔒 [HR OTT] Enhanced AdBlocker initialized with redirect protection');
+                    console.log('🔒 [HR OTT] AdBlocker initialized');
                 }
 
                 isAdUrl(url) {
@@ -482,12 +459,10 @@
                 interceptFetch() {
                     const self = this;
                     const origFetch = window.fetch;
-                    
                     window.fetch = function(...args) {
                         const url = String(args[0] || '');
                         if (self.isAdUrl(url)) {
                             self.blockedCount++;
-                            console.log(`[AdBlocker] Blocked fetch: ${url}`);
                             return Promise.reject(new Error('Ad blocked'));
                         }
                         return origFetch.apply(this, args);
@@ -497,14 +472,10 @@
                 interceptXHR() {
                     const self = this;
                     const origOpen = XMLHttpRequest.prototype.open;
-                    
                     XMLHttpRequest.prototype.open = function(method, url, ...rest) {
                         if (self.isAdUrl(url)) {
                             self.blockedCount++;
-                            console.log(`[AdBlocker] Blocked XHR: ${url}`);
-                            setTimeout(() => {
-                                try { this.abort(); } catch(e) {}
-                            }, 0);
+                            setTimeout(() => { try { this.abort(); } catch(e) {} }, 0);
                             return;
                         }
                         return origOpen.call(this, method, url, ...rest);
@@ -513,44 +484,23 @@
 
                 blockPopupsAndRedirects() {
                     const self = this;
-                    
-                    // Block window.open
                     const origOpen = window.open;
                     window.open = function(url, name, features) {
                         if (url && self.isAdUrl(url)) {
                             self.blockedCount++;
                             self.popupBlocked++;
-                            console.log(`[AdBlocker] Blocked popup: ${url}`);
                             return null;
                         }
                         return origOpen.call(this, url, name, features);
                     };
                     
-                    // Block click redirects
                     document.addEventListener('click', function(e) {
                         const target = e.target.closest('a');
-                        if (target) {
-                            const href = target.href || '';
-                            if (self.isAdUrl(href)) {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                self.blockedCount++;
-                                self.redirectBlocked++;
-                                console.log(`[AdBlocker] Blocked redirect: ${href}`);
-                                return false;
-                            }
-                        }
-                    }, true);
-                    
-                    // Block form submissions to ad URLs
-                    document.addEventListener('submit', function(e) {
-                        const form = e.target;
-                        if (form && form.action && self.isAdUrl(form.action)) {
+                        if (target && target.href && self.isAdUrl(target.href)) {
                             e.preventDefault();
                             e.stopPropagation();
                             self.blockedCount++;
                             self.redirectBlocked++;
-                            console.log(`[AdBlocker] Blocked form submission: ${form.action}`);
                             return false;
                         }
                     }, true);
@@ -559,7 +509,6 @@
                 blockIframes() {
                     const self = this;
                     const origCreateElement = document.createElement.bind(document);
-                    
                     document.createElement = function(tagName, options) {
                         const element = origCreateElement(tagName, options);
                         if (tagName.toLowerCase() === 'iframe') {
@@ -568,28 +517,10 @@
                                 if (name === 'src' && self.isAdUrl(value)) {
                                     self.blockedCount++;
                                     self.iframeBlocked++;
-                                    console.log(`[AdBlocker] Blocked iframe: ${value}`);
                                     value = 'about:blank';
                                 }
                                 return origSetAttribute(name, value);
                             };
-                            
-                            // Intercept src property
-                            const desc = Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype, 'src');
-                            if (desc) {
-                                Object.defineProperty(element, 'src', {
-                                    get: function() { return desc.get.call(this); },
-                                    set: function(value) {
-                                        if (self.isAdUrl(value)) {
-                                            self.blockedCount++;
-                                            self.iframeBlocked++;
-                                            console.log(`[AdBlocker] Blocked iframe src: ${value}`);
-                                            value = 'about:blank';
-                                        }
-                                        return desc.set.call(this, value);
-                                    }
-                                });
-                            }
                         }
                         return element;
                     };
@@ -598,7 +529,6 @@
                 blockScripts() {
                     const self = this;
                     const origCreateElement = document.createElement.bind(document);
-                    
                     document.createElement = function(tagName, options) {
                         const element = origCreateElement(tagName, options);
                         if (tagName.toLowerCase() === 'script') {
@@ -606,26 +536,10 @@
                             element.setAttribute = function(name, value) {
                                 if (name === 'src' && self.isAdUrl(value)) {
                                     self.blockedCount++;
-                                    console.log(`[AdBlocker] Blocked script: ${value}`);
                                     return;
                                 }
                                 return origSetAttribute(name, value);
                             };
-                            
-                            const desc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');
-                            if (desc) {
-                                Object.defineProperty(element, 'src', {
-                                    get: function() { return desc.get.call(this); },
-                                    set: function(value) {
-                                        if (self.isAdUrl(value)) {
-                                            self.blockedCount++;
-                                            console.log(`[AdBlocker] Blocked script src: ${value}`);
-                                            value = '';
-                                        }
-                                        return desc.set.call(this, value);
-                                    }
-                                });
-                            }
                         }
                         return element;
                     };
@@ -634,7 +548,6 @@
                 blockImages() {
                     const self = this;
                     const origCreateElement = document.createElement.bind(document);
-                    
                     document.createElement = function(tagName, options) {
                         const element = origCreateElement(tagName, options);
                         if (tagName.toLowerCase() === 'img') {
@@ -642,26 +555,10 @@
                             element.setAttribute = function(name, value) {
                                 if (name === 'src' && self.isAdUrl(value)) {
                                     self.blockedCount++;
-                                    console.log(`[AdBlocker] Blocked image: ${value}`);
                                     value = '';
                                 }
                                 return origSetAttribute(name, value);
                             };
-                            
-                            const desc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
-                            if (desc) {
-                                Object.defineProperty(element, 'src', {
-                                    get: function() { return desc.get.call(this); },
-                                    set: function(value) {
-                                        if (self.isAdUrl(value)) {
-                                            self.blockedCount++;
-                                            console.log(`[AdBlocker] Blocked image src: ${value}`);
-                                            value = '';
-                                        }
-                                        return desc.set.call(this, value);
-                                    }
-                                });
-                            }
                         }
                         return element;
                     };
@@ -670,11 +567,9 @@
                 blockWebSockets() {
                     const self = this;
                     const origWebSocket = window.WebSocket;
-                    
                     window.WebSocket = function(url, protocols) {
                         if (self.isAdUrl(url)) {
                             self.blockedCount++;
-                            console.log(`[AdBlocker] Blocked WebSocket: ${url}`);
                             return {
                                 readyState: 3,
                                 close: function() {},
@@ -691,11 +586,9 @@
                 blockBeacon() {
                     const self = this;
                     const origSendBeacon = navigator.sendBeacon;
-                    
                     navigator.sendBeacon = function(url, data) {
                         if (self.isAdUrl(url)) {
                             self.blockedCount++;
-                            console.log(`[AdBlocker] Blocked beacon: ${url}`);
                             return true;
                         }
                         return origSendBeacon.call(this, url, data);
@@ -712,7 +605,6 @@
                                 meta.remove();
                                 self.blockedCount++;
                                 self.redirectBlocked++;
-                                console.log(`[AdBlocker] Blocked meta refresh redirect: ${urlMatch[1]}`);
                             }
                         });
                     });
@@ -721,44 +613,21 @@
 
                 blockLocationRedirects() {
                     const self = this;
-                    const origLocationSet = Object.getOwnPropertyDescriptor(window.location, 'href')?.set;
-                    
-                    if (origLocationSet) {
-                        Object.defineProperty(window.location, 'href', {
-                            set: function(value) {
-                                if (self.isAdUrl(value)) {
-                                    self.blockedCount++;
-                                    self.redirectBlocked++;
-                                    console.log(`[AdBlocker] Blocked location redirect: ${value}`);
-                                    return;
-                                }
-                                return origLocationSet.call(this, value);
-                            },
-                            get: function() {
-                                return window.location.href;
-                            }
-                        });
-                    }
-                    
-                    // Block window.location.assign
                     const origAssign = window.location.assign;
                     window.location.assign = function(url) {
                         if (self.isAdUrl(url)) {
                             self.blockedCount++;
                             self.redirectBlocked++;
-                            console.log(`[AdBlocker] Blocked location.assign: ${url}`);
                             return;
                         }
                         return origAssign.call(this, url);
                     };
                     
-                    // Block window.location.replace
                     const origReplace = window.location.replace;
                     window.location.replace = function(url) {
                         if (self.isAdUrl(url)) {
                             self.blockedCount++;
                             self.redirectBlocked++;
-                            console.log(`[AdBlocker] Blocked location.replace: ${url}`);
                             return;
                         }
                         return origReplace.call(this, url);
@@ -769,33 +638,23 @@
                     const selectors = [
                         '[id*="ad" i]', '[class*="ad" i]', 
                         '[id*="banner" i]', '[class*="banner" i]',
-                        '[id*="sponsor" i]', '[class*="sponsor" i]',
-                        '[id*="promo" i]', '[class*="promo" i]',
                         '.ad-container', '.ad-wrapper', '.ad-banner',
                         '.advertisement', '.google-ads', '.adsbygoogle',
                         '.ad-slot', '.ad-unit', '.ad-frame',
                         '[data-ad]', '[data-ad-slot]', '[data-ad-unit]',
                         '.video-ads', '.player-ads', '.stream-ads',
-                        'iframe[src*="ad"]', 'iframe[src*="banner"]',
-                        'div[style*="z-index:999"][style*="position:fixed"]'
+                        'iframe[src*="ad"]', 'div[style*="z-index:999"][style*="position:fixed"]'
                     ];
                     
                     try {
                         document.querySelectorAll(selectors.join(',')).forEach(el => {
                             if (el && el.parentNode) {
-                                const rect = el.getBoundingClientRect();
-                                if (rect.width > 0 && rect.height > 0) {
-                                    el.style.display = 'none';
-                                    el.style.pointerEvents = 'none';
-                                    el.style.opacity = '0';
-                                    el.style.height = '0';
-                                    el.style.overflow = 'hidden';
-                                    // Remove popup overlays
-                                    if (el.style.position === 'fixed' || el.style.position === 'absolute') {
-                                        setTimeout(() => {
-                                            if (el.parentNode) el.parentNode.removeChild(el);
-                                        }, 500);
-                                    }
+                                el.style.display = 'none';
+                                el.style.pointerEvents = 'none';
+                                if (el.style.position === 'fixed' || el.style.position === 'absolute') {
+                                    setTimeout(() => {
+                                        if (el.parentNode) el.parentNode.removeChild(el);
+                                    }, 500);
                                 }
                             }
                         });
@@ -833,9 +692,7 @@
                         timestamp: Date.now()
                     };
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-                } catch (e) {
-                    console.warn('Could not save state:', e);
-                }
+                } catch (e) {}
             }
 
             function loadState() {
@@ -848,9 +705,7 @@
                         return null;
                     }
                     return state;
-                } catch (e) {
-                    return null;
-                }
+                } catch (e) { return null; }
             }
 
             function updateUrlWithoutReload(id, type, season, episode, source) {
@@ -862,9 +717,7 @@
                     if (episode) url.searchParams.set('e', episode);
                     if (source) url.searchParams.set('source', source);
                     window.history.replaceState({}, '', url);
-                } catch (e) {
-                    console.warn('Could not update URL:', e);
-                }
+                } catch (e) {}
             }
 
             // ═══════ TMDB CONFIG ═══════
@@ -894,6 +747,7 @@
             let currentSource = 1;
             let isLoading = false;
             let mediaData = null;
+            let isInitialLoad = true;
             const playerSources = {};
 
             // ═══════ HELPERS ═══════
@@ -905,7 +759,7 @@
                 t.className = `toast ${type}`;
                 t.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}-circle"></i>${msg}`;
                 document.body.appendChild(t);
-                setTimeout(() => t.remove(), 3500);
+                setTimeout(() => t.remove(), 3000);
             }
 
             function buildIframe(src) {
@@ -916,7 +770,6 @@
                 i.setAttribute('allowfullscreen', 'true');
                 i.setAttribute('webkitallowfullscreen', 'true');
                 i.setAttribute('mozallowfullscreen', 'true');
-                i.sandbox = 'allow-same-origin allow-scripts allow-popups allow-forms allow-modals';
                 i.referrerPolicy = 'no-referrer';
                 i.loading = 'eager';
                 return i;
@@ -968,7 +821,12 @@
                 currentSource = key;
                 const container = document.getElementById('playerContainer');
                 const oldIframe = container.querySelector('iframe');
-                if (oldIframe) oldIframe.remove();
+                if (oldIframe) {
+                    try {
+                        oldIframe.src = 'about:blank';
+                        oldIframe.remove();
+                    } catch(e) {}
+                }
                 
                 const loading = document.getElementById('playerLoading');
                 loading.classList.remove('hidden');
@@ -983,7 +841,7 @@
                         isLoading = false; 
                         showToast(`Failed to load ${source.displayName}. Try another server.`, 'error');
                     }
-                }, 20000);
+                }, 15000);
                 
                 iframe.onload = () => { 
                     if (!loaded) {
@@ -991,7 +849,9 @@
                         clearTimeout(timeout); 
                         loading.classList.add('hidden'); 
                         isLoading = false; 
-                        showToast(`Playing with ${source.displayName}`, 'success'); 
+                        if (!isInitialLoad) {
+                            showToast(`Playing with ${source.displayName}`, 'success');
+                        }
                     }
                 };
                 
@@ -1026,6 +886,7 @@
                 });
                 
                 updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource);
+                isInitialLoad = false;
             }
 
             // ═══════ SERVER BUTTONS ═══════
@@ -1041,7 +902,16 @@
                     b.type = 'button';
                     b.innerHTML = `<i class="fas fa-server"></i> Server ${k}`;
                     b.title = s.displayName;
-                    b.onclick = () => loadPlayerEmbed(parseInt(k));
+                    b.onclick = function(e) {
+                        e.preventDefault();
+                        const srcKey = parseInt(this.dataset.source);
+                        if (srcKey !== currentSource) {
+                            loadPlayerEmbed(srcKey);
+                        } else {
+                            // Reload if same server
+                            loadPlayerEmbed(srcKey);
+                        }
+                    };
                     container.appendChild(b);
                 });
             }
@@ -1061,7 +931,7 @@
                     const photoUrl = member.profile_path ? `${TMDB_IMG}${member.profile_path}` : null;
                     castEl.innerHTML = `
                         <div class="cast-avatar">
-                            ${photoUrl ? `<img src="${photoUrl}" alt="${member.name}" onerror="this.parentElement.innerHTML='<div class=\\'cast-avatar-placeholder\\'><i class=\\'fas fa-user\\'></i></div>'">` : `<div class="cast-avatar-placeholder"><i class="fas fa-user"></i></div>`}
+                            ${photoUrl ? `<img src="${photoUrl}" alt="${member.name}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'cast-avatar-placeholder\\'><i class=\\'fas fa-user\\'></i></div>'">` : `<div class="cast-avatar-placeholder"><i class="fas fa-user"></i></div>`}
                         </div>
                         <div class="cast-name">${member.name}</div>
                         ${member.character ? `<div class="cast-character">${member.character}</div>` : ''}
@@ -1088,16 +958,10 @@
                 let titleText = '';
                 
                 if (currentType === 'movie') {
-                    endpoints = [
-                        `/movie/${currentId}/similar`,
-                        `/movie/${currentId}/recommendations`
-                    ];
+                    endpoints = [`/movie/${currentId}/similar`, `/movie/${currentId}/recommendations`];
                     titleText = '<i class="fas fa-film"></i> Similar Movies';
                 } else if (currentType === 'tv') {
-                    endpoints = [
-                        `/tv/${currentId}/similar`,
-                        `/tv/${currentId}/recommendations`
-                    ];
+                    endpoints = [`/tv/${currentId}/similar`, `/tv/${currentId}/recommendations`];
                     titleText = '<i class="fas fa-tv"></i> Similar TV Shows';
                 } else {
                     similarSection.style.display = 'none';
@@ -1121,9 +985,7 @@
                                 break;
                             }
                         }
-                    } catch (e) {
-                        console.warn(`Failed to fetch ${endpoint}:`, e);
-                    }
+                    } catch (e) {}
                 }
                 
                 if (allResults.length === 0 && mediaData && mediaData.genres) {
@@ -1142,9 +1004,7 @@
                                     .slice(0, 12);
                             }
                         }
-                    } catch (e) {
-                        console.warn('Genre discovery failed:', e);
-                    }
+                    } catch (e) {}
                 }
                 
                 if (allResults.length === 0) {
@@ -1160,9 +1020,7 @@
                                 .filter(m => m.poster_path && m.id != currentId)
                                 .slice(0, 12);
                         }
-                    } catch (e) {
-                        console.warn('Popular fetch failed:', e);
-                    }
+                    } catch (e) {}
                 }
                 
                 if (allResults.length === 0) {
@@ -1183,7 +1041,7 @@
                     const typeLabel = currentType === 'movie' ? 'Movie' : 'TV Series';
                     
                     card.innerHTML = `
-                        <img src="${poster}" alt="${title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 300%22%3E%3Crect fill=%22%23222%22 width=%22200%22 height=%22300%22/%3E%3Ctext x=%22100%22 y=%22150%22 text-anchor=%22middle%22 fill=%22%23666%22 font-size=%2224%22 font-family=%22Inter,sans-serif%22%3ENo Image%3C/text%3E%3C/svg%3E';">
+                        <img src="${poster}" alt="${title}" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 300%22%3E%3Crect fill=%22%23222%22 width=%22200%22 height=%22300%22/%3E%3Ctext x=%22100%22 y=%22150%22 text-anchor=%22middle%22 fill=%22%23666%22 font-size=%2224%22 font-family=%22Inter,sans-serif%22%3ENo Image%3C/text%3E%3C/svg%3E';">
                         <div class="similar-card-overlay">
                             <div class="similar-card-type">${typeLabel} · ${year}</div>
                             <div class="similar-card-rating"><i class="fas fa-star"></i> ${rating}</div>
@@ -1233,7 +1091,7 @@
                         card.className = 'season-card' + (s.season_number === currentSeason ? ' active' : '');
                         card.dataset.seasonNumber = s.season_number;
                         const p = s.poster_path ? `${TMDB_IMG}${s.poster_path}` : '';
-                        card.innerHTML = (p ? `<img class="season-poster" src="${p}" alt="">` : `<div class="season-poster" style="display:flex;align-items:center;justify-content:center;font-weight:800;">S${s.season_number}</div>`) + `<div class="season-label">Season ${s.season_number}</div>`;
+                        card.innerHTML = (p ? `<img class="season-poster" src="${p}" alt="" loading="lazy">` : `<div class="season-poster" style="display:flex;align-items:center;justify-content:center;font-weight:800;">S${s.season_number}</div>`) + `<div class="season-label">Season ${s.season_number}</div>`;
                         card.onclick = () => {
                             currentSeason = s.season_number;
                             currentEpisode = 1;
@@ -1257,8 +1115,7 @@
                     };
                     
                     loadSeasonEpisodes(currentSeason, currentId);
-                } catch (e) { 
-                    console.error('Episode guide error:', e);
+                } catch (e) {
                     guide.style.display = 'none';
                 }
             }
@@ -1282,7 +1139,7 @@
                         item.type = 'button';
                         item.className = 'episode-item' + (ep.episode_number === currentEpisode && s === currentSeason ? ' active' : '');
                         const still = ep.still_path ? `${TMDB_IMG}${ep.still_path}` : '';
-                        const thumb = still ? `<img class="episode-thumb" src="${still}" alt="">` : `<div class="episode-thumb" style="display:flex;align-items:center;justify-content:center;font-weight:800;">EP${ep.episode_number}</div>`;
+                        const thumb = still ? `<img class="episode-thumb" src="${still}" alt="" loading="lazy">` : `<div class="episode-thumb" style="display:flex;align-items:center;justify-content:center;font-weight:800;">EP${ep.episode_number}</div>`;
                         item.innerHTML = thumb + `<div class="episode-content"><div class="episode-num">Ep ${ep.episode_number}</div><div class="episode-name">${ep.name || 'Unknown'}</div><div class="episode-meta">${ep.runtime || 'TBA'} min</div></div>`;
                         item.onclick = () => {
                             currentEpisode = ep.episode_number;
@@ -1293,9 +1150,7 @@
                         };
                         grid.appendChild(item);
                     });
-                } catch (e) { 
-                    console.error('Episodes error:', e);
-                }
+                } catch (e) {}
             }
 
             // ═══════ FETCH MEDIA DETAILS ═══════
@@ -1344,7 +1199,6 @@
                     document.getElementById('genresRow').innerHTML = genres.map(g => `<div class="genre-tag">${g.name}</div>`).join('') || '<div class="genre-tag">N/A</div>';
                     
                     renderCast(cast);
-                    
                     updatePlayerTitle();
                     
                     saveState({
@@ -1421,9 +1275,6 @@
                 
                 const stats = adBlocker.getStats();
                 console.log(`🛡️ [AdBlocker] Active - ${stats.totalBlocked} ads blocked`);
-                console.log(`   ├─ Popups: ${stats.popupsBlocked}`);
-                console.log(`   ├─ Redirects: ${stats.redirectBlocked}`);
-                console.log(`   └─ Iframes: ${stats.iframesBlocked}`);
             }
 
             // ═══════ EVENT LISTENERS ═══════
@@ -1436,26 +1287,28 @@
                 }, 50);
             }, { passive: true });
 
-            document.getElementById('playerFullscreenBtn')?.addEventListener('click', async () => {
+            document.getElementById('playerFullscreenBtn')?.addEventListener('click', function(e) {
+                e.preventDefault();
                 const container = document.getElementById('playerContainer');
                 try {
                     if (!document.fullscreenElement) {
                         if (container.requestFullscreen) {
-                            await container.requestFullscreen();
+                            container.requestFullscreen();
                         } else if (container.webkitRequestFullscreen) {
-                            await container.webkitRequestFullscreen();
+                            container.webkitRequestFullscreen();
                         }
                     } else {
                         if (document.exitFullscreen) {
-                            await document.exitFullscreen();
+                            document.exitFullscreen();
                         } else if (document.webkitExitFullscreen) {
-                            await document.webkitExitFullscreen();
+                            document.webkitExitFullscreen();
                         }
                     }
                 } catch (e) { console.warn('Fullscreen request failed:', e); }
             });
 
-            document.getElementById('playerReloadBtn')?.addEventListener('click', () => {
+            document.getElementById('playerReloadBtn')?.addEventListener('click', function(e) {
+                e.preventDefault();
                 loadPlayerEmbed(currentSource);
                 showToast('Reloading player...', 'success');
             });
@@ -1463,19 +1316,14 @@
             // Update ad blocker status
             setInterval(() => {
                 const stats = adBlocker.getStats();
-                const el = document.getElementById('adblockText');
                 const countEl = document.getElementById('adblockCount');
-                if (el) el.textContent = 'Ad Block: ON';
                 if (countEl) countEl.textContent = `(${stats.totalBlocked} blocked)`;
-            }, 5000);
+            }, 10000);
 
-            // Prevent page from being stuck
+            // Prevent page stuck
             window.addEventListener('beforeunload', () => {
-                // Clean up any stuck iframes
                 document.querySelectorAll('iframe').forEach(iframe => {
-                    try {
-                        iframe.src = 'about:blank';
-                    } catch(e) {}
+                    try { iframe.src = 'about:blank'; } catch(e) {}
                 });
             });
 
