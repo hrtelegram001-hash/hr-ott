@@ -73,19 +73,165 @@
         @keyframes fadeBarIn { to { opacity: 1; } }
         .loading-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--red-dark), var(--red)); animation: loadFill 1.5s ease-in-out 1s forwards; }
         @keyframes loadFill { 0% {width:0%;} 100% {width:100%;} }
+        
+        /* Enhanced Navigation */
         .nav {
             position: fixed; top: 0; left: 0; right: 0; z-index: 100;
             padding: 20px var(--pad); display: flex; align-items: center; gap: 28px;
             background: linear-gradient(180deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.45) 60%, rgba(0,0,0,0) 100%);
-            transition: background 0.3s ease, padding 0.3s ease;
+            transition: all 0.3s ease;
         }
-        .nav.scrolled { background: rgba(11,11,15,0.9); padding: 12px var(--pad); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(255,255,255,0.06); }
-        .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; font-weight: 900; color: var(--red); letter-spacing: 1px; text-transform: uppercase; cursor: pointer; text-shadow: 0 0 20px var(--red-glow); user-select: none; white-space: nowrap; text-decoration: none; }
+        .nav.scrolled { 
+            background: rgba(11,11,15,0.95); 
+            padding: 12px var(--pad); 
+            backdrop-filter: blur(14px); 
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .nav-logo { 
+            font-family: 'Bebas Neue', sans-serif; 
+            font-size: 2rem; 
+            font-weight: 900; 
+            color: var(--red); 
+            letter-spacing: 1px; 
+            text-transform: uppercase; 
+            cursor: pointer; 
+            text-shadow: 0 0 20px var(--red-glow); 
+            user-select: none; 
+            white-space: nowrap; 
+            text-decoration: none;
+            transition: transform 0.3s;
+        }
+        .nav-logo:hover { transform: scale(1.05); }
         .nav-links { display: flex; gap: 22px; font-size: 14px; font-weight: 500; }
-        .nav-links a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; cursor: pointer; }
+        .nav-links a { 
+            color: var(--text-muted); 
+            text-decoration: none; 
+            transition: all 0.2s; 
+            cursor: pointer;
+            position: relative;
+            padding-bottom: 4px;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--red);
+            transition: all 0.3s;
+            transform: translateX(-50%);
+        }
         .nav-links a:hover, .nav-links a.active { color: var(--text); font-weight: 700; }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
         .nav-right { margin-left: auto; display: flex; align-items: center; gap: 18px; }
         
+        /* Page Header for non-home routes */
+        .page-header {
+            padding: 120px var(--pad) 30px;
+            margin-bottom: 10px;
+            background: linear-gradient(180deg, rgba(229,9,20,0.1) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .page-header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .page-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .page-title i {
+            color: var(--red);
+            font-size: 0.8em;
+        }
+        .page-subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 8px;
+        }
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 12px;
+        }
+        .breadcrumb a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .breadcrumb a:hover { color: var(--red); }
+        .breadcrumb .separator { color: var(--text-dim); }
+        .breadcrumb .current { color: var(--text); font-weight: 600; }
+        
+        /* Search Page Styles */
+        .search-page-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px var(--pad);
+        }
+        .search-hero {
+            text-align: center;
+            padding: 20px 0 30px;
+        }
+        .search-hero-icon {
+            font-size: 3rem;
+            color: var(--red);
+            margin-bottom: 15px;
+        }
+        .search-input-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            padding: 16px 50px 16px 20px;
+            background: rgba(30,30,36,0.9);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 50px;
+            color: #fff;
+            font-size: 1.1rem;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+        }
+        .search-input:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 30px rgba(229,9,20,0.2);
+        }
+        .search-submit-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--red);
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .search-submit-btn:hover {
+            background: var(--red-dark);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        /* Enhanced Search Overlay */
         .search-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(11,11,15,0.98); backdrop-filter: blur(20px);
@@ -183,6 +329,7 @@
         .hero-dot { width: 30px; height: 3px; background: rgba(255,255,255,0.3); cursor: pointer; transition: background 0.3s; border-radius: 2px; }
         .hero-dot.active { background: var(--red); }
         .main-content { position: relative; z-index: 5; margin-top: -70px; padding-bottom: 30px; min-height: 60vh; }
+        .main-content.no-hero { margin-top: 0; }
         .continue-watching-section { margin: 0 0 30px; padding: 20px 0; display: none; }
         .continue-watching-section.visible { display: block; }
         .section-header { display: flex; align-items: center; justify-content: space-between; padding: 0 var(--pad); margin-bottom: 15px; }
@@ -251,6 +398,55 @@
         .empty-state { text-align: center; padding: 110px 20px; color: #888; }
         .empty-state i { font-size: 3rem; margin-bottom: 20px; display: block; color: var(--red); }
         .empty-state h2 { font-size: 1.5rem; margin-bottom: 10px; color:#fff; }
+        
+        /* 404 Page */
+        .not-found-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+            padding: 20px;
+        }
+        .not-found-code {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(6rem, 15vw, 12rem);
+            color: var(--red);
+            text-shadow: 0 0 30px var(--red-glow);
+            margin-bottom: 20px;
+        }
+        .not-found-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        .not-found-message {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            max-width: 400px;
+        }
+        .not-found-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 30px;
+            background: var(--red);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .not-found-btn:hover {
+            background: var(--red-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(229,9,20,0.4);
+        }
+        
         .footer-wrapper {
             position: relative;
             z-index: 5;
@@ -308,6 +504,7 @@
             body { padding-bottom: var(--bottom-nav-height); }
             .search-filters-bar { gap: 6px; }
             .filter-select { font-size: 0.75rem; padding: 8px 10px; min-width: 100px; flex: 0 0 auto; }
+            .page-header { padding: 100px var(--pad) 20px; }
         }
     </style>
 </head>
@@ -360,11 +557,12 @@
     <nav class="nav" id="mainNav">
         <a href="/" class="nav-logo">HR OTT</a>
         <div class="nav-links">
-            <a href="/" class="active" data-route="home">Home</a>
-            <a href="/series" data-route="series">TV Shows</a>
-            <a href="/movies" data-route="movies">Movies</a>
-            <a href="/new" data-route="new">New & Popular</a>
-            <a href="/my-list" data-route="my-list">My List</a>
+            <a href="/" class="active" data-route="home"><i class="fas fa-home"></i> Home</a>
+            <a href="/search" data-route="search"><i class="fas fa-search"></i> Search</a>
+            <a href="/series" data-route="series"><i class="fas fa-tv"></i> TV Shows</a>
+            <a href="/movies" data-route="movies"><i class="fas fa-film"></i> Movies</a>
+            <a href="/new" data-route="new"><i class="fas fa-star"></i> New & Popular</a>
+            <a href="/my-list" data-route="my-list"><i class="fas fa-bookmark"></i> My List</a>
         </div>
         <div class="nav-right">
             <button class="search-icon-btn" id="searchOpenBtn"><i class="fas fa-search"></i></button>
@@ -429,6 +627,7 @@
     
     <div class="bottom-nav" id="bottomNav">
         <a href="/" class="bottom-nav-item active" data-route="home"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="/search" class="bottom-nav-item" data-route="search"><i class="fas fa-search"></i><span>Search</span></a>
         <a href="/movies" class="bottom-nav-item" data-route="movies"><i class="fas fa-film"></i><span>Movies</span></a>
         <a href="/series" class="bottom-nav-item" data-route="series"><i class="fas fa-tv"></i><span>Series</span></a>
         <a href="/my-list" class="bottom-nav-item" data-route="my-list"><i class="fas fa-bookmark"></i><span>My List</span></a>
@@ -446,15 +645,13 @@
                     this.scriptBlocked = 0;
                     this.iframeBlocked = 0;
                     
-                    // Comprehensive ad domain list
                     this.adDomains = [
-                        // Major ad networks
                         'googlesyndication.com', 'doubleclick.net', 'adservice.google.com',
                         'googleads.g.doubleclick.net', 'googleadservices.com',
                         'ads-twitter.com', 'facebook.com/ads', 'fbcdn.net',
                         'rubiconproject.com', 'pubmatic.com', 'openx.net',
                         'spotxchange.com', 'adroll.com', 'criteo.com',
-                        'casalemedia.com', 'amazon-adsystem.com', 'amazon-adsystem.com',
+                        'casalemedia.com', 'amazon-adsystem.com',
                         'taboola.com', 'outbrain.com', 'exoclick.com',
                         'adnxs.com', 'adsrvr.org', 'adzerk.net',
                         'adform.net', 'adfox.ru', 'adition.com',
@@ -466,55 +663,42 @@
                         'googletagmanager.com', 'googletagservices.com',
                         'gumgum.com', 'indexexchange.com', 'lijit.com',
                         'liveintent.com', 'lotame.com', 'mopub.com',
-                        'neustar.biz', 'outbrain.com', 'pubexchange.com',
+                        'neustar.biz', 'pubexchange.com',
                         'pulpix.com', 'quantcast.com', 'rhythmone.com',
                         'scorecardresearch.com', 'sharethrough.com', 'simpli.fi',
                         'smartadserver.com', 'sovrn.com', 'spotx.tv',
-                        'stickyads.tv', 'taboola.com', 'tremorhub.com',
+                        'stickyads.tv', 'tremorhub.com',
                         'turn.com', 'undertone.com', 'vevo.com',
                         'videohub.com', 'vungle.com', 'yieldmo.com',
                         'yieldmanager.com', 'zedo.com',
-                        
-                        // Video player ad domains
                         'vidoomy.com', 'adserver.video', 'video-ad.com',
                         'prebid.org', 'vast.ad', 'vpaid.com',
                         'ima3.video', 'adserver-video.com',
                         'video-advertising.com', 'ad-video.com',
                         'video-ads.com', 'videos-ad.com',
-                        'adserver.video', 'video-ad-serving.com',
+                        'video-ad-serving.com',
                         'vast-player.com', 'vpaid-player.com',
                         'video-ad-sdk.com', 'ad-video-sdk.com',
-                        
-                        // Popup/popunder domains
                         'popads.net', 'popcash.net', 'popunder.com',
                         'popup-ad.com', 'pop-under.com',
                         'adpop.com', 'popad.net', 'popunder.io',
                         'popup-service.com', 'popup-ad-network.com',
-                        
-                        // Malware/adware domains
                         'adware.com', 'malware.com', 'adware-remover.com',
                         'spyware.com', 'adware-removal.com',
                         'adware-protection.com', 'malware-protection.com',
-                        
-                        // Redirect/tracking domains
                         'redirectingat.com', 'redirect-tracker.com',
                         'ad-redirect.com', 'tracking-ad.com',
                         'ad-tracking.com', 'tracking-service.com',
                         'redirect-ad.com', 'ad-traffic.com',
-                        
-                        // Streaming ad domains
                         'streaming-ads.com', 'stream-ad.com',
                         'streaming-ad.com', 'ad-stream.com',
                         'streamingad.com', 'streamad.com',
                         'videos-streaming-ads.com', 'live-ad.com',
-                        
-                        // Common ad keywords in URLs
                         'banner', 'sponsor', 'promo', 'affiliate',
                         'partners', 'advert', 'marketing', 'campaign',
                         'clicks', 'impression', 'conversion'
                     ];
                     
-                    // Ad URL patterns (regex)
                     this.adPatterns = [
                         /[/?&]ad(=|_|\.)/i,
                         /[/?&]advert/i,
@@ -560,61 +744,37 @@
                 }
 
                 init() {
-                    // Intercept fetch requests
                     this.interceptFetch();
-                    
-                    // Intercept XMLHttpRequest
                     this.interceptXHR();
-                    
-                    // Block popups
                     this.blockPopups();
-                    
-                    // Block iframe creation
                     this.blockIframes();
-                    
-                    // Block script injection
                     this.blockScripts();
-                    
-                    // Block image requests
                     this.blockImages();
-                    
-                    // Block WebSocket connections
                     this.blockWebSockets();
-                    
-                    // Block navigator.sendBeacon
                     this.blockBeacon();
-                    
-                    // Periodically clean up
                     setInterval(() => this.cleanup(), 5000);
                 }
 
                 isAdUrl(url) {
                     if (!url) return false;
                     const lowerUrl = url.toLowerCase();
-                    
-                    // Check domain list
                     for (const domain of this.adDomains) {
                         if (lowerUrl.includes(domain)) return true;
                     }
-                    
-                    // Check regex patterns
                     for (const pattern of this.adPatterns) {
                         if (pattern.test(lowerUrl)) return true;
                     }
-                    
                     return false;
                 }
 
                 interceptFetch() {
                     const self = this;
                     const origFetch = window.fetch;
-                    
                     window.fetch = function(...args) {
                         const url = String(args[0] || '');
                         if (self.isAdUrl(url)) {
                             self.blockedCount++;
                             self.scriptBlocked++;
-                            console.log(`[AdBlocker] Blocked fetch: ${url}`);
                             return Promise.reject(new Error('Ad blocked by HR OTT AdBlocker'));
                         }
                         return origFetch.apply(this, args);
@@ -624,16 +784,11 @@
                 interceptXHR() {
                     const self = this;
                     const origOpen = XMLHttpRequest.prototype.open;
-                    
                     XMLHttpRequest.prototype.open = function(method, url, ...rest) {
                         if (self.isAdUrl(url)) {
                             self.blockedCount++;
                             self.scriptBlocked++;
-                            console.log(`[AdBlocker] Blocked XHR: ${url}`);
-                            // Abort the request
-                            setTimeout(() => {
-                                try { this.abort(); } catch(e) {}
-                            }, 0);
+                            setTimeout(() => { try { this.abort(); } catch(e) {} }, 0);
                             return;
                         }
                         return origOpen.call(this, method, url, ...rest);
@@ -643,25 +798,14 @@
                 blockPopups() {
                     const self = this;
                     const origOpen = window.open;
-                    
                     window.open = function(url, name, features) {
                         if (url && self.isAdUrl(url)) {
                             self.blockedCount++;
                             self.popupBlocked++;
-                            console.log(`[AdBlocker] Blocked popup: ${url}`);
-                            // Return a dummy window object
-                            return {
-                                closed: true,
-                                close: function() {},
-                                focus: function() {},
-                                blur: function() {},
-                                postMessage: function() {}
-                            };
+                            return { closed: true, close: function() {}, focus: function() {}, blur: function() {}, postMessage: function() {} };
                         }
                         return origOpen.call(this, url, name, features);
                     };
-                    
-                    // Block onclick popups
                     document.addEventListener('click', function(e) {
                         const target = e.target.closest('a');
                         if (target && target.target === '_blank') {
@@ -671,7 +815,6 @@
                                 e.stopPropagation();
                                 self.blockedCount++;
                                 self.popupBlocked++;
-                                console.log(`[AdBlocker] Blocked click popup: ${href}`);
                                 return false;
                             }
                         }
@@ -681,7 +824,6 @@
                 blockIframes() {
                     const self = this;
                     const origCreateElement = document.createElement.bind(document);
-                    
                     document.createElement = function(tagName, options) {
                         const element = origCreateElement(tagName, options);
                         if (tagName.toLowerCase() === 'iframe') {
@@ -690,28 +832,10 @@
                                 if (name === 'src' && self.isAdUrl(value)) {
                                     self.blockedCount++;
                                     self.iframeBlocked++;
-                                    console.log(`[AdBlocker] Blocked iframe: ${value}`);
                                     value = 'about:blank';
                                 }
                                 return origSetAttribute(name, value);
                             };
-                            
-                            // Also intercept src property
-                            const desc = Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype, 'src');
-                            if (desc) {
-                                Object.defineProperty(element, 'src', {
-                                    get: function() { return desc.get.call(this); },
-                                    set: function(value) {
-                                        if (self.isAdUrl(value)) {
-                                            self.blockedCount++;
-                                            self.iframeBlocked++;
-                                            console.log(`[AdBlocker] Blocked iframe src: ${value}`);
-                                            value = 'about:blank';
-                                        }
-                                        return desc.set.call(this, value);
-                                    }
-                                });
-                            }
                         }
                         return element;
                     };
@@ -720,7 +844,6 @@
                 blockScripts() {
                     const self = this;
                     const origCreateElement = document.createElement.bind(document);
-                    
                     document.createElement = function(tagName, options) {
                         const element = origCreateElement(tagName, options);
                         if (tagName.toLowerCase() === 'script') {
@@ -729,29 +852,10 @@
                                 if (name === 'src' && self.isAdUrl(value)) {
                                     self.blockedCount++;
                                     self.scriptBlocked++;
-                                    console.log(`[AdBlocker] Blocked script: ${value}`);
-                                    // Replace with empty script
                                     return;
                                 }
                                 return origSetAttribute(name, value);
                             };
-                            
-                            // Intercept src property
-                            const desc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');
-                            if (desc) {
-                                Object.defineProperty(element, 'src', {
-                                    get: function() { return desc.get.call(this); },
-                                    set: function(value) {
-                                        if (self.isAdUrl(value)) {
-                                            self.blockedCount++;
-                                            self.scriptBlocked++;
-                                            console.log(`[AdBlocker] Blocked script src: ${value}`);
-                                            value = '';
-                                        }
-                                        return desc.set.call(this, value);
-                                    }
-                                });
-                            }
                         }
                         return element;
                     };
@@ -760,7 +864,6 @@
                 blockImages() {
                     const self = this;
                     const origCreateElement = document.createElement.bind(document);
-                    
                     document.createElement = function(tagName, options) {
                         const element = origCreateElement(tagName, options);
                         if (tagName.toLowerCase() === 'img') {
@@ -768,27 +871,10 @@
                             element.setAttribute = function(name, value) {
                                 if (name === 'src' && self.isAdUrl(value)) {
                                     self.blockedCount++;
-                                    console.log(`[AdBlocker] Blocked image: ${value}`);
                                     value = '';
                                 }
                                 return origSetAttribute(name, value);
                             };
-                            
-                            // Intercept src property
-                            const desc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
-                            if (desc) {
-                                Object.defineProperty(element, 'src', {
-                                    get: function() { return desc.get.call(this); },
-                                    set: function(value) {
-                                        if (self.isAdUrl(value)) {
-                                            self.blockedCount++;
-                                            console.log(`[AdBlocker] Blocked image src: ${value}`);
-                                            value = '';
-                                        }
-                                        return desc.set.call(this, value);
-                                    }
-                                });
-                            }
                         }
                         return element;
                     };
@@ -797,20 +883,10 @@
                 blockWebSockets() {
                     const self = this;
                     const origWebSocket = window.WebSocket;
-                    
                     window.WebSocket = function(url, protocols) {
                         if (self.isAdUrl(url)) {
                             self.blockedCount++;
-                            console.log(`[AdBlocker] Blocked WebSocket: ${url}`);
-                            // Return a dummy WebSocket
-                            return {
-                                readyState: 3,
-                                close: function() {},
-                                send: function() {},
-                                addEventListener: function() {},
-                                removeEventListener: function() {},
-                                dispatchEvent: function() {}
-                            };
+                            return { readyState: 3, close: function() {}, send: function() {}, addEventListener: function() {}, removeEventListener: function() {}, dispatchEvent: function() {} };
                         }
                         return new origWebSocket(url, protocols);
                     };
@@ -819,11 +895,9 @@
                 blockBeacon() {
                     const self = this;
                     const origSendBeacon = navigator.sendBeacon;
-                    
                     navigator.sendBeacon = function(url, data) {
                         if (self.isAdUrl(url)) {
                             self.blockedCount++;
-                            console.log(`[AdBlocker] Blocked beacon: ${url}`);
                             return true;
                         }
                         return origSendBeacon.call(this, url, data);
@@ -831,7 +905,6 @@
                 }
 
                 cleanup() {
-                    // Remove any ad elements that might have slipped through
                     const selectors = [
                         '[id*="ad" i]', '[class*="ad" i]', 
                         '[id*="banner" i]', '[class*="banner" i]',
@@ -841,14 +914,11 @@
                         '.advertisement', '.google-ads', '.adsbygoogle',
                         '.ad-slot', '.ad-unit', '.ad-frame'
                     ];
-                    
                     try {
                         document.querySelectorAll(selectors.join(',')).forEach(el => {
                             if (el && el.parentNode) {
-                                // Check if it's likely an ad
                                 const rect = el.getBoundingClientRect();
-                                if (rect.width > 0 && rect.height > 0 && 
-                                    (rect.width > 300 || rect.height > 50)) {
+                                if (rect.width > 0 && rect.height > 0 && (rect.width > 300 || rect.height > 50)) {
                                     el.style.display = 'none';
                                     el.style.pointerEvents = 'none';
                                 }
@@ -867,7 +937,6 @@
                 }
             }
 
-            // ═══════ INIT AD BLOCKER ═══════
             const adBlocker = new EnhancedAdBlocker();
 
             // ═══════ CANVAS STARFIELD ═══════
@@ -907,9 +976,9 @@
                 { key:'tvshows',    title:'Trending TV Shows',    ep:'/trending/tv/week?page=', type:'tv' },
             ];
             const WALLS = {
-                movies: { title:'Movies', ep:'/discover/movie?sort_by=popularity.desc&vote_count.gte=50&page=', type:'movie' },
-                tv:     { title:'TV Shows', ep:'/discover/tv?sort_by=popularity.desc&vote_count.gte=50&page=', type:'tv' },
-                new:    { title:'New & Popular', ep:'/trending/all/week?page=', type:'mixed' },
+                movies: { title:'Movies', ep:'/discover/movie?sort_by=popularity.desc&vote_count.gte=50&page=', type:'movie', icon:'fa-film', subtitle:'Browse all movies in our collection' },
+                tv:     { title:'TV Shows', ep:'/discover/tv?sort_by=popularity.desc&vote_count.gte=50&page=', type:'tv', icon:'fa-tv', subtitle:'Discover amazing TV series' },
+                new:    { title:'New & Popular', ep:'/trending/all/week?page=', type:'mixed', icon:'fa-star', subtitle:'What\'s trending this week' },
             };
 
             let watchlist=[], recent=[], heroMovies=[], heroIdx=0, heroTimer;
@@ -918,7 +987,6 @@
             let allGenres = [];
             let allLanguages = [];
             let allCountries = [];
-            
             let searchPage = 1;
             let searchTotalPages = 1;
             let searchIsLoading = false;
@@ -935,9 +1003,7 @@
                         timestamp: Date.now()
                     };
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-                } catch (e) {
-                    console.warn('Could not save state:', e);
-                }
+                } catch (e) {}
             }
 
             function loadAppState() {
@@ -950,9 +1016,7 @@
                         return null;
                     }
                     return state;
-                } catch (e) {
-                    return null;
-                }
+                } catch (e) { return null; }
             }
 
             function loadStorage() { 
@@ -969,14 +1033,8 @@
                 } catch(e){ watchlist=[]; recent=[]; } 
             }
             
-            function saveWl(){ 
-                localStorage.HR_wl = JSON.stringify(watchlist); 
-                saveAppState();
-            }
-            function saveRec(){ 
-                localStorage.HR_rec = JSON.stringify(recent); 
-                saveAppState();
-            }
+            function saveWl(){ localStorage.HR_wl = JSON.stringify(watchlist); saveAppState(); }
+            function saveRec(){ localStorage.HR_rec = JSON.stringify(recent); saveAppState(); }
 
             async function tmdbFetch(endpoint) {
                 const sep = endpoint.includes('?') ? '&' : '?';
@@ -1002,18 +1060,13 @@
                     const tvGenres = await tmdbFetch('/genre/tv/list');
                     const combined = [...(movieGenres.genres||[]), ...(tvGenres.genres||[])];
                     allGenres = combined.filter((v,i,a)=>a.findIndex(t=>t.id===v.id)===i);
-                    
                     const langData = await tmdbFetch('/configuration/languages');
                     allLanguages = langData || [];
-                    
                     const countryData = await tmdbFetch('/configuration/countries');
                     allCountries = countryData || [];
-                    
                     populateSearchFilters();
                 } catch(e) {
-                    allGenres = [];
-                    allLanguages = [];
-                    allCountries = [];
+                    allGenres = []; allLanguages = []; allCountries = [];
                 }
             }
 
@@ -1028,7 +1081,6 @@
                         genreSelect.appendChild(opt);
                     });
                 }
-                
                 const langSelect = document.getElementById('searchLanguageFilter');
                 if (langSelect && allLanguages.length) {
                     langSelect.innerHTML = '<option value="all">All Languages</option>';
@@ -1039,7 +1091,6 @@
                         langSelect.appendChild(opt);
                     });
                 }
-                
                 const countrySelect = document.getElementById('searchCountryFilter');
                 if (countrySelect && allCountries.length) {
                     countrySelect.innerHTML = '<option value="all">All Countries</option>';
@@ -1050,7 +1101,6 @@
                         countrySelect.appendChild(opt);
                     });
                 }
-                
                 const yearSelect = document.getElementById('searchYearFilter');
                 if (yearSelect) {
                     yearSelect.innerHTML = '<option value="all">All Years</option>';
@@ -1076,9 +1126,7 @@
 
                 if (searchQuery.length >= 2) {
                     let endpoint = `/search/multi?query=${encodeURIComponent(searchQuery)}&page=${page}`;
-                    if (type !== 'multi') {
-                        endpoint += `&media_type=${type}`;
-                    }
+                    if (type !== 'multi') endpoint += `&media_type=${type}`;
                     return endpoint;
                 } else {
                     let base = '/discover/movie';
@@ -1129,10 +1177,7 @@
             searchOverlayClose.addEventListener('click', closeSearch);
 
             function renderSearchResults(items, append = false) {
-                if (!append) {
-                    searchResults.innerHTML = '';
-                }
-                
+                if (!append) searchResults.innerHTML = '';
                 const resultsHtml = items.map(item => {
                     const poster = item.poster_path ? TMDB_IMG + item.poster_path : '';
                     const title = getTitle(item);
@@ -1148,9 +1193,7 @@
                         </div>
                     </a>`;
                 }).join('');
-                
                 searchResults.innerHTML += resultsHtml;
-                
                 searchResults.querySelectorAll('.search-result-card').forEach(card => {
                     card.addEventListener('click', (e) => {
                         e.preventDefault();
@@ -1172,37 +1215,30 @@
                 const hasFilters = searchTypeFilter.value !== 'multi' || searchGenreFilter.value !== 'all' || 
                                   searchYearFilter.value !== 'all' || searchLanguageFilter.value !== 'all' || 
                                   searchCountryFilter.value !== 'all';
-                
                 if (query.length < 2 && !hasFilters && !append) {
                     searchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Type to search or use filters</div>';
                     loadMoreContainer.style.display = 'none';
                     return;
                 }
-                
                 if (!append) {
                     searchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Searching...</div>';
                     searchPage = 1;
                 }
-                
                 searchIsLoading = true;
                 loadMoreBtn.disabled = true;
                 loadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
-                
                 try {
                     const endpoint = buildSearchEndpoint(page, query);
                     const data = await tmdbFetch(endpoint);
                     const items = (data.results || []).filter(m => m.poster_path);
                     searchTotalPages = data.total_pages || 1;
                     searchPage = page;
-                    
                     if (items.length === 0 && !append) {
                         searchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">No results found</div>';
                         loadMoreContainer.style.display = 'none';
                         return;
                     }
-                    
                     renderSearchResults(items, append);
-                    
                     if (searchPage < searchTotalPages) {
                         loadMoreContainer.style.display = 'block';
                         loadMoreBtn.disabled = false;
@@ -1210,7 +1246,6 @@
                     } else {
                         loadMoreContainer.style.display = 'none';
                     }
-                    
                 } catch (e) {
                     if (!append) {
                         searchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Search error</div>';
@@ -1225,15 +1260,11 @@
                 }
             }
 
-            loadMoreBtn.addEventListener('click', () => {
-                performSearch(searchPage + 1, true);
-            });
-
+            loadMoreBtn.addEventListener('click', () => { performSearch(searchPage + 1, true); });
             searchOverlayInput.addEventListener('input', function() {
                 clearTimeout(searchTimeout);
                 searchTimeout = setTimeout(() => performSearch(1, false), 400);
             });
-
             [searchTypeFilter, searchGenreFilter, searchYearFilter, searchLanguageFilter, searchCountryFilter, searchSortFilter].forEach(filter => {
                 filter.addEventListener('change', () => performSearch(1, false));
             });
@@ -1249,8 +1280,6 @@
                 const match = item.vote_average ? Math.round(item.vote_average * 10) : 0;
                 const id = item.id;
                 const top = item.vote_average >= 8;
-                const playerPath = `/player.html?id=${id}&type=${type}`;
-                
                 const card = document.createElement('a');
                 card.className='card'; 
                 card.href = 'javascript:void(0)';
@@ -1259,7 +1288,6 @@
                 card.dataset.title = title;
                 card.dataset.poster = posterPath;
                 card.dataset.year = year;
-                
                 card.innerHTML = `
                     <div class="card-thumb">
                         <img src="${posterPath}" loading="lazy" alt="${esc(title)}" onerror="this.style.background='#1a1a20';this.style.opacity='0';">
@@ -1276,18 +1304,14 @@
                             </div>
                         </div>
                     </div>`;
-                
                 card.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
+                    e.preventDefault(); e.stopPropagation();
                     openMovieModal(id, type);
                 });
-                
                 const playBtn = card.querySelector('[data-play]');
                 if (playBtn) {
                     playBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
+                        e.preventDefault(); e.stopPropagation();
                         const pid = playBtn.dataset.id;
                         const ptype = playBtn.dataset.type;
                         const ptitle = playBtn.dataset.title;
@@ -1297,12 +1321,10 @@
                         window.location.href = `/player.html?id=${pid}&type=${ptype}`;
                     });
                 }
-                
                 const heartBtn = card.querySelector('[data-heart]');
                 if (heartBtn) {
                     heartBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
+                        e.preventDefault(); e.stopPropagation();
                         const hid = heartBtn.dataset.id;
                         const htitle = card.dataset.title;
                         const hposter = card.dataset.poster;
@@ -1312,18 +1334,15 @@
                         updateHeart(card, hid);
                     });
                 }
-                
                 const infoBtn = card.querySelector('[data-info]');
                 if (infoBtn) {
                     infoBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
+                        e.preventDefault(); e.stopPropagation();
                         const iid = infoBtn.dataset.id;
                         const itype = infoBtn.dataset.type;
                         openMovieModal(iid, itype);
                     });
                 }
-                
                 updateHeart(card, id);
                 return card;
             }
@@ -1452,9 +1471,7 @@
                     watchlist.push({id:currentModalId, title:currentModalTitle, poster:currentModalPoster, year:currentModalYear, type:currentModalType}); 
                     toast('Added to My List'); 
                 }
-                saveWl(); 
-                refreshHearts(); 
-                updateModalWatchlistBtn();
+                saveWl(); refreshHearts(); updateModalWatchlistBtn();
                 document.querySelectorAll('.hero-watchlist-btn').forEach(btn => {
                     if (btn.dataset.id == currentModalId) {
                         const inWl = watchlist.some(w=>w.id==currentModalId);
@@ -1520,6 +1537,28 @@
             function hideHero(){ if(heroTimer) clearInterval(heroTimer); document.getElementById('hero').style.display='none'; }
             function showHero(){ document.getElementById('hero').style.display='block'; }
 
+            // ═══════ PAGE HEADER ═══════
+            function createPageHeader(title, icon, subtitle) {
+                const header = document.createElement('div');
+                header.className = 'page-header';
+                header.innerHTML = `
+                    <div class="page-header-content">
+                        <div class="breadcrumb">
+                            <a href="/" data-route="home">Home</a>
+                            <span class="separator">›</span>
+                            <span class="current">${title}</span>
+                        </div>
+                        <h1 class="page-title"><i class="fas ${icon}"></i> ${title}</h1>
+                        <p class="page-subtitle">${subtitle}</p>
+                    </div>
+                `;
+                header.querySelector('[data-route="home"]').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    navigateTo('home');
+                });
+                return header;
+            }
+
             // ═══════ HOME ROWS ═══════
             function createRowSection(cfg){
                 const sec=document.createElement('div'); sec.className='section';
@@ -1535,6 +1574,7 @@
                 showHero();
                 currentRoute = 'home';
                 const container=document.getElementById('sectionsContainer'); container.innerHTML='';
+                document.getElementById('mainContent').classList.remove('no-hero');
                 HOME_ROWS.forEach(c=>container.appendChild(createRowSection(c)));
                 renderContinueWatching();
                 const proms=HOME_ROWS.map(async c=>{ try{ const d=await tmdbFetch(c.ep+'1'); return {cfg:c, data:(d.results||[]).filter(m=>m.poster_path||m.backdrop_path)}; } catch(e){ return {cfg:c, data:[]}; } });
@@ -1557,7 +1597,13 @@
                 renderContinueWatching();
                 const cfg = WALLS[catKey];
                 const container=document.getElementById('sectionsContainer');
-                container.innerHTML = `<div class="section"><h2 class="section-title">${cfg.title}</h2><div class="grid-wall" id="wallGrid"></div><div class="grid-loader" id="wallLoader"><i class="fas fa-circle-notch fa-spin"></i> Loading…</div><div class="grid-sentinel" id="wallSentinel"></div></div>`;
+                document.getElementById('mainContent').classList.add('no-hero');
+                container.innerHTML = '';
+                container.appendChild(createPageHeader(cfg.title, cfg.icon, cfg.subtitle));
+                const wallSection = document.createElement('div');
+                wallSection.className = 'section';
+                wallSection.innerHTML = `<div class="grid-wall" id="wallGrid"></div><div class="grid-loader" id="wallLoader"><i class="fas fa-circle-notch fa-spin"></i> Loading…</div><div class="grid-sentinel" id="wallSentinel"></div>`;
+                container.appendChild(wallSection);
                 wallState = { page:0, ep:cfg.ep, type:cfg.type, loading:false, ended:false, observer:null };
                 await loadWallPage();
                 if(wallState){ const sentinel = document.getElementById('wallSentinel'); wallState.observer = new IntersectionObserver(entries=>{ if(entries[0].isIntersecting) loadWallPage(); },{ rootMargin:'600px' }); wallState.observer.observe(sentinel); }
@@ -1589,19 +1635,150 @@
                 currentRoute = 'my-list';
                 renderContinueWatching();
                 const container = document.getElementById('sectionsContainer');
+                document.getElementById('mainContent').classList.add('no-hero');
                 container.innerHTML = '';
+                container.appendChild(createPageHeader('My List', 'fa-bookmark', 'Your saved movies and TV shows'));
                 if (watchlist.length === 0) { 
-                    container.innerHTML = `<div class="empty-state"><i class="fas fa-heart"></i><h2>Your list is empty</h2><p>Add movies and shows to your list to watch them later.</p></div>`; 
+                    container.innerHTML += `<div class="empty-state"><i class="fas fa-heart"></i><h2>Your list is empty</h2><p>Add movies and shows to your list to watch them later.</p></div>`; 
                     showHideFooter();
                     updateNavActive('my-list');
                     saveAppState();
                     return; 
                 }
-                const sec = document.createElement('div'); sec.className = 'section'; sec.innerHTML = `<h2 class="section-title">My List</h2><div class="grid-wall" id="grid-mylist"></div>`; container.appendChild(sec);
+                const sec = document.createElement('div'); sec.className = 'section'; sec.innerHTML = `<div class="grid-wall" id="grid-mylist"></div>`; container.appendChild(sec);
                 const grid = document.getElementById('grid-mylist');
                 watchlist.forEach(item => { const card=createCard({ id:item.id, title:item.title, poster_path:null, backdrop_path:null, release_date:(item.year||'')+'-01-01', vote_average:0 }, item.type); if(!card) return; const img=card.querySelector('img'); if(item.poster) img.src=item.poster; card.querySelector('.card-rating').innerHTML='<i class="fas fa-heart" style="color:var(--red)"></i>'; grid.appendChild(card); });
                 showHideFooter();
                 updateNavActive('my-list');
+                saveAppState();
+            }
+
+            function renderSearchPage(){
+                teardownWall(); hideHero();
+                currentRoute = 'search';
+                renderContinueWatching();
+                const container = document.getElementById('sectionsContainer');
+                document.getElementById('mainContent').classList.add('no-hero');
+                container.innerHTML = '';
+                container.appendChild(createPageHeader('Search', 'fa-search', 'Find movies and TV shows'));
+                const searchSection = document.createElement('div');
+                searchSection.className = 'search-page-container';
+                searchSection.innerHTML = `
+                    <div class="search-hero">
+                        <div class="search-hero-icon"><i class="fas fa-search"></i></div>
+                        <div class="search-input-wrapper">
+                            <input type="text" class="search-input" id="pageSearchInput" placeholder="Search movies, TV shows, genres..." autocomplete="off">
+                            <button class="search-submit-btn" id="pageSearchBtn"><i class="fas fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                    <div class="search-results" id="pageSearchResults"></div>
+                    <div class="load-more-container" id="pageLoadMoreContainer" style="display:none;">
+                        <button class="load-more-btn" id="pageLoadMoreBtn"><i class="fas fa-plus"></i> Load More</button>
+                    </div>
+                `;
+                container.appendChild(searchSection);
+                
+                const pageSearchInput = document.getElementById('pageSearchInput');
+                const pageSearchBtn = document.getElementById('pageSearchBtn');
+                const pageSearchResults = document.getElementById('pageSearchResults');
+                const pageLoadMoreContainer = document.getElementById('pageLoadMoreContainer');
+                const pageLoadMoreBtn = document.getElementById('pageLoadMoreBtn');
+                
+                let pageSearchTimeout;
+                
+                function pageSearch(page = 1, append = false) {
+                    const query = pageSearchInput.value.trim();
+                    if (query.length < 2) {
+                        pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Type to search for movies and TV shows</div>';
+                        pageLoadMoreContainer.style.display = 'none';
+                        return;
+                    }
+                    if (!append) {
+                        pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Searching...</div>';
+                    }
+                    tmdbFetch(`/search/multi?query=${encodeURIComponent(query)}&page=${page}`).then(data => {
+                        const items = (data.results || []).filter(m => m.poster_path);
+                        if (items.length === 0 && !append) {
+                            pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">No results found</div>';
+                            pageLoadMoreContainer.style.display = 'none';
+                            return;
+                        }
+                        if (!append) pageSearchResults.innerHTML = '';
+                        const resultsHtml = items.map(item => {
+                            const poster = item.poster_path ? TMDB_IMG + item.poster_path : '';
+                            const title = getTitle(item);
+                            const year = getYear(item);
+                            const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '?';
+                            const type = getMediaType(item, null);
+                            const typeLabel = type === 'movie' ? 'Movie' : 'TV';
+                            return `<a class="search-result-card" href="javascript:void(0)" data-id="${item.id}" data-type="${type}" data-title="${esc(title)}" data-poster="${poster}" data-year="${year}">
+                                <img src="${poster}" alt="${esc(title)}" onerror="this.style.background='#222';this.style.opacity='0.5';">
+                                <div class="search-result-info">
+                                    <div class="search-result-title">${esc(title)}</div>
+                                    <div class="search-result-meta">★ ${rating} · ${year} · ${typeLabel}</div>
+                                </div>
+                            </a>`;
+                        }).join('');
+                        pageSearchResults.innerHTML += resultsHtml;
+                        pageSearchResults.querySelectorAll('.search-result-card').forEach(card => {
+                            card.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                const id = card.dataset.id;
+                                const type = card.dataset.type;
+                                const title = card.dataset.title;
+                                const poster = card.dataset.poster;
+                                const year = card.dataset.year;
+                                addRecent(id, title, poster, year, type);
+                                window.location.href = `/player.html?id=${id}&type=${type}`;
+                            });
+                        });
+                        if (page < (data.total_pages || 1)) {
+                            pageLoadMoreContainer.style.display = 'block';
+                            pageLoadMoreBtn.onclick = () => pageSearch(page + 1, true);
+                        } else {
+                            pageLoadMoreContainer.style.display = 'none';
+                        }
+                    }).catch(() => {
+                        pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Search error</div>';
+                        pageLoadMoreContainer.style.display = 'none';
+                    });
+                }
+                
+                pageSearchInput.addEventListener('input', function() {
+                    clearTimeout(pageSearchTimeout);
+                    pageSearchTimeout = setTimeout(() => pageSearch(1, false), 400);
+                });
+                pageSearchBtn.addEventListener('click', () => pageSearch(1, false));
+                pageSearchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') pageSearch(1, false);
+                });
+                
+                showHideFooter();
+                updateNavActive('search');
+                saveAppState();
+            }
+
+            function render404(path) {
+                teardownWall(); hideHero();
+                currentRoute = '404';
+                renderContinueWatching();
+                const container = document.getElementById('sectionsContainer');
+                document.getElementById('mainContent').classList.add('no-hero');
+                container.innerHTML = `
+                    <div class="not-found-container">
+                        <div class="not-found-code">404</div>
+                        <h1 class="not-found-title">Page Not Found</h1>
+                        <p class="not-found-message">
+                            The page "${path}" you're looking for doesn't exist or has been moved.
+                            Let's get you back to watching great content!
+                        </p>
+                        <a href="/" class="not-found-btn" onclick="event.preventDefault(); navigateTo('home');">
+                            <i class="fas fa-home"></i> Back to Home
+                        </a>
+                    </div>
+                `;
+                showHideFooter();
+                updateNavActive('');
                 saveAppState();
             }
 
@@ -1618,12 +1795,10 @@
                 const footerWrapper = document.getElementById('footerWrapper');
                 const container = document.getElementById('sectionsContainer');
                 if (!footerWrapper || !container) return;
-                
                 const hasContent = container.children.length > 0 && container.innerHTML.trim() !== '';
                 const hasEmptyState = container.querySelector('.empty-state') !== null;
                 const hasGrid = container.querySelector('.grid-wall') !== null;
                 const hasGridItems = container.querySelector('.grid-wall')?.children?.length > 0;
-                
                 if (hasContent && (hasGridItems || !hasEmptyState)) {
                     footerWrapper.classList.remove('hidden');
                 } else if (hasContent && hasEmptyState && !hasGridItems) {
@@ -1642,6 +1817,8 @@
                 else if (route === 'series') renderWall('tv');
                 else if (route === 'new') renderWall('new');
                 else if (route === 'my-list') renderMyList();
+                else if (route === 'search') renderSearchPage();
+                else render404(window.location.pathname);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 saveAppState();
             }
@@ -1653,24 +1830,23 @@
                     'movies': '/movies',
                     'series': '/series',
                     'new': '/new',
-                    'my-list': '/my-list'
+                    'my-list': '/my-list',
+                    'search': '/search'
                 };
                 window.history.pushState({ route: route }, '', routeMap[route] || '/');
                 handleRoute(route);
             }
 
-            document.querySelectorAll('.nav-links a').forEach(link => {
+            document.querySelectorAll('.nav-links a, .bottom-nav-item').forEach(link => {
                 link.addEventListener('click', (e) => { 
                     e.preventDefault(); 
                     navigateTo(link.dataset.route); 
                 });
             });
 
-            document.querySelectorAll('.bottom-nav-item').forEach(item => {
-                item.addEventListener('click', (e) => { 
-                    e.preventDefault(); 
-                    navigateTo(item.dataset.route); 
-                });
+            document.querySelector('.nav-logo').addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateTo('home');
             });
 
             // ═══════ BACK TO TOP ═══════
@@ -1691,16 +1867,19 @@
 
             // ═══════ BROWSER BACK/FORWARD ═══════
             window.addEventListener('popstate', (e) => {
-                const route = e.state?.route || 'home';
+                const route = e.state?.route || getRouteFromPath(window.location.pathname);
                 handleRoute(route);
             });
 
-            // ═══════ AD BLOCKER STATUS ═══════
-            // Update ad blocker stats in console
-            setInterval(() => {
-                const stats = adBlocker.getStats();
-                console.log(`[AdBlocker] Stats: ${stats.totalBlocked} total (${stats.popupsBlocked} popups, ${stats.scriptsBlocked} scripts, ${stats.iframesBlocked} iframes)`);
-            }, 30000);
+            function getRouteFromPath(path) {
+                if (path === '/movies') return 'movies';
+                if (path === '/series') return 'series';
+                if (path === '/new') return 'new';
+                if (path === '/my-list') return 'my-list';
+                if (path === '/search') return 'search';
+                if (path === '/') return 'home';
+                return '404';
+            }
 
             // ═══════ INIT ═══════
             async function init() {
@@ -1709,15 +1888,8 @@
                 await loadConfiguration();
                 renderContinueWatching();
                 
-                // Parse URL to determine initial route
                 const path = window.location.pathname;
-                let initialRoute = 'home';
-                if (path === '/movies') initialRoute = 'movies';
-                else if (path === '/series') initialRoute = 'series';
-                else if (path === '/new') initialRoute = 'new';
-                else if (path === '/my-list') initialRoute = 'my-list';
-                else if (path === '/') initialRoute = 'home';
-                
+                const initialRoute = getRouteFromPath(path);
                 currentRoute = initialRoute;
                 await handleRoute(initialRoute);
                 
