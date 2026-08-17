@@ -190,14 +190,15 @@
             inset: 0;
             background-size: cover;
             background-position: center;
-            filter: brightness(0.35) blur(3px);
+            background-repeat: no-repeat;
+            filter: brightness(0.4) blur(2px);
             z-index: 0;
         }
 
         .hero-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, rgba(11, 11, 15, 0) 0%, rgba(11, 11, 15, 0.5) 40%, rgba(11, 11, 15, 0.95) 100%);
+            background: linear-gradient(180deg, rgba(11, 11, 15, 0) 0%, rgba(11, 11, 15, 0.4) 40%, rgba(11, 11, 15, 0.95) 100%);
             z-index: 1;
         }
 
@@ -245,6 +246,8 @@
             letter-spacing: -1.5px;
             word-break: break-word;
             text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            margin: 0;
+            padding: 0;
         }
 
         .hero-meta {
@@ -436,7 +439,7 @@
             contain: layout style;
         }
 
-        .player-fullscreen-btn {
+        .player-btn {
             appearance: none;
             border: 1px solid rgba(255,255,255,0.2);
             background: rgba(11, 11, 15, 0.82);
@@ -449,20 +452,29 @@
             cursor: pointer;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             backdrop-filter: blur(12px);
             transition: all 0.2s ease;
             will-change: background;
             white-space: nowrap;
             height: fit-content;
+            font-family: 'Inter', sans-serif;
         }
 
-        .player-fullscreen-btn:hover {
+        .player-btn:hover {
             background: rgba(229, 9, 20, 0.85);
             border-color: rgba(229, 9, 20, 0.9);
             transform: translateY(-2px);
             box-shadow: 0 4px 16px rgba(229, 9, 20, 0.25);
         }
+
+        .player-btn:active {
+            transform: translateY(0);
+        }
+
+        .player-fullscreen-btn { }
+        .player-reload-btn { }
 
         .player-container {
             width: 100%;
@@ -550,6 +562,7 @@
             color: var(--text-muted);
             line-height: 1.6;
             contain: layout style;
+            margin-top: 20px;
         }
 
         .ad-disclaimer i {
@@ -951,12 +964,12 @@
                 gap: 8px;
             }
 
-            .player-fullscreen-btn {
+            .player-btn {
                 padding: 8px 12px;
                 font-size: 0.75rem;
             }
 
-            .player-fullscreen-btn span {
+            .player-btn span {
                 display: none;
             }
 
@@ -1001,6 +1014,7 @@
             .ad-disclaimer {
                 font-size: 0.85rem;
                 padding: 12px 14px;
+                margin-top: 16px;
             }
 
             .ad-disclaimer i {
@@ -1082,16 +1096,17 @@
             .player-controls-top {
                 top: 10px;
                 right: 10px;
+                gap: 8px;
             }
 
-            .player-fullscreen-btn {
+            .player-btn {
                 padding: 7px 10px;
-                font-size: 0.7rem;
+                font-size: 0.65rem;
                 border-radius: 6px;
             }
 
-            .player-fullscreen-btn i {
-                font-size: 1rem;
+            .player-btn i {
+                font-size: 0.95rem;
             }
 
             .ad-disclaimer {
@@ -1099,6 +1114,7 @@
                 padding: 10px 12px;
                 gap: 10px;
                 margin-bottom: 20px;
+                margin-top: 14px;
             }
 
             .ad-disclaimer i {
@@ -1250,7 +1266,7 @@
             <div class="hero-overlay"></div>
             <div class="hero-content">
                 <div class="hero-poster">
-                    <img id="posterImg" src="" alt="Movie Poster" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 220 330%22%3E%3Crect fill=%22%23222%22 width=%22220%22 height=%22330%22/%3E%3C/svg%3E';">
+                    <img id="posterImg" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 220 330%22%3E%3Crect fill=%22%23222%22 width=%22220%22 height=%22330%22/%3E%3C/svg%3E" alt="Movie Poster">
                 </div>
                 <div class="hero-info">
                     <h1 class="hero-title" id="titleText">Loading...</h1>
@@ -1269,10 +1285,14 @@
             </div>
         </div>
 
-        <!-- Video Player Container with Fullscreen Button -->
+        <!-- Video Player Container with Controls -->
         <div class="player-wrapper-outer">
             <div class="player-controls-top">
-                <button class="player-fullscreen-btn" id="playerFullscreenBtn" type="button" aria-label="Toggle fullscreen">
+                <button class="player-btn player-reload-btn" id="playerReloadBtn" type="button" title="Reload Player" aria-label="Reload player">
+                    <i class="fas fa-redo"></i>
+                    <span>Reload</span>
+                </button>
+                <button class="player-btn player-fullscreen-btn" id="playerFullscreenBtn" type="button" title="Toggle Fullscreen" aria-label="Toggle fullscreen">
                     <i class="fas fa-expand"></i>
                     <span>Fullscreen</span>
                 </button>
@@ -1286,12 +1306,12 @@
             </div>
         </div>
 
-        <!-- Ad Disclaimer -->
+        <!-- Ad Disclaimer - AFTER PLAYER -->
         <div class="ad-disclaimer">
             <i class="fas fa-ban"></i>
             <div class="ad-disclaimer-content">
                 <strong><i class="fas fa-shield-alt"></i> HR OTT is completely ad-free!</strong>
-                <p>Any ads or new tabs you see come from the video server itself, not from us. Keep your ad blocker and pop-up shield ON for a seamless viewing experience. If a server refuses to play with protection enabled, you can disable it temporarily for that server or switch to the next one.</p>
+                <p>Any ads or new tabs you see come from the video server itself, not from us. Keep your ad blocker and pop-up shield ON for a seamless viewing experience. If a server refuses to play with protection enabled, you can disable it temporarily for that server or switch to the next one. HR OTT believes in an ad-free viewing experience.</p>
             </div>
         </div>
 
@@ -1606,7 +1626,7 @@
                     const photoUrl = member.profile_path ? `${TMDB_IMG}${member.profile_path}` : null;
                     castEl.innerHTML = `
                         <div class="cast-avatar">
-                            ${photoUrl ? `<img src="${photoUrl}" alt="${member.name}">` : `<div class="cast-avatar-placeholder"><i class="fas fa-user"></i></div>`}
+                            ${photoUrl ? `<img src="${photoUrl}" alt="${member.name}" onerror="this.parentElement.innerHTML='<div class=\\'cast-avatar-placeholder\\'><i class=\\'fas fa-user\\'></i></div>'">` : `<div class="cast-avatar-placeholder"><i class="fas fa-user"></i></div>`}
                         </div>
                         <div class="cast-name">${member.name}</div>
                         ${member.character ? `<div class="cast-character">${member.character}</div>` : ''}
@@ -1743,13 +1763,13 @@
 
                     document.title = `${title} - HR OTT`;
                     document.getElementById('titleText').textContent = title;
-                    document.getElementById('posterImg').src = poster;
+                    if (poster) document.getElementById('posterImg').src = poster;
                     document.getElementById('overviewText').textContent = overview;
                     document.getElementById('descText').textContent = overview;
 
                     // Set backdrop image
                     const backdropEl = document.getElementById('heroBackdrop');
-                    if (backdropEl) {
+                    if (backdropEl && backdrop) {
                         backdropEl.style.backgroundImage = `url('${backdrop}')`;
                     }
 
@@ -1798,7 +1818,15 @@
                     } else {
                         await (document.exitFullscreen || document.webkitExitFullscreen).call(document);
                     }
-                } catch (e) {}
+                } catch (e) {
+                    console.warn('Fullscreen request failed:', e);
+                }
+            });
+
+            // ═══════ RELOAD PLAYER ═══════
+            document.getElementById('playerReloadBtn')?.addEventListener('click', () => {
+                loadPlayerEmbed(currentSource);
+                showToast('Reloading player...', 'success');
             });
 
             // ═══════ AD BLOCK STATS ═══════
