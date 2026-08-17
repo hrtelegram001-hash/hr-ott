@@ -121,7 +121,6 @@
         .search-result-title { font-weight: 700; font-size: 0.85rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .search-result-meta { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
         
-        /* Load More Button */
         .load-more-container {
             text-align: center;
             padding: 20px 0;
@@ -204,19 +203,19 @@
         .card { flex: 0 0 auto; width: var(--poster-min); position: relative; cursor: pointer; border-radius: 8px; overflow: hidden; background: var(--bg-card); transition: transform 0.35s cubic-bezier(0.5,0,0.1,1), box-shadow 0.35s; box-shadow: 0 4px 14px rgba(0,0,0,0.5); text-decoration: none; color: var(--text); display: block; }
         .grid-wall .card { width: 100%; }
         .card-thumb { position: relative; width: 100%; aspect-ratio: 2/3; background: #14141a; overflow: hidden; }
-        .card-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
+        .card-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; pointer-events: none; }
         .card:hover { transform: scale(1.07) translateY(-4px); z-index: 60; box-shadow: 0 24px 50px rgba(0,0,0,0.85), 0 0 0 2px rgba(229,9,20,0.55); }
         .card:hover .card-thumb img { transform: scale(1.06); }
-        .card-rating { position: absolute; top: 8px; left: 8px; z-index: 4; display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.72); backdrop-filter: blur(4px); padding: 3px 7px; border-radius: 5px; font-size: 0.72rem; font-weight: 700; }
+        .card-rating { position: absolute; top: 8px; left: 8px; z-index: 4; display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.72); backdrop-filter: blur(4px); padding: 3px 7px; border-radius: 5px; font-size: 0.72rem; font-weight: 700; pointer-events: none; }
         .card-rating i { color: var(--gold); font-size: 0.7rem; }
-        .card-toplist { position: absolute; top: 8px; right: 8px; z-index: 4; background: var(--red); color: #fff; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.5px; padding: 3px 6px; border-radius: 5px; text-transform: uppercase; }
-        .card-overlay { position: absolute; inset: 0; z-index: 3; background: linear-gradient(180deg, transparent 35%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,0.96) 100%); opacity: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 12px 12px 14px; transition: opacity 0.28s ease; }
-        .card:hover .card-overlay { opacity: 1; }
-        .card-name { font-weight: 700; font-size: 0.86rem; line-height: 1.2; margin-bottom: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .card-sub { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 10px; display: flex; gap: 8px; align-items:center; }
+        .card-toplist { position: absolute; top: 8px; right: 8px; z-index: 4; background: var(--red); color: #fff; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.5px; padding: 3px 6px; border-radius: 5px; text-transform: uppercase; pointer-events: none; }
+        .card-overlay { position: absolute; inset: 0; z-index: 3; background: linear-gradient(180deg, transparent 35%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,0.96) 100%); opacity: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 12px 12px 14px; transition: opacity 0.28s ease; pointer-events: none; }
+        .card:hover .card-overlay { opacity: 1; pointer-events: auto; }
+        .card-name { font-weight: 700; font-size: 0.86rem; line-height: 1.2; margin-bottom: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; pointer-events: none; }
+        .card-sub { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 10px; display: flex; gap: 8px; align-items:center; pointer-events: none; }
         .card-sub .match { color: var(--green); font-weight: 700; }
-        .card-buttons { display: flex; gap: 6px; }
-        .circle-btn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.55); background: rgba(30,30,36,0.7); color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; transition: all 0.2s; }
+        .card-buttons { display: flex; gap: 6px; pointer-events: auto; }
+        .circle-btn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.55); background: rgba(30,30,36,0.7); color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; transition: all 0.2s; pointer-events: auto; }
         .circle-btn:hover { border-color: white; background: rgba(80,80,90,0.9); transform: scale(1.08); }
         .circle-btn.play-btn { background: white; color: black; border-color: white; }
         .circle-btn.play-btn:hover { background: rgba(255,255,255,0.82); }
@@ -225,7 +224,7 @@
         .grid-sentinel { height: 1px; width: 100%; }
         .grid-loader { text-align:center; padding: 24px; color: var(--text-dim); font-size: 0.9rem; }
         .grid-loader i { color: var(--red); }
-        .progress-bar { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--red); z-index: 5; border-radius: 0 2px 2px 0; }
+        .progress-bar { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--red); z-index: 5; border-radius: 0 2px 2px 0; pointer-events: none; }
         .back-to-top { position: fixed; bottom: 80px; right: 30px; width: 50px; height: 50px; border-radius: 50%; background: var(--red); display: none; align-items: center; justify-content: center; color: #fff; font-size: 1.2rem; cursor: pointer; z-index: 90; box-shadow: 0 4px 25px var(--red-glow); transition: all 0.3s; border: none; }
         .back-to-top.visible { display:flex; }
         .back-to-top:hover { transform: translateY(-4px); background: var(--red-dark); }
@@ -256,8 +255,6 @@
         .developer-credits { margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); font-family: 'Inter', sans-serif; }
         .dev-line { font-size: 0.95rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
         .dev-line span { color: #fff; font-weight: 700; }
-        .taught-line { font-size: 0.85rem; color: var(--text-dim); font-style: italic; }
-        .taught-line span { color: var(--red); font-weight: 600; }
         .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(120px); background: rgba(24,24,28,0.97); color: white; padding: 14px 22px; border-radius: 8px; border-left: 4px solid var(--red); z-index: 9999; font-size: 14px; font-weight: 500; box-shadow: 0 12px 36px rgba(0,0,0,0.7); display: flex; align-items: center; gap: 10px; transition: transform 0.4s cubic-bezier(0.5,0,0.1,1); }
         .toast.show { transform: translateX(-50%) translateY(0); }
         ::-webkit-scrollbar { width: 10px; height: 10px; }
@@ -307,7 +304,6 @@
         <div class="loading-bar-container"><div class="loading-bar-fill"></div></div>
     </div>
     
-    <!-- Search Overlay with Full Filters & Load More -->
     <div class="search-overlay" id="searchOverlay">
         <div class="search-overlay-header">
             <input type="text" class="search-overlay-input" id="searchOverlayInput" placeholder="Search movies, TV shows, genres..." autocomplete="off">
@@ -476,7 +472,6 @@
             let allLanguages = [];
             let allCountries = [];
             
-            // Search pagination state
             let searchPage = 1;
             let searchTotalPages = 1;
             let searchIsLoading = false;
@@ -571,7 +566,7 @@
                 }
             }
 
-            // ═══════ CREATE CARD ═══════
+            // ═══════ CREATE CARD - FIXED ═══════
             function createCard(item, forcedType, progress){
                 const type = getMediaType(item, forcedType);
                 if(type !== 'movie' && type !== 'tv') return null;
@@ -582,14 +577,16 @@
                 const match = item.vote_average ? Math.round(item.vote_average * 10) : 0;
                 const id = item.id;
                 const top = item.vote_average >= 8;
-                const detailPath = type === 'movie' ? `/movie/${id}` : `/series/${id}`;
                 const playerPath = `/player.html?id=${id}&type=${type}`;
                 
                 const card = document.createElement('a');
                 card.className='card'; 
-                card.href = playerPath;
+                card.href = 'javascript:void(0)';
                 card.dataset.id = id; 
                 card.dataset.type = type;
+                card.dataset.title = title;
+                card.dataset.poster = posterPath;
+                card.dataset.year = year;
                 
                 card.innerHTML = `
                     <div class="card-thumb">
@@ -601,45 +598,75 @@
                             <div class="card-name">${esc(title)}</div>
                             <div class="card-sub"><span class="match">${match}% Match</span><span>${year||''}</span><span>${type === 'movie' ? 'Movie' : 'TV'}</span></div>
                             <div class="card-buttons">
-                                <a class="circle-btn play-btn" href="${playerPath}" title="Play"><i class="fas fa-play"></i></a>
-                                <button class="circle-btn card-heart" title="My List" onclick="event.preventDefault(); event.stopPropagation();"><i class="far fa-heart"></i></button>
-                                <button class="circle-btn info-btn" title="More Info" onclick="event.preventDefault(); event.stopPropagation();"><i class="fas fa-chevron-down"></i></button>
+                                <button class="circle-btn play-btn" data-play data-id="${id}" data-type="${type}" data-title="${esc(title)}" data-poster="${posterPath}" data-year="${year}" title="Play"><i class="fas fa-play"></i></button>
+                                <button class="circle-btn card-heart" data-heart data-id="${id}" title="My List"><i class="far fa-heart"></i></button>
+                                <button class="circle-btn info-btn" data-info data-id="${id}" data-type="${type}" title="More Info"><i class="fas fa-chevron-down"></i></button>
                             </div>
                         </div>
                     </div>`;
                 
+                // CLICK HANDLER - opens modal with options
                 card.addEventListener('click', (e) => {
                     e.preventDefault();
-                    addRecent(id, title, posterPath, year, type);
-                    window.location.href = playerPath;
-                });
-                
-                card.querySelector('.play-btn').addEventListener('click', (e) => {
-                    e.preventDefault();
                     e.stopPropagation();
-                    addRecent(id, title, posterPath, year, type);
-                    window.location.href = playerPath;
+                    // Open modal with the card's data
+                    openMovieModal(id, type);
                 });
                 
-                card.querySelector('.info-btn').addEventListener('click', (e) => { 
-                    e.preventDefault();
-                    e.stopPropagation(); 
-                    openMovieModal(id, type); 
-                });
+                // PLAY BUTTON - direct play
+                const playBtn = card.querySelector('[data-play]');
+                if (playBtn) {
+                    playBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const pid = playBtn.dataset.id;
+                        const ptype = playBtn.dataset.type;
+                        const ptitle = playBtn.dataset.title;
+                        const pposter = playBtn.dataset.poster;
+                        const pyear = playBtn.dataset.year;
+                        addRecent(pid, ptitle, pposter, pyear, ptype);
+                        window.location.href = `/player.html?id=${pid}&type=${ptype}`;
+                    });
+                }
                 
-                card.querySelector('.card-heart').addEventListener('click', (e) => { 
-                    e.preventDefault();
-                    e.stopPropagation(); 
-                    toggleWl(id, title, posterPath, year, type); 
-                    updateHeart(card, id); 
-                });
+                // HEART BUTTON - watchlist
+                const heartBtn = card.querySelector('[data-heart]');
+                if (heartBtn) {
+                    heartBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const hid = heartBtn.dataset.id;
+                        const htitle = card.dataset.title;
+                        const hposter = card.dataset.poster;
+                        const hyear = card.dataset.year;
+                        const htype = card.dataset.type;
+                        toggleWl(hid, htitle, hposter, hyear, htype);
+                        updateHeart(card, hid);
+                    });
+                }
+                
+                // INFO BUTTON - modal
+                const infoBtn = card.querySelector('[data-info]');
+                if (infoBtn) {
+                    infoBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const iid = infoBtn.dataset.id;
+                        const itype = infoBtn.dataset.type;
+                        openMovieModal(iid, itype);
+                    });
+                }
                 
                 updateHeart(card, id);
                 return card;
             }
 
-            function updateHeart(card, id){ const i = card.querySelector('.card-heart i'); if (i) i.className = watchlist.some(w=>w.id==id) ? 'fas fa-heart' : 'far fa-heart'; }
+            function updateHeart(card, id){ 
+                const i = card.querySelector('.card-heart i'); 
+                if (i) i.className = watchlist.some(w=>w.id==id) ? 'fas fa-heart' : 'far fa-heart'; 
+            }
             function refreshHearts(){ document.querySelectorAll('.card').forEach(c=>updateHeart(c,c.dataset.id)); }
+            
             function toggleWl(id,title,poster,year,type){
                 const idx=watchlist.findIndex(w=>w.id==id);
                 if(idx>=0){ watchlist.splice(idx,1); toast('Removed from My List'); }
@@ -649,6 +676,14 @@
                 if (navIcon) navIcon.className = watchlist.length > 0 ? 'fas fa-heart' : 'fas fa-bell';
                 refreshHearts();
                 if (currentRoute === 'my-list') renderMyList();
+                // Update hero buttons if visible
+                document.querySelectorAll('.hero-watchlist-btn').forEach(btn => {
+                    if (btn.dataset.id == id) {
+                        const inWl = watchlist.some(w=>w.id==id);
+                        btn.classList.toggle('active', inWl);
+                        btn.innerHTML = `<i class="fas ${inWl?'fa-check':'fa-plus'}"></i> ${inWl?'In Watchlist':'Add to Watchlist'}`;
+                    }
+                });
             }
 
             function addRecent(id,title,poster,year,type){
@@ -726,6 +761,7 @@
                     updateModalWatchlistBtn();
                 } catch (error) { document.getElementById('modalTitle').textContent = 'Error loading details'; }
             }
+            
             function updateModalWatchlistBtn() {
                 if (watchlist.some(w=>w.id==currentModalId)) {
                     modalWatchlistBtn.innerHTML = '<i class="fas fa-check"></i> In Watchlist';
@@ -735,16 +771,34 @@
                     modalWatchlistBtn.style.background = 'rgba(229,9,20,0.2)';
                 }
             }
+            
             modalPlayBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 addRecent(currentModalId, currentModalTitle, currentModalPoster, currentModalYear, currentModalType);
                 window.location.href = `/player.html?id=${currentModalId}&type=${currentModalType}`;
             });
+            
             modalWatchlistBtn.addEventListener('click', () => {
-                if (watchlist.some(w=>w.id==currentModalId)) { watchlist = watchlist.filter(w=>w.id!=currentModalId); toast('Removed from My List'); }
-                else { watchlist.push({id:currentModalId, title:currentModalTitle, poster:currentModalPoster, year:currentModalYear, type:currentModalType}); toast('Added to My List'); }
-                saveWl(); refreshHearts(); updateModalWatchlistBtn();
+                if (watchlist.some(w=>w.id==currentModalId)) { 
+                    watchlist = watchlist.filter(w=>w.id!=currentModalId); 
+                    toast('Removed from My List'); 
+                } else { 
+                    watchlist.push({id:currentModalId, title:currentModalTitle, poster:currentModalPoster, year:currentModalYear, type:currentModalType}); 
+                    toast('Added to My List'); 
+                }
+                saveWl(); 
+                refreshHearts(); 
+                updateModalWatchlistBtn();
+                // Update hero buttons
+                document.querySelectorAll('.hero-watchlist-btn').forEach(btn => {
+                    if (btn.dataset.id == currentModalId) {
+                        const inWl = watchlist.some(w=>w.id==currentModalId);
+                        btn.classList.toggle('active', inWl);
+                        btn.innerHTML = `<i class="fas ${inWl?'fa-check':'fa-plus'}"></i> ${inWl?'In Watchlist':'Add to Watchlist'}`;
+                    }
+                });
             });
+            
             function closeModal() { modal.classList.remove('active'); document.body.style.overflow = ''; }
             modalClose.addEventListener('click', closeModal);
             modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
@@ -870,7 +924,7 @@
                 watchlist.forEach(item => { const card=createCard({ id:item.id, title:item.title, poster_path:null, backdrop_path:null, release_date:(item.year||'')+'-01-01', vote_average:0 }, item.type); if(!card) return; const img=card.querySelector('img'); if(item.poster) img.src=item.poster; card.querySelector('.card-rating').innerHTML='<i class="fas fa-heart" style="color:var(--red)"></i>'; grid.appendChild(card); });
             }
 
-            // ═══════ SEARCH with LOAD MORE ═══════
+            // ═══════ SEARCH ═══════
             const searchOverlay = document.getElementById('searchOverlay');
             const searchOverlayInput = document.getElementById('searchOverlayInput');
             const searchOverlayClose = document.getElementById('searchOverlayClose');
@@ -944,7 +998,7 @@
                     const type = getMediaType(item, searchTypeFilter.value !== 'multi' ? searchTypeFilter.value : null);
                     const typeLabel = type === 'movie' ? 'Movie' : 'TV';
                     const playerPath = `/player.html?id=${item.id}&type=${type}`;
-                    return `<a class="search-result-card" href="${playerPath}" data-id="${item.id}" data-type="${type}">
+                    return `<a class="search-result-card" href="javascript:void(0)" data-id="${item.id}" data-type="${type}" data-title="${esc(title)}" data-poster="${poster}" data-year="${year}">
                         <img src="${poster}" alt="${esc(title)}" onerror="this.style.background='#222';this.style.opacity='0.5';">
                         <div class="search-result-info">
                             <div class="search-result-title">${esc(title)}</div>
@@ -958,8 +1012,15 @@
                 searchResults.querySelectorAll('.search-result-card').forEach(card => {
                     card.addEventListener('click', (e) => {
                         e.preventDefault();
+                        const id = card.dataset.id;
+                        const type = card.dataset.type;
+                        const title = card.dataset.title;
+                        const poster = card.dataset.poster;
+                        const year = card.dataset.year;
                         closeSearch();
-                        window.location.href = card.href;
+                        // Open modal with the search result
+                        addRecent(id, title, poster, year, type);
+                        window.location.href = `/player.html?id=${id}&type=${type}`;
                     });
                 });
             }
@@ -1008,7 +1069,6 @@
                     
                     renderSearchResults(items, append);
                     
-                    // Show/hide load more button
                     if (searchPage < searchTotalPages) {
                         loadMoreContainer.style.display = 'block';
                         loadMoreBtn.disabled = false;
@@ -1031,18 +1091,15 @@
                 }
             }
 
-            // Load More button click
             loadMoreBtn.addEventListener('click', () => {
                 performSearch(searchPage + 1, true);
             });
 
-            // Search input
             searchOverlayInput.addEventListener('input', function() {
                 clearTimeout(searchTimeout);
                 searchTimeout = setTimeout(() => performSearch(1, false), 400);
             });
 
-            // Filter changes
             [searchTypeFilter, searchGenreFilter, searchYearFilter, searchLanguageFilter, searchCountryFilter, searchSortFilter].forEach(filter => {
                 filter.addEventListener('change', () => performSearch(1, false));
             });
