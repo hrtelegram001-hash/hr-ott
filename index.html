@@ -659,51 +659,275 @@
                 watchlist.forEach(item => { const card=createCard({ id:item.id, title:item.title, poster_path:null, backdrop_path:null, release_date:(item.year||'')+'-01-01', vote_average:0 }, item.type); if(!card) return; const img=card.querySelector('img'); if(item.poster) img.src=item.poster; card.querySelector('.card-rating').innerHTML='<i class="fas fa-heart" style="color:var(--red)"></i>'; grid.appendChild(card); });
             }
 
-            // ═══════ SEARCH ═══════
-            const searchInput=document.getElementById('searchInput');
-            const searchDropdown=document.getElementById('searchDropdown');
-            const searchClear=document.getElementById('searchClear');
-            const searchIconBtn=document.getElementById('searchIconBtn');
-            let searchTimeout;
+// ═══════ IMPROVED SEARCH WITH DYNAMIC FILTERS ═══════
+const searchInput = document.getElementById('searchInput');
+const searchDropdown = document.getElementById('searchDropdown');
+const searchClear = document.getElementById('searchClear');
+const searchIconBtn = document.getElementById('searchIconBtn');
+let searchTimeout;
+let currentSearchMode = 'text'; // 'text' or 'filter'
+let searchFilters = { genre: 'all', year: 'all', language: 'all', sort: 'popularity.desc', type: 'multi' };
 
-            searchIconBtn.addEventListener('click', () => {
-                searchInput.classList.toggle('active');
-                if(searchInput.classList.contains('active')) setTimeout(() => searchInput.focus(), 100);
-                else { searchInput.value=''; searchDropdown.classList.remove('active'); }
-            });
+// Create filter controls
+function createSearchFilterBar() {
+    const filterBar = document.createElement('div');
+    filterBar.className = 'search-filters';
+    filterBar.id = 'searchFilterBar';
+    filterBar.innerHTML = `
+        <select class="filter-mini-select" id="searchTypeSelect">
+            <option value="multi">All Types</option>
+            <option value="movie">Movies</option>
+            <option value="tv">TV Shows</option>
+        </select>
+        <select class="filter-mini-select" id="searchGenreSelect">
+            <option value="all">All Genres</option>
+        </select>
+        <select class="filter-mini-select" id="searchYearSelect">
+            <option value="all">All Years</option>
+        </select>
+        <select class="filter-mini-select" id="searchLanguageSelect">
+            <option value="all">All Languages</option>
+        </select>
+        <select class="filter-mini-select" id="searchSortSelect">
+            <option value="popularity.desc">Popularity</option>
+            <option value="vote_average.desc">Rating</option>
+            <option value="primary_release_date.desc">Release Date</option>
+            <option value="original_title.asc">Title A-Z</option>
+        </select>
+        <button class="filter-mini-select" id="searchApplyBtn" style="background:var(--red);border:none;color:#fff;padding:6px 12px;border-radius:4px;cursor:pointer;font-weight:700;">
+            <i class="fas fa-search"></i> Apply
+        </button>
+    `;
+    return filterBar;
+}
 
-            searchInput.addEventListener('input', function(){
-                clearTimeout(searchTimeout);
-                const q=this.value.trim();
-                if(q.length<2){ searchDropdown.classList.remove('active'); return; }
-                searchDropdown.classList.add('active');
-                searchDropdown.innerHTML='<div style="padding:14px;text-align:center;color:var(--text-muted);">Searching...</div>';
-                searchTimeout = setTimeout(async ()=>{
-                    if(searchInput.value.trim()!==q) return;
-                    try{
-                        const data=await tmdbFetch('/search/multi?query='+encodeURIComponent(q));
-                        const items=(data.results||[]).filter(r=>['movie','tv'].includes(r.media_type)).slice(0,8);
-                        if(items.length){
-                            searchDropdown.innerHTML=items.map(item=>{
-                                const poster=item.poster_path?TMDB_IMG+item.poster_path:'';
-                                const title=item.title||item.name||'Untitled';
-                                const year=(item.release_date||item.first_air_date||'').substring(0,4);
-                                const rating=item.vote_average?Number(item.vote_average).toFixed(1):'?';
-                                const typeLabel=item.media_type==='movie'?'Movie':'TV';
-                                return `<div class="search-item" data-id="${item.id}" data-type="${item.media_type}">${poster?`<img src="${poster}" alt="">`:'<div style="width:40px;height:60px;background:#222;border-radius:3px;"></div>'}<div class="search-item-info"><b>${esc(title)}</b><span>★ ${rating} · ${year} · ${typeLabel}</span></div></div>`;
-                            }).join('');
-                            document.querySelectorAll('.search-item').forEach(el=>el.addEventListener('click',()=> {
-                                searchDropdown.classList.remove('active'); searchInput.value=''; searchInput.classList.remove('active');
-                                openMovieModal(el.dataset.id, el.dataset.type);
-                            }));
-                        } else { searchDropdown.innerHTML='<div class="search-no-results">No results found</div>'; }
-                    }catch(e){ searchDropdown.innerHTML='<div class="search-no-results">Search error</div>'; }
-                },350);
-            });
+// Populate genre filter
+function populateSearchGenres() {
+    const genreSelect = document.getElementById('searchGenreSelect');
+    if (!genreSelect || allGenres.length === 0) return;
+    genreSelect.innerHTML = '<option value="all">All Genres</option>';
+    allGenres.forEach(g => {
+        const opt = document.createElement('option');
+        opt.value = g.id;
+        opt.textContent = g.name;
+        genreSelect.appendChild(opt);
+    });
+}
 
-            searchClear.addEventListener('click',()=>{ searchInput.value=''; searchDropdown.classList.remove('active'); searchInput.focus(); });
-            document.addEventListener('click',e=>{ if(!e.target.closest('.search-container')) searchDropdown.classList.remove('active'); });
+// Populate year filter
+function populateSearchYears() {
+    const yearSelect = document.getElementById('searchYearSelect');
+    if (!yearSelect) return;
+    yearSelect.innerHTML = '<option value="all">All Years</option>';
+    const currentYear = new Date().getFullYear();
+    for (let y = currentYear; y >= 1950; y--) {
+        const opt = document.createElement('option');
+        opt.value = y;
+        opt.textContent = y;
+        yearSelect.appendChild(opt);
+    }
+}
 
+// Populate language filter
+function populateSearchLanguages() {
+    const langSelect = document.getElementById('searchLanguageSelect');
+    if (!langSelect) return;
+    langSelect.innerHTML = '<option value="all">All Languages</option>';
+    const languages = [
+        {code:'en', name:'English'}, {code:'hi', name:'Hindi'}, 
+        {code:'es', name:'Spanish'}, {code:'fr', name:'French'},
+        {code:'de', name:'German'}, {code:'it', name:'Italian'},
+        {code:'ja', name:'Japanese'}, {code:'ko', name:'Korean'},
+        {code:'zh', name:'Chinese'}, {code:'pt', name:'Portuguese'},
+        {code:'ru', name:'Russian'}, {code:'ar', name:'Arabic'}
+    ];
+    languages.forEach(lang => {
+        const opt = document.createElement('option');
+        opt.value = lang.code;
+        opt.textContent = lang.name;
+        langSelect.appendChild(opt);
+    });
+}
+
+// Build search endpoint based on current mode
+function buildSearchEndpoint(page = 1) {
+    const query = searchInput.value.trim();
+    
+    if (currentSearchMode === 'text' && query.length >= 2) {
+        return `/search/multi?query=${encodeURIComponent(query)}&page=${page}`;
+    } else {
+        // Filter mode
+        const type = searchFilters.type;
+        const genre = searchFilters.genre;
+        const year = searchFilters.year;
+        const lang = searchFilters.language;
+        const sort = searchFilters.sort;
+        
+        let base = '/discover/movie';
+        if (type === 'tv') base = '/discover/tv';
+        else if (type === 'multi') base = '/discover/movie'; // Default to movie for multi
+        
+        const params = new URLSearchParams();
+        if (genre !== 'all') params.set('with_genres', genre);
+        if (year !== 'all') params.set('primary_release_year', year);
+        if (lang !== 'all') params.set('with_original_language', lang);
+        params.set('sort_by', sort);
+        params.set('page', page);
+        
+        return `${base}?${params.toString()}`;
+    }
+}
+
+// Render search results
+function renderSearchResults(items, container) {
+    if (!items || items.length === 0) {
+        container.innerHTML = '<div class="search-no-results">No results found. Try different filters.</div>';
+        return;
+    }
+    
+    container.innerHTML = items.map(item => {
+        const poster = item.poster_path ? TMDB_IMG + item.poster_path : '';
+        const title = item.title || item.name || 'Untitled';
+        const year = (item.release_date || item.first_air_date || '').substring(0, 4);
+        const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '?';
+        const mediaType = item.media_type || (searchFilters.type === 'tv' ? 'tv' : 'movie');
+        const typeLabel = mediaType === 'movie' ? 'Movie' : 'TV';
+        
+        return `<div class="search-item" data-id="${item.id}" data-type="${mediaType}">
+            ${poster ? `<img src="${poster}" alt="">` : '<div style="width:40px;height:60px;background:#222;border-radius:3px;"></div>'}
+            <div class="search-item-info">
+                <b>${esc(title)}</b>
+                <span>★ ${rating} · ${year} · ${typeLabel}</span>
+            </div>
+        </div>`;
+    }).join('');
+    
+    // Add click handlers
+    container.querySelectorAll('.search-item').forEach(el => {
+        el.addEventListener('click', () => {
+            searchDropdown.classList.remove('active');
+            searchInput.value = '';
+            searchInput.classList.remove('active');
+            openMovieModal(el.dataset.id, el.dataset.type);
+        });
+    });
+}
+
+// Perform search
+async function performSearch() {
+    const query = searchInput.value.trim();
+    
+    // Show dropdown
+    searchDropdown.classList.add('active');
+    
+    // Clear and add filter bar
+    searchDropdown.innerHTML = '';
+    const filterBar = createSearchFilterBar();
+    searchDropdown.appendChild(filterBar);
+    populateSearchGenres();
+    populateSearchYears();
+    populateSearchLanguages();
+    
+    // Set current filter values
+    document.getElementById('searchTypeSelect').value = searchFilters.type;
+    document.getElementById('searchGenreSelect').value = searchFilters.genre;
+    document.getElementById('searchYearSelect').value = searchFilters.year;
+    document.getElementById('searchLanguageSelect').value = searchFilters.language;
+    document.getElementById('searchSortSelect').value = searchFilters.sort;
+    
+    // Add filter listeners
+    const typeSelect = document.getElementById('searchTypeSelect');
+    const genreSelect = document.getElementById('searchGenreSelect');
+    const yearSelect = document.getElementById('searchYearSelect');
+    const langSelect = document.getElementById('searchLanguageSelect');
+    const sortSelect = document.getElementById('searchSortSelect');
+    const applyBtn = document.getElementById('searchApplyBtn');
+    
+    function applyFilters() {
+        searchFilters.type = typeSelect.value;
+        searchFilters.genre = genreSelect.value;
+        searchFilters.year = yearSelect.value;
+        searchFilters.language = langSelect.value;
+        searchFilters.sort = sortSelect.value;
+        currentSearchMode = 'filter';
+        searchInput.value = '';
+        performSearch();
+    }
+    
+    // Apply button
+    applyBtn?.addEventListener('click', applyFilters);
+    
+    // Also apply on sort change
+    sortSelect?.addEventListener('change', () => {
+        searchFilters.sort = sortSelect.value;
+        currentSearchMode = 'filter';
+        searchInput.value = '';
+        performSearch();
+    });
+    
+    // Create results container
+    const resultsContainer = document.createElement('div');
+    resultsContainer.id = 'searchResultsContainer';
+    searchDropdown.appendChild(resultsContainer);
+    
+    // Show loading
+    resultsContainer.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text-muted);">Searching...</div>';
+    
+    try {
+        const endpoint = buildSearchEndpoint(1);
+        const data = await tmdbFetch(endpoint);
+        const items = (data.results || []).filter(m => m.poster_path).slice(0, 12);
+        
+        if (currentSearchMode === 'filter') {
+            renderSearchResults(items, resultsContainer);
+        } else {
+            renderSearchResults(items, resultsContainer);
+        }
+    } catch (e) {
+        resultsContainer.innerHTML = '<div class="search-no-results">Search error. Please try again.</div>';
+    }
+}
+
+// Search icon toggle
+searchIconBtn.addEventListener('click', () => {
+    searchInput.classList.toggle('active');
+    if (searchInput.classList.contains('active')) {
+        setTimeout(() => searchInput.focus(), 100);
+        currentSearchMode = 'filter';
+        performSearch();
+    } else {
+        searchInput.value = '';
+        searchDropdown.classList.remove('active');
+    }
+});
+
+// Input event for text search
+searchInput.addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    const q = this.value.trim();
+    if (q.length >= 2) {
+        currentSearchMode = 'text';
+        searchTimeout = setTimeout(performSearch, 400);
+    } else if (q.length === 0) {
+        currentSearchMode = 'filter';
+        searchTimeout = setTimeout(performSearch, 100);
+    }
+});
+
+// Clear search
+searchClear.addEventListener('click', () => {
+    searchInput.value = '';
+    searchDropdown.classList.remove('active');
+    searchInput.focus();
+    currentSearchMode = 'filter';
+});
+
+// Close dropdown on outside click
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-container')) {
+        searchDropdown.classList.remove('active');
+    }
+}); 
             // ═══════ NAV & BACK TO TOP ═══════
             document.querySelectorAll('.nav-links a').forEach(link => {
                 link.addEventListener('click', (e) => { 
