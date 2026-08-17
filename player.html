@@ -39,12 +39,12 @@
         .genre-tag { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; padding: 8px 18px; font-size: 0.9rem; font-weight: 600; }
         .hero-description { max-width: 600px; color: rgba(255,255,255,0.85); line-height: 1.8; font-size: 1rem; }
         .player-section { background: var(--bg); padding: 40px clamp(20px, 4vw, 80px); max-width: 1400px; margin: 0 auto; width: 100%; }
-        .server-section { margin-bottom: 28px; }
-        .server-label { font-size: 0.9rem; font-weight: 800; color: rgba(255,255,255,0.7); letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 16px; display: block; }
-        .server-tabs { display: flex; gap: 12px; flex-wrap: wrap; min-height: 44px; align-items: center; width: 100%; overflow-x: auto; padding-bottom: 8px; }
-        .server-btn { background: transparent; border: 2px solid rgba(255,255,255,0.2); color: var(--text-muted); padding: 11px 20px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 0.95rem; transition: all 0.3s ease; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; flex-shrink: 0; }
+        .server-section { margin-bottom: 20px; }
+        .server-label { font-size: 0.85rem; font-weight: 800; color: rgba(255,255,255,0.7); letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 12px; display: block; }
+        .server-tabs { display: flex; gap: 8px; flex-wrap: wrap; min-height: 36px; align-items: center; width: 100%; overflow-x: auto; padding-bottom: 6px; }
+        .server-btn { background: transparent; border: 1.5px solid rgba(255,255,255,0.2); color: var(--text-muted); padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: all 0.3s ease; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; flex-shrink: 0; }
         .server-btn:hover { background: rgba(255,255,255,0.08); color: var(--text); border-color: rgba(255,255,255,0.4); }
-        .server-btn.active { background: var(--red); border-color: var(--red); color: #fff; box-shadow: 0 6px 20px rgba(229, 9, 20, 0.4); }
+        .server-btn.active { background: var(--red); border-color: var(--red); color: #fff; box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3); }
         .player-wrapper-outer { position: relative; margin-bottom: 40px; }
         .player-controls-top { position: absolute; top: 16px; right: 16px; z-index: 25; display: flex; gap: 12px; }
         .player-btn { appearance: none; border: 1px solid rgba(255,255,255,0.25); background: rgba(11, 11, 15, 0.85); color: var(--text); border-radius: 8px; padding: 11px 18px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; backdrop-filter: blur(14px); transition: all 0.3s ease; font-family: 'Inter', sans-serif; box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
@@ -115,7 +115,7 @@
             .hero-poster { width: 180px; height: 270px; margin: 0 auto; }
             .hero-title { font-size: 2rem; }
             .player-section { padding: 30px 16px; }
-            .server-btn { padding: 9px 16px; font-size: 0.85rem; }
+            .server-btn { padding: 5px 10px; font-size: 0.75rem; }
             .player-container { min-height: 280px; }
             .player-controls-top { top: 12px; right: 12px; gap: 8px; }
             .player-btn { padding: 9px 14px; font-size: 0.8rem; }
@@ -375,12 +375,56 @@
                 if (similarTitle) similarTitle.innerHTML = titleText;
                 
                 try {
-                    const res = await fetch(`${TMDB_BASE}${endpoint}?api_key=${TMDB_KEY}`);
-                    if (!res.ok) { similarSection.style.display = 'none'; return; }
+                    const res = await fetch(`${TMDB_BASE}${endpoint}?api_key=${TMDB_KEY}&language=en-US&page=1`);
+                    if (!res.ok) {
+                        // Try recommendations endpoint as fallback
+                        const recEndpoint = type === 'movie' ? `/movie/${id}/recommendations` : `/tv/${id}/recommendations`;
+                        const recRes = await fetch(`${TMDB_BASE}${recEndpoint}?api_key=${TMDB_KEY}&language=en-US&page=1`);
+                        if (!recRes.ok) {
+                            similarSection.style.display = 'none';
+                            return;
+                        }
+                        const recData = await recRes.json();
+                        const recommendations = (recData.results || []).filter(m => m.poster_path).slice(0, 12);
+                        
+                        if (recommendations.length === 0) {
+                            similarSection.style.display = 'none';
+                            return;
+                        }
+                        
+                        similarSection.style.display = 'block';
+                        similarGrid.innerHTML = '';
+                        
+                        recommendations.forEach(item => {
+                            const card = document.createElement('a');
+                            card.className = 'similar-card';
+                            card.href = `/player.html?id=${item.id}&type=${type}`;
+                            const poster = item.poster_path ? TMDB_IMG + item.poster_path : '';
+                            const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '?';
+                            const title = getTitle(item);
+                            const year = getYear(item);
+                            const typeLabel = type === 'movie' ? 'Movie' : 'TV';
+                            
+                            card.innerHTML = `
+                                <img src="${poster}" alt="${title}" onerror="this.style.background='#222';this.style.opacity='0.5';">
+                                <div class="similar-card-overlay">
+                                    <div class="similar-card-type">${typeLabel} · ${year}</div>
+                                    <div class="similar-card-rating"><i class="fas fa-star"></i> ${rating}</div>
+                                    <div class="similar-card-title">${title}</div>
+                                </div>
+                            `;
+                            similarGrid.appendChild(card);
+                        });
+                        return;
+                    }
+                    
                     const data = await res.json();
                     const similar = (data.results || []).filter(m => m.poster_path).slice(0, 12);
                     
-                    if (similar.length === 0) { similarSection.style.display = 'none'; return; }
+                    if (similar.length === 0) {
+                        similarSection.style.display = 'none';
+                        return;
+                    }
                     
                     similarSection.style.display = 'block';
                     similarGrid.innerHTML = '';
@@ -405,7 +449,9 @@
                         `;
                         similarGrid.appendChild(card);
                     });
-                } catch (e) { similarSection.style.display = 'none'; }
+                } catch (e) { 
+                    similarSection.style.display = 'none'; 
+                }
             }
 
             async function loadEpisodeGuide() {
