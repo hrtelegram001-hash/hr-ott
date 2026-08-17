@@ -26,6 +26,7 @@
             --gap: 8px;
             --poster-min: clamp(104px, 14vw, 172px);
             --bottom-nav-height: 65px;
+            --nav-height: 70px;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         html { scroll-behavior:smooth; -webkit-tap-highlight-color:transparent; }
@@ -40,6 +41,7 @@
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
             position: relative;
+            padding-top: var(--nav-height);
         }
         #starCanvas { position: fixed; inset:0; z-index:-2; pointer-events:none; opacity:0.28; }
         #cursorGlow {
@@ -74,237 +76,34 @@
         .loading-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--red-dark), var(--red)); animation: loadFill 1.5s ease-in-out 1s forwards; }
         @keyframes loadFill { 0% {width:0%;} 100% {width:100%;} }
         
-        /* Enhanced Navigation */
+        /* Fixed Navigation */
         .nav {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-            padding: 20px var(--pad); display: flex; align-items: center; gap: 28px;
-            background: linear-gradient(180deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.45) 60%, rgba(0,0,0,0) 100%);
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            height: var(--nav-height);
+            display: flex; align-items: center; gap: 28px;
+            background: rgba(11,11,15,0.95);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+            padding: 0 var(--pad);
             transition: all 0.3s ease;
         }
-        .nav.scrolled { 
-            background: rgba(11,11,15,0.95); 
-            padding: 12px var(--pad); 
-            backdrop-filter: blur(14px); 
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-        .nav-logo { 
-            font-family: 'Bebas Neue', sans-serif; 
-            font-size: 2rem; 
-            font-weight: 900; 
-            color: var(--red); 
-            letter-spacing: 1px; 
-            text-transform: uppercase; 
-            cursor: pointer; 
-            text-shadow: 0 0 20px var(--red-glow); 
-            user-select: none; 
-            white-space: nowrap; 
-            text-decoration: none;
-            transition: transform 0.3s;
-        }
+        .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; font-weight: 900; color: var(--red); letter-spacing: 1px; text-transform: uppercase; cursor: pointer; text-shadow: 0 0 20px var(--red-glow); user-select: none; white-space: nowrap; text-decoration: none; transition: transform 0.3s; }
         .nav-logo:hover { transform: scale(1.05); }
         .nav-links { display: flex; gap: 22px; font-size: 14px; font-weight: 500; }
-        .nav-links a { 
-            color: var(--text-muted); 
-            text-decoration: none; 
-            transition: all 0.2s; 
-            cursor: pointer;
-            position: relative;
-            padding-bottom: 4px;
-        }
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background: var(--red);
-            transition: all 0.3s;
-            transform: translateX(-50%);
-        }
+        .nav-links a { color: var(--text-muted); text-decoration: none; transition: all 0.2s; cursor: pointer; position: relative; padding-bottom: 4px; }
+        .nav-links a::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: var(--red); transition: all 0.3s; transform: translateX(-50%); }
         .nav-links a:hover, .nav-links a.active { color: var(--text); font-weight: 700; }
         .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
         .nav-right { margin-left: auto; display: flex; align-items: center; gap: 18px; }
-        
-        /* Page Header for non-home routes */
-        .page-header {
-            padding: 120px var(--pad) 30px;
-            margin-bottom: 10px;
-            background: linear-gradient(180deg, rgba(229,9,20,0.1) 0%, transparent 100%);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .page-header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        .page-title {
-            font-size: clamp(2rem, 4vw, 3rem);
-            font-weight: 900;
-            letter-spacing: -1px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .page-title i {
-            color: var(--red);
-            font-size: 0.8em;
-        }
-        .page-subtitle {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-top: 8px;
-        }
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-            color: var(--text-dim);
-            margin-bottom: 12px;
-        }
-        .breadcrumb a {
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        .breadcrumb a:hover { color: var(--red); }
-        .breadcrumb .separator { color: var(--text-dim); }
-        .breadcrumb .current { color: var(--text); font-weight: 600; }
-        
-        /* Search Page Styles */
-        .search-page-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px var(--pad);
-        }
-        .search-hero {
-            text-align: center;
-            padding: 20px 0 30px;
-        }
-        .search-hero-icon {
-            font-size: 3rem;
-            color: var(--red);
-            margin-bottom: 15px;
-        }
-        .search-input-wrapper {
-            max-width: 600px;
-            margin: 0 auto;
-            position: relative;
-        }
-        .search-input {
-            width: 100%;
-            padding: 16px 50px 16px 20px;
-            background: rgba(30,30,36,0.9);
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 50px;
-            color: #fff;
-            font-size: 1.1rem;
-            outline: none;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.3s;
-        }
-        .search-input:focus {
-            border-color: var(--red);
-            box-shadow: 0 0 30px rgba(229,9,20,0.2);
-        }
-        .search-submit-btn {
-            position: absolute;
-            right: 5px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: var(--red);
-            border: none;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .search-submit-btn:hover {
-            background: var(--red-dark);
-            transform: translateY(-50%) scale(1.1);
-        }
-        
-        /* Enhanced Search Overlay */
-        .search-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(11,11,15,0.98); backdrop-filter: blur(20px);
-            z-index: 1000; display: none; flex-direction: column;
-            padding: 20px var(--pad); overflow-y: auto;
-        }
-        .search-overlay.active { display: flex; }
-        .search-overlay-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
-        .search-overlay-input {
-            flex: 1; padding: 16px 20px; background: rgba(30,30,36,0.8);
-            border: 1px solid rgba(255,255,255,0.2); border-radius: 10px;
-            color: #fff; font-size: 18px; outline: none; font-family: 'Inter', sans-serif;
-        }
-        .search-overlay-input:focus { border-color: var(--red); }
-        .search-overlay-close { background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer; padding: 8px; }
-        .search-overlay-close:hover { color: var(--red); }
-        .search-filters-bar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-        .filter-select {
-            background: rgba(30,30,36,0.9); border: 1px solid rgba(255,255,255,0.2);
-            color: #fff; padding: 10px 14px; border-radius: 8px; font-size: 0.85rem;
-            cursor: pointer; outline: none; font-family: 'Inter', sans-serif; flex: 1; min-width: 140px;
-        }
-        .filter-select:hover { border-color: var(--red); }
-        .filter-select option { background: #1a1a1f; }
-        .search-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
-        .search-result-card {
-            cursor: pointer; border-radius: 8px; overflow: hidden; background: var(--bg-card);
-            transition: transform 0.3s, box-shadow 0.3s; text-decoration: none; color: var(--text);
-        }
-        .search-result-card:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(0,0,0,0.8), 0 0 0 2px rgba(229,9,20,0.5); }
-        .search-result-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; }
-        .search-result-info { padding: 10px; }
-        .search-result-title { font-weight: 700; font-size: 0.85rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .search-result-meta { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
-        
-        .load-more-container {
-            text-align: center;
-            padding: 20px 0;
-            margin-top: 10px;
-        }
-        .load-more-btn {
-            background: var(--red);
-            color: #fff;
-            border: none;
-            padding: 14px 40px;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 8px 24px rgba(229,9,20,0.4);
-        }
-        .load-more-btn:hover {
-            background: var(--red-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(229,9,20,0.5);
-        }
-        .load-more-btn:disabled {
-            background: #333;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-        
-        .search-icon-btn { background: transparent; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 6px; display: flex; align-items: center; }
-        .watchlist-btn-nav { background: none; border: none; font-size: 1.3rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+        .watchlist-btn-nav { background: none; border: none; font-size: 1.3rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: color 0.2s; position: relative; }
         .watchlist-btn-nav:hover { color: var(--red); }
+        .watchlist-badge { position: absolute; top: -8px; right: -8px; background: var(--red); color: white; font-size: 0.6rem; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; display: none; }
+        .watchlist-badge.visible { display: flex; }
         .profile-avatar { width: 34px; height: 34px; border-radius: 8px; background: linear-gradient(135deg, var(--red), #4a0408); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 0 4px 14px var(--red-glow); }
-        .hero { height: 88vh; min-height: 560px; position: relative; overflow: hidden; }
+        
+        /* Hero Section */
+        .hero { height: calc(88vh - var(--nav-height)); min-height: 560px; position: relative; overflow: hidden; }
         .hero-slide { position: absolute; inset:0; background-size: cover; background-position: center 20%; opacity: 0; transition: opacity 1.2s ease; will-change: opacity; }
         .hero-slide.active { opacity:1; z-index:2; animation: kenBurns 24s ease-in-out infinite alternate; }
         @keyframes kenBurns { from { transform: scale(1.0); } to { transform: scale(1.12); } }
@@ -328,8 +127,165 @@
         .hero-dots { position: absolute; bottom: 26%; right: var(--pad); z-index: 4; display: flex; gap: 6px; }
         .hero-dot { width: 30px; height: 3px; background: rgba(255,255,255,0.3); cursor: pointer; transition: background 0.3s; border-radius: 2px; }
         .hero-dot.active { background: var(--red); }
+        
         .main-content { position: relative; z-index: 5; margin-top: -70px; padding-bottom: 30px; min-height: 60vh; }
         .main-content.no-hero { margin-top: 0; }
+        
+        /* Page Header */
+        .page-header {
+            padding: 120px var(--pad) 30px;
+            margin-bottom: 10px;
+            background: linear-gradient(180deg, rgba(229,9,20,0.1) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .page-header-content { max-width: 1400px; margin: 0 auto; }
+        .page-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; letter-spacing: -1px; margin-bottom: 8px; display: flex; align-items: center; gap: 15px; }
+        .page-title i { color: var(--red); font-size: 0.8em; }
+        .page-subtitle { color: var(--text-muted); font-size: 0.95rem; margin-top: 8px; }
+        .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px; }
+        .breadcrumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+        .breadcrumb a:hover { color: var(--red); }
+        .breadcrumb .separator { color: var(--text-dim); }
+        .breadcrumb .current { color: var(--text); font-weight: 600; }
+        
+        /* Enhanced Search Page Styles */
+        .search-page-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px var(--pad);
+        }
+        .search-hero {
+            text-align: center;
+            padding: 20px 0 30px;
+        }
+        .search-hero-icon { font-size: 3rem; color: var(--red); margin-bottom: 15px; }
+        .search-input-wrapper { max-width: 600px; margin: 0 auto; position: relative; }
+        .search-input {
+            width: 100%;
+            padding: 16px 50px 16px 20px;
+            background: rgba(30,30,36,0.9);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 50px;
+            color: #fff;
+            font-size: 1.1rem;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+        }
+        .search-input:focus { border-color: var(--red); box-shadow: 0 0 30px rgba(229,9,20,0.2); }
+        .search-submit-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--red);
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .search-submit-btn:hover { background: var(--red-dark); transform: translateY(-50%) scale(1.1); }
+        
+        /* Filters Section */
+        .filters-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(22,22,28,0.8);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+        .filters-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .filters-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .filters-title i { color: var(--red); }
+        .clear-filters-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: color 0.2s;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .clear-filters-btn:hover { color: var(--red); }
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .filter-select {
+            background: rgba(30,30,36,0.9);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        .filter-select:hover { border-color: var(--red); }
+        .filter-select:focus { border-color: var(--red); box-shadow: 0 0 10px rgba(229,9,20,0.2); }
+        .filter-select option { background: #1a1a1f; }
+        
+        .search-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+        .search-result-card {
+            cursor: pointer; border-radius: 8px; overflow: hidden; background: var(--bg-card);
+            transition: transform 0.3s, box-shadow 0.3s; text-decoration: none; color: var(--text);
+        }
+        .search-result-card:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(0,0,0,0.8), 0 0 0 2px rgba(229,9,20,0.5); }
+        .search-result-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; }
+        .search-result-info { padding: 10px; }
+        .search-result-title { font-weight: 700; font-size: 0.85rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .search-result-meta { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
+        
+        .load-more-container { text-align: center; padding: 20px 0; margin-top: 10px; }
+        .load-more-btn {
+            background: var(--red); color: #fff; border: none;
+            padding: 14px 40px; border-radius: 8px; font-size: 1rem;
+            font-weight: 700; cursor: pointer; transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif; display: inline-flex;
+            align-items: center; gap: 10px; box-shadow: 0 8px 24px rgba(229,9,20,0.4);
+        }
+        .load-more-btn:hover { background: var(--red-dark); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(229,9,20,0.5); }
+        .load-more-btn:disabled { background: #333; cursor: not-allowed; box-shadow: none; transform: none; }
+        
+        /* Cards and other styles remain same */
         .continue-watching-section { margin: 0 0 30px; padding: 20px 0; display: none; }
         .continue-watching-section.visible { display: block; }
         .section-header { display: flex; align-items: center; justify-content: space-between; padding: 0 var(--pad); margin-bottom: 15px; }
@@ -398,71 +354,15 @@
         .empty-state { text-align: center; padding: 110px 20px; color: #888; }
         .empty-state i { font-size: 3rem; margin-bottom: 20px; display: block; color: var(--red); }
         .empty-state h2 { font-size: 1.5rem; margin-bottom: 10px; color:#fff; }
-        
-        /* 404 Page */
-        .not-found-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 60vh;
-            text-align: center;
-            padding: 20px;
-        }
-        .not-found-code {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: clamp(6rem, 15vw, 12rem);
-            color: var(--red);
-            text-shadow: 0 0 30px var(--red-glow);
-            margin-bottom: 20px;
-        }
-        .not-found-title {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 10px;
-        }
-        .not-found-message {
-            color: var(--text-muted);
-            margin-bottom: 30px;
-            max-width: 400px;
-        }
-        .not-found-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 14px 30px;
-            background: var(--red);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        .not-found-btn:hover {
-            background: var(--red-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(229,9,20,0.4);
-        }
-        
-        .footer-wrapper {
-            position: relative;
-            z-index: 5;
-            margin-top: auto;
-        }
-        .footer-wrapper.hidden {
-            display: none;
-        }
-        footer { 
-            padding: 30px var(--pad); 
-            color: var(--text-dim); 
-            font-size: 13px; 
-            border-top: 1px solid rgba(255,255,255,0.08); 
-            margin-top: 20px; 
-            text-align: center; 
-        }
+        .not-found-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; text-align: center; padding: 20px; }
+        .not-found-code { font-family: 'Bebas Neue', sans-serif; font-size: clamp(6rem, 15vw, 12rem); color: var(--red); text-shadow: 0 0 30px var(--red-glow); margin-bottom: 20px; }
+        .not-found-title { font-size: 2rem; font-weight: 800; margin-bottom: 10px; }
+        .not-found-message { color: var(--text-muted); margin-bottom: 30px; max-width: 400px; }
+        .not-found-btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 30px; background: var(--red); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; text-decoration: none; transition: all 0.3s ease; }
+        .not-found-btn:hover { background: var(--red-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(229,9,20,0.4); }
+        .footer-wrapper { position: relative; z-index: 5; margin-top: auto; }
+        .footer-wrapper.hidden { display: none; }
+        footer { padding: 30px var(--pad); color: var(--text-dim); font-size: 13px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 20px; text-align: center; }
         .developer-credits { margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); font-family: 'Inter', sans-serif; }
         .dev-line { font-size: 0.95rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
         .dev-line span { color: #fff; font-weight: 700; }
@@ -472,25 +372,14 @@
         ::-webkit-scrollbar-track { background: #0a0a0a; }
         ::-webkit-scrollbar-thumb { background: #2a2a30; border-radius: 5px; }
         ::-webkit-scrollbar-thumb:hover { background: #444; }
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0; height: var(--bottom-nav-height);
-            background: rgba(11,11,15,0.98); backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255,255,255,0.1); display: none; z-index: 500;
-            align-items: center; justify-content: space-around; padding: 0 10px;
-            box-shadow: 0 -5px 30px rgba(0,0,0,0.5);
-        }
-        .bottom-nav-item {
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-            color: var(--text-muted); text-decoration: none; font-size: 0.7rem;
-            font-weight: 600; cursor: pointer; transition: color 0.2s; padding: 8px 15px;
-            border: none; background: none; font-family: 'Inter', sans-serif;
-        }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: var(--bottom-nav-height); background: rgba(11,11,15,0.98); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.1); display: none; z-index: 500; align-items: center; justify-content: space-around; padding: 0 10px; box-shadow: 0 -5px 30px rgba(0,0,0,0.5); }
+        .bottom-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-muted); text-decoration: none; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: color 0.2s; padding: 8px 15px; border: none; background: none; font-family: 'Inter', sans-serif; }
         .bottom-nav-item i { font-size: 1.3rem; }
         .bottom-nav-item.active { color: var(--red); }
         .bottom-nav-item:hover { color: var(--text); }
         @media (max-width: 900px) {
             .nav-links { display: none; }
-            .hero { height: 78vh; }
+            .hero { height: calc(78vh - var(--nav-height)); }
             .hero-content { bottom: 22%; }
             .hero-title { font-size: 2.4rem; }
             .hero-watch, .hero-info, .hero-watchlist-btn { padding: 10px 18px; font-size: 14px; }
@@ -502,9 +391,8 @@
             .back-to-top { bottom: 80px; }
             .toast { bottom: 80px; }
             body { padding-bottom: var(--bottom-nav-height); }
-            .search-filters-bar { gap: 6px; }
-            .filter-select { font-size: 0.75rem; padding: 8px 10px; min-width: 100px; flex: 0 0 auto; }
             .page-header { padding: 100px var(--pad) 20px; }
+            .filters-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
         }
     </style>
 </head>
@@ -516,57 +404,21 @@
         <div class="loading-bar-container"><div class="loading-bar-fill"></div></div>
     </div>
     
-    <div class="search-overlay" id="searchOverlay">
-        <div class="search-overlay-header">
-            <input type="text" class="search-overlay-input" id="searchOverlayInput" placeholder="Search movies, TV shows, genres..." autocomplete="off">
-            <button class="search-overlay-close" id="searchOverlayClose">&times;</button>
-        </div>
-        <div class="search-filters-bar" id="searchFiltersBar">
-            <select class="filter-select" id="searchTypeFilter">
-                <option value="multi">All Types</option>
-                <option value="movie">Movies</option>
-                <option value="tv">TV Shows</option>
-            </select>
-            <select class="filter-select" id="searchGenreFilter">
-                <option value="all">All Genres</option>
-            </select>
-            <select class="filter-select" id="searchYearFilter">
-                <option value="all">All Years</option>
-            </select>
-            <select class="filter-select" id="searchLanguageFilter">
-                <option value="all">All Languages</option>
-            </select>
-            <select class="filter-select" id="searchCountryFilter">
-                <option value="all">All Countries</option>
-            </select>
-            <select class="filter-select" id="searchSortFilter">
-                <option value="popularity.desc">Popularity</option>
-                <option value="vote_average.desc">Rating</option>
-                <option value="primary_release_date.desc">Release Date</option>
-                <option value="original_title.asc">Title A-Z</option>
-            </select>
-        </div>
-        <div class="search-results" id="searchResults"></div>
-        <div class="load-more-container" id="loadMoreContainer" style="display:none;">
-            <button class="load-more-btn" id="loadMoreBtn">
-                <i class="fas fa-plus"></i> Load More
-            </button>
-        </div>
-    </div>
-    
     <nav class="nav" id="mainNav">
         <a href="/" class="nav-logo">HR OTT</a>
         <div class="nav-links">
-            <a href="/" class="active" data-route="home"><i class="fas fa-home"></i> Home</a>
-            <a href="/search" data-route="search"><i class="fas fa-search"></i> Search</a>
-            <a href="/series" data-route="series"><i class="fas fa-tv"></i> TV Shows</a>
-            <a href="/movies" data-route="movies"><i class="fas fa-film"></i> Movies</a>
-            <a href="/new" data-route="new"><i class="fas fa-star"></i> New & Popular</a>
-            <a href="/my-list" data-route="my-list"><i class="fas fa-bookmark"></i> My List</a>
+            <a href="/" class="active" data-route="home">Home</a>
+            <a href="/search" data-route="search">Search</a>
+            <a href="/series" data-route="series">TV Shows</a>
+            <a href="/movies" data-route="movies">Movies</a>
+            <a href="/new" data-route="new">New & Popular</a>
+            <a href="/my-list" data-route="my-list">My List</a>
         </div>
         <div class="nav-right">
-            <button class="search-icon-btn" id="searchOpenBtn"><i class="fas fa-search"></i></button>
-            <button class="watchlist-btn-nav" id="watchlistBtnNav"><i class="fas fa-bell"></i></button>
+            <button class="watchlist-btn-nav" id="watchlistBtnNav">
+                <i class="fas fa-bell"></i>
+                <span class="watchlist-badge" id="watchlistBadge">0</span>
+            </button>
             <div class="profile-avatar">HR</div>
         </div>
     </nav>
@@ -593,7 +445,6 @@
             <p>© 2026 HR OTT — Watch Movies & Series.</p>
             <div class="developer-credits">
                 <div class="dev-line">Developed by <span>YATIN GOYAL</span></div>
-                <div class="taught-line"><span></span></div>
             </div>
         </footer>
     </div>
@@ -635,138 +486,23 @@
 
     <script>
         (function() {
-            // ═══════════════════════════════════════════════
-            // ═══ ENHANCED AD BLOCKER ═══
-            // ═══════════════════════════════════════════════
+            // Ad Blocker (simplified)
             class EnhancedAdBlocker {
                 constructor() {
                     this.blockedCount = 0;
-                    this.popupBlocked = 0;
-                    this.scriptBlocked = 0;
-                    this.iframeBlocked = 0;
-                    
-                    this.adDomains = [
-                        'googlesyndication.com', 'doubleclick.net', 'adservice.google.com',
-                        'googleads.g.doubleclick.net', 'googleadservices.com',
-                        'ads-twitter.com', 'facebook.com/ads', 'fbcdn.net',
-                        'rubiconproject.com', 'pubmatic.com', 'openx.net',
-                        'spotxchange.com', 'adroll.com', 'criteo.com',
-                        'casalemedia.com', 'amazon-adsystem.com',
-                        'taboola.com', 'outbrain.com', 'exoclick.com',
-                        'adnxs.com', 'adsrvr.org', 'adzerk.net',
-                        'adform.net', 'adfox.ru', 'adition.com',
-                        'advertise.com', 'advertising.com', 'adzerk.com',
-                        'bidswitch.net', 'bluekai.com', 'bounceexchange.com',
-                        'contextweb.com', 'demandbase.com', 'dianomi.com',
-                        'doubleverify.com', 'eplanning.net', 'exelator.com',
-                        'eyeota.net', 'flashtalking.com', 'google-analytics.com',
-                        'googletagmanager.com', 'googletagservices.com',
-                        'gumgum.com', 'indexexchange.com', 'lijit.com',
-                        'liveintent.com', 'lotame.com', 'mopub.com',
-                        'neustar.biz', 'pubexchange.com',
-                        'pulpix.com', 'quantcast.com', 'rhythmone.com',
-                        'scorecardresearch.com', 'sharethrough.com', 'simpli.fi',
-                        'smartadserver.com', 'sovrn.com', 'spotx.tv',
-                        'stickyads.tv', 'tremorhub.com',
-                        'turn.com', 'undertone.com', 'vevo.com',
-                        'videohub.com', 'vungle.com', 'yieldmo.com',
-                        'yieldmanager.com', 'zedo.com',
-                        'vidoomy.com', 'adserver.video', 'video-ad.com',
-                        'prebid.org', 'vast.ad', 'vpaid.com',
-                        'ima3.video', 'adserver-video.com',
-                        'video-advertising.com', 'ad-video.com',
-                        'video-ads.com', 'videos-ad.com',
-                        'video-ad-serving.com',
-                        'vast-player.com', 'vpaid-player.com',
-                        'video-ad-sdk.com', 'ad-video-sdk.com',
-                        'popads.net', 'popcash.net', 'popunder.com',
-                        'popup-ad.com', 'pop-under.com',
-                        'adpop.com', 'popad.net', 'popunder.io',
-                        'popup-service.com', 'popup-ad-network.com',
-                        'adware.com', 'malware.com', 'adware-remover.com',
-                        'spyware.com', 'adware-removal.com',
-                        'adware-protection.com', 'malware-protection.com',
-                        'redirectingat.com', 'redirect-tracker.com',
-                        'ad-redirect.com', 'tracking-ad.com',
-                        'ad-tracking.com', 'tracking-service.com',
-                        'redirect-ad.com', 'ad-traffic.com',
-                        'streaming-ads.com', 'stream-ad.com',
-                        'streaming-ad.com', 'ad-stream.com',
-                        'streamingad.com', 'streamad.com',
-                        'videos-streaming-ads.com', 'live-ad.com',
-                        'banner', 'sponsor', 'promo', 'affiliate',
-                        'partners', 'advert', 'marketing', 'campaign',
-                        'clicks', 'impression', 'conversion'
-                    ];
-                    
-                    this.adPatterns = [
-                        /[/?&]ad(=|_|\.)/i,
-                        /[/?&]advert/i,
-                        /[/?&]banner/i,
-                        /[/?&]sponsor/i,
-                        /[/?&]promo/i,
-                        /[/?&]affiliate/i,
-                        /[/?&]campaign/i,
-                        /[/?&]marketing/i,
-                        /[/?&]clicks?=/, 
-                        /[/?&]impression/,
-                        /[/?&]conversion/,
-                        /doubleclick\.net/i,
-                        /googleadservices/i,
-                        /googlesyndication/i,
-                        /taboola\.com/i,
-                        /outbrain\.com/i,
-                        /popads\.net/i,
-                        /popcash\.net/i,
-                        /exoclick\.com/i,
-                        /adnxs\.com/i,
-                        /openx\.net/i,
-                        /pubmatic\.com/i,
-                        /rubiconproject\.com/i,
-                        /casalemedia\.com/i,
-                        /criteo\.com/i,
-                        /adroll\.com/i,
-                        /amazon-adsystem\.com/i,
-                        /adform\.net/i,
-                        /smartadserver\.com/i,
-                        /yieldmo\.com/i,
-                        /zedo\.com/i,
-                        /spotx\.tv/i,
-                        /vungle\.com/i,
-                        /adserver\.video/i,
-                        /vast\.ad/i,
-                        /vpaid/i,
-                        /ima3\.video/i,
-                        /prebid\.org/i
-                    ];
-                    
+                    this.adDomains = ['googlesyndication.com', 'doubleclick.net', 'adservice.google.com', 'taboola.com', 'outbrain.com', 'exoclick.com', 'popads.net', 'popcash.net'];
                     this.init();
                 }
-
                 init() {
                     this.interceptFetch();
-                    this.interceptXHR();
                     this.blockPopups();
-                    this.blockIframes();
-                    this.blockScripts();
-                    this.blockImages();
-                    this.blockWebSockets();
-                    this.blockBeacon();
                     setInterval(() => this.cleanup(), 5000);
                 }
-
                 isAdUrl(url) {
                     if (!url) return false;
                     const lowerUrl = url.toLowerCase();
-                    for (const domain of this.adDomains) {
-                        if (lowerUrl.includes(domain)) return true;
-                    }
-                    for (const pattern of this.adPatterns) {
-                        if (pattern.test(lowerUrl)) return true;
-                    }
-                    return false;
+                    return this.adDomains.some(domain => lowerUrl.includes(domain));
                 }
-
                 interceptFetch() {
                     const self = this;
                     const origFetch = window.fetch;
@@ -774,172 +510,33 @@
                         const url = String(args[0] || '');
                         if (self.isAdUrl(url)) {
                             self.blockedCount++;
-                            self.scriptBlocked++;
-                            return Promise.reject(new Error('Ad blocked by HR OTT AdBlocker'));
+                            return Promise.reject(new Error('Ad blocked'));
                         }
                         return origFetch.apply(this, args);
                     };
                 }
-
-                interceptXHR() {
-                    const self = this;
-                    const origOpen = XMLHttpRequest.prototype.open;
-                    XMLHttpRequest.prototype.open = function(method, url, ...rest) {
-                        if (self.isAdUrl(url)) {
-                            self.blockedCount++;
-                            self.scriptBlocked++;
-                            setTimeout(() => { try { this.abort(); } catch(e) {} }, 0);
-                            return;
-                        }
-                        return origOpen.call(this, method, url, ...rest);
-                    };
-                }
-
                 blockPopups() {
                     const self = this;
-                    const origOpen = window.open;
                     window.open = function(url, name, features) {
                         if (url && self.isAdUrl(url)) {
                             self.blockedCount++;
-                            self.popupBlocked++;
-                            return { closed: true, close: function() {}, focus: function() {}, blur: function() {}, postMessage: function() {} };
+                            return { closed: true };
                         }
-                        return origOpen.call(this, url, name, features);
-                    };
-                    document.addEventListener('click', function(e) {
-                        const target = e.target.closest('a');
-                        if (target && target.target === '_blank') {
-                            const href = target.href || '';
-                            if (self.isAdUrl(href)) {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                self.blockedCount++;
-                                self.popupBlocked++;
-                                return false;
-                            }
-                        }
-                    }, true);
-                }
-
-                blockIframes() {
-                    const self = this;
-                    const origCreateElement = document.createElement.bind(document);
-                    document.createElement = function(tagName, options) {
-                        const element = origCreateElement(tagName, options);
-                        if (tagName.toLowerCase() === 'iframe') {
-                            const origSetAttribute = element.setAttribute.bind(element);
-                            element.setAttribute = function(name, value) {
-                                if (name === 'src' && self.isAdUrl(value)) {
-                                    self.blockedCount++;
-                                    self.iframeBlocked++;
-                                    value = 'about:blank';
-                                }
-                                return origSetAttribute(name, value);
-                            };
-                        }
-                        return element;
+                        return window.open(url, name, features);
                     };
                 }
-
-                blockScripts() {
-                    const self = this;
-                    const origCreateElement = document.createElement.bind(document);
-                    document.createElement = function(tagName, options) {
-                        const element = origCreateElement(tagName, options);
-                        if (tagName.toLowerCase() === 'script') {
-                            const origSetAttribute = element.setAttribute.bind(element);
-                            element.setAttribute = function(name, value) {
-                                if (name === 'src' && self.isAdUrl(value)) {
-                                    self.blockedCount++;
-                                    self.scriptBlocked++;
-                                    return;
-                                }
-                                return origSetAttribute(name, value);
-                            };
-                        }
-                        return element;
-                    };
-                }
-
-                blockImages() {
-                    const self = this;
-                    const origCreateElement = document.createElement.bind(document);
-                    document.createElement = function(tagName, options) {
-                        const element = origCreateElement(tagName, options);
-                        if (tagName.toLowerCase() === 'img') {
-                            const origSetAttribute = element.setAttribute.bind(element);
-                            element.setAttribute = function(name, value) {
-                                if (name === 'src' && self.isAdUrl(value)) {
-                                    self.blockedCount++;
-                                    value = '';
-                                }
-                                return origSetAttribute(name, value);
-                            };
-                        }
-                        return element;
-                    };
-                }
-
-                blockWebSockets() {
-                    const self = this;
-                    const origWebSocket = window.WebSocket;
-                    window.WebSocket = function(url, protocols) {
-                        if (self.isAdUrl(url)) {
-                            self.blockedCount++;
-                            return { readyState: 3, close: function() {}, send: function() {}, addEventListener: function() {}, removeEventListener: function() {}, dispatchEvent: function() {} };
-                        }
-                        return new origWebSocket(url, protocols);
-                    };
-                }
-
-                blockBeacon() {
-                    const self = this;
-                    const origSendBeacon = navigator.sendBeacon;
-                    navigator.sendBeacon = function(url, data) {
-                        if (self.isAdUrl(url)) {
-                            self.blockedCount++;
-                            return true;
-                        }
-                        return origSendBeacon.call(this, url, data);
-                    };
-                }
-
                 cleanup() {
-                    const selectors = [
-                        '[id*="ad" i]', '[class*="ad" i]', 
-                        '[id*="banner" i]', '[class*="banner" i]',
-                        '[id*="sponsor" i]', '[class*="sponsor" i]',
-                        '[id*="promo" i]', '[class*="promo" i]',
-                        '.ad-container', '.ad-wrapper', '.ad-banner',
-                        '.advertisement', '.google-ads', '.adsbygoogle',
-                        '.ad-slot', '.ad-unit', '.ad-frame'
-                    ];
                     try {
-                        document.querySelectorAll(selectors.join(',')).forEach(el => {
-                            if (el && el.parentNode) {
-                                const rect = el.getBoundingClientRect();
-                                if (rect.width > 0 && rect.height > 0 && (rect.width > 300 || rect.height > 50)) {
-                                    el.style.display = 'none';
-                                    el.style.pointerEvents = 'none';
-                                }
-                            }
+                        document.querySelectorAll('[id*="ad"], [class*="ad"], .ad-container, .ad-wrapper, .ad-banner').forEach(el => {
+                            if (el && el.parentNode) el.style.display = 'none';
                         });
                     } catch(e) {}
                 }
-
-                getStats() {
-                    return {
-                        totalBlocked: this.blockedCount,
-                        popupsBlocked: this.popupBlocked,
-                        scriptsBlocked: this.scriptBlocked,
-                        iframesBlocked: this.iframeBlocked
-                    };
-                }
             }
-
+            
             const adBlocker = new EnhancedAdBlocker();
 
-            // ═══════ CANVAS STARFIELD ═══════
+            // Canvas Starfield
             const canvas = document.getElementById('starCanvas');
             const ctx = canvas.getContext('2d');
             let stars = [];
@@ -951,34 +548,28 @@
             function drawStars() { ctx.clearRect(0,0,canvas.width,canvas.height); stars.forEach(s => { ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fillStyle = `rgba(255,250,255,${s.a * 0.5})`; ctx.fill(); s.a += s.da; if(s.a<=0.1 || s.a>=0.9) s.da*=-1; s.y += s.s; if(s.y>canvas.height){ s.y=0; s.x=Math.random()*canvas.width; } }); requestAnimationFrame(drawStars); }
             drawStars();
 
-            // ═══════ CURSOR GLOW ═══════
+            // Cursor Glow
             const cursorGlow = document.getElementById('cursorGlow');
             let rafId=null, mx=0, my=0;
             document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; if(!rafId) rafId = requestAnimationFrame(()=>{ cursorGlow.style.transform = `translate(${mx}px, ${my}px)`; rafId=null; }); });
 
-            // ═══════ CONFIG & API ═══════
+            // API Config
             const TMDB_KEY = '3a87b1db63bc74b8e3fe9266ddc75b30';
             const TMDB_BASE = 'https://api.themoviedb.org/3';
             const TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
             const TMDB_BACK = 'https://image.tmdb.org/t/p/original';
 
             const HOME_ROWS = [
-                { key:'trending',   title:'Trending Now',         ep:'/trending/movie/week?page=', type:'movie', hero:true },
-                { key:'toprated',   title:'Top Rated Movies',     ep:'/movie/top_rated?page=', type:'movie' },
-                { key:'popular',    title:'Popular Movies',       ep:'/movie/popular?page=', type:'movie' },
-                { key:'action',     title:'Action & Adventure',   ep:'/discover/movie?with_genres=28&sort_by=popularity.desc&page=', type:'movie' },
-                { key:'scifi',      title:'Sci-Fi & Fantasy',     ep:'/discover/movie?with_genres=878&sort_by=popularity.desc&page=', type:'movie' },
-                { key:'horror',     title:'Horror & Thrillers',   ep:'/discover/movie?with_genres=27&sort_by=popularity.desc&page=', type:'movie' },
-                { key:'comedy',     title:'Comedy',               ep:'/discover/movie?with_genres=35&sort_by=popularity.desc&page=', type:'movie' },
-                { key:'animation',  title:'Animation',            ep:'/discover/movie?with_genres=16&sort_by=popularity.desc&page=', type:'movie' },
-                { key:'romance',    title:'Romance',              ep:'/discover/movie?with_genres=10749&sort_by=popularity.desc&page=', type:'movie' },
-                { key:'bollywood',  title:'Bollywood',            ep:'/discover/movie?with_original_language=hi&sort_by=popularity.desc&page=', type:'movie' },
-                { key:'tvshows',    title:'Trending TV Shows',    ep:'/trending/tv/week?page=', type:'tv' },
+                { key:'trending', title:'Trending Now', ep:'/trending/movie/week?page=', type:'movie', hero:true },
+                { key:'toprated', title:'Top Rated Movies', ep:'/movie/top_rated?page=', type:'movie' },
+                { key:'popular', title:'Popular Movies', ep:'/movie/popular?page=', type:'movie' },
+                { key:'action', title:'Action & Adventure', ep:'/discover/movie?with_genres=28&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'tvshows', title:'Trending TV Shows', ep:'/trending/tv/week?page=', type:'tv' },
             ];
             const WALLS = {
                 movies: { title:'Movies', ep:'/discover/movie?sort_by=popularity.desc&vote_count.gte=50&page=', type:'movie', icon:'fa-film', subtitle:'Browse all movies in our collection' },
-                tv:     { title:'TV Shows', ep:'/discover/tv?sort_by=popularity.desc&vote_count.gte=50&page=', type:'tv', icon:'fa-tv', subtitle:'Discover amazing TV series' },
-                new:    { title:'New & Popular', ep:'/trending/all/week?page=', type:'mixed', icon:'fa-star', subtitle:'What\'s trending this week' },
+                tv: { title:'TV Shows', ep:'/discover/tv?sort_by=popularity.desc&vote_count.gte=50&page=', type:'tv', icon:'fa-tv', subtitle:'Discover amazing TV series' },
+                new: { title:'New & Popular', ep:'/trending/all/week?page=', type:'mixed', icon:'fa-star', subtitle:'What\'s trending this week' },
             };
 
             let watchlist=[], recent=[], heroMovies=[], heroIdx=0, heroTimer;
@@ -987,54 +578,23 @@
             let allGenres = [];
             let allLanguages = [];
             let allCountries = [];
-            let searchPage = 1;
-            let searchTotalPages = 1;
-            let searchIsLoading = false;
 
-            // ═══════ PERSISTENCE ═══════
-            const STORAGE_KEY = 'hr_ott_state';
-            
-            function saveAppState() {
-                try {
-                    const state = {
-                        route: currentRoute,
-                        watchlist: watchlist,
-                        recent: recent,
-                        timestamp: Date.now()
-                    };
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-                } catch (e) {}
-            }
-
-            function loadAppState() {
-                try {
-                    const raw = localStorage.getItem(STORAGE_KEY);
-                    if (!raw) return null;
-                    const state = JSON.parse(raw);
-                    if (state.timestamp && (Date.now() - state.timestamp) > 604800000) {
-                        localStorage.removeItem(STORAGE_KEY);
-                        return null;
-                    }
-                    return state;
-                } catch (e) { return null; }
-            }
-
+            // Storage
             function loadStorage() { 
                 try { 
-                    const saved = loadAppState();
-                    if (saved) {
-                        watchlist = saved.watchlist || [];
-                        recent = saved.recent || [];
-                        currentRoute = saved.route || 'home';
-                    } else {
-                        watchlist = JSON.parse(localStorage.HR_wl||'[]'); 
-                        recent = JSON.parse(localStorage.HR_rec||'[]');
-                    }
+                    watchlist = JSON.parse(localStorage.HR_wl||'[]'); 
+                    recent = JSON.parse(localStorage.HR_rec||'[]');
                 } catch(e){ watchlist=[]; recent=[]; } 
             }
-            
-            function saveWl(){ localStorage.HR_wl = JSON.stringify(watchlist); saveAppState(); }
-            function saveRec(){ localStorage.HR_rec = JSON.stringify(recent); saveAppState(); }
+            function saveWl(){ localStorage.HR_wl = JSON.stringify(watchlist); updateWatchlistBadge(); }
+            function saveRec(){ localStorage.HR_rec = JSON.stringify(recent); }
+            function updateWatchlistBadge() {
+                const badge = document.getElementById('watchlistBadge');
+                if (badge) {
+                    badge.textContent = watchlist.length;
+                    badge.classList.toggle('visible', watchlist.length > 0);
+                }
+            }
 
             async function tmdbFetch(endpoint) {
                 const sep = endpoint.includes('?') ? '&' : '?';
@@ -1048,12 +608,11 @@
             function esc(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
             function toast(msg){ const t=document.createElement('div'); t.className='toast show'; t.innerHTML=`<i class="fas fa-check-circle" style="color:#46d369"></i> ${msg}`; document.body.appendChild(t); setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=>t.remove(), 400); },2200); }
 
-            // ═══════ TITLE MAPPING ═══════
             function getTitle(item) { return item.title || item.name || 'Untitled'; }
             function getYear(item) { return (item.release_date || item.first_air_date || '').substring(0,4); }
             function getMediaType(item, forcedType) { return forcedType || item.media_type || 'movie'; }
 
-            // ═══════ LOAD CONFIGURATION ═══════
+            // Load Configuration for filters
             async function loadConfiguration() {
                 try {
                     const movieGenres = await tmdbFetch('/genre/movie/list');
@@ -1064,212 +623,11 @@
                     allLanguages = langData || [];
                     const countryData = await tmdbFetch('/configuration/countries');
                     allCountries = countryData || [];
-                    populateSearchFilters();
                 } catch(e) {
                     allGenres = []; allLanguages = []; allCountries = [];
                 }
             }
 
-            function populateSearchFilters() {
-                const genreSelect = document.getElementById('searchGenreFilter');
-                if (genreSelect && allGenres.length) {
-                    genreSelect.innerHTML = '<option value="all">All Genres</option>';
-                    allGenres.forEach(g => {
-                        const opt = document.createElement('option');
-                        opt.value = g.id;
-                        opt.textContent = g.name;
-                        genreSelect.appendChild(opt);
-                    });
-                }
-                const langSelect = document.getElementById('searchLanguageFilter');
-                if (langSelect && allLanguages.length) {
-                    langSelect.innerHTML = '<option value="all">All Languages</option>';
-                    allLanguages.forEach(l => {
-                        const opt = document.createElement('option');
-                        opt.value = l.iso_639_1;
-                        opt.textContent = l.english_name || l.name;
-                        langSelect.appendChild(opt);
-                    });
-                }
-                const countrySelect = document.getElementById('searchCountryFilter');
-                if (countrySelect && allCountries.length) {
-                    countrySelect.innerHTML = '<option value="all">All Countries</option>';
-                    allCountries.forEach(c => {
-                        const opt = document.createElement('option');
-                        opt.value = c.iso_3166_1;
-                        opt.textContent = c.english_name || c.native_name;
-                        countrySelect.appendChild(opt);
-                    });
-                }
-                const yearSelect = document.getElementById('searchYearFilter');
-                if (yearSelect) {
-                    yearSelect.innerHTML = '<option value="all">All Years</option>';
-                    const currentYear = new Date().getFullYear();
-                    for (let y = currentYear; y >= 1950; y--) {
-                        const opt = document.createElement('option');
-                        opt.value = y;
-                        opt.textContent = y;
-                        yearSelect.appendChild(opt);
-                    }
-                }
-            }
-
-            // ═══════ SEARCH WITH PARAMETERS ═══════
-            function buildSearchEndpoint(page = 1, query = null) {
-                const searchQuery = query || searchOverlayInput.value.trim();
-                const type = searchTypeFilter.value;
-                const genre = searchGenreFilter.value;
-                const year = searchYearFilter.value;
-                const language = searchLanguageFilter.value;
-                const country = searchCountryFilter.value;
-                const sort = searchSortFilter.value;
-
-                if (searchQuery.length >= 2) {
-                    let endpoint = `/search/multi?query=${encodeURIComponent(searchQuery)}&page=${page}`;
-                    if (type !== 'multi') endpoint += `&media_type=${type}`;
-                    return endpoint;
-                } else {
-                    let base = '/discover/movie';
-                    if (type === 'tv') base = '/discover/tv';
-                    const params = new URLSearchParams();
-                    if (genre !== 'all') params.set('with_genres', genre);
-                    if (year !== 'all') params.set('primary_release_year', year);
-                    if (language !== 'all') params.set('with_original_language', language);
-                    if (country !== 'all') params.set('with_origin_country', country);
-                    params.set('sort_by', sort);
-                    params.set('page', page);
-                    return `${base}?${params.toString()}`;
-                }
-            }
-
-            // ═══════ SEARCH OVERLAY ═══════
-            const searchOverlay = document.getElementById('searchOverlay');
-            const searchOverlayInput = document.getElementById('searchOverlayInput');
-            const searchOverlayClose = document.getElementById('searchOverlayClose');
-            const searchOpenBtn = document.getElementById('searchOpenBtn');
-            const searchResults = document.getElementById('searchResults');
-            const loadMoreContainer = document.getElementById('loadMoreContainer');
-            const loadMoreBtn = document.getElementById('loadMoreBtn');
-            const searchTypeFilter = document.getElementById('searchTypeFilter');
-            const searchGenreFilter = document.getElementById('searchGenreFilter');
-            const searchYearFilter = document.getElementById('searchYearFilter');
-            const searchLanguageFilter = document.getElementById('searchLanguageFilter');
-            const searchCountryFilter = document.getElementById('searchCountryFilter');
-            const searchSortFilter = document.getElementById('searchSortFilter');
-            let searchTimeout;
-
-            function openSearch() {
-                searchOverlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-                setTimeout(() => searchOverlayInput.focus(), 100);
-            }
-            function closeSearch() {
-                searchOverlay.classList.remove('active');
-                document.body.style.overflow = '';
-                searchOverlayInput.value = '';
-                searchResults.innerHTML = '';
-                loadMoreContainer.style.display = 'none';
-                searchPage = 1;
-                searchTotalPages = 1;
-            }
-
-            searchOpenBtn.addEventListener('click', openSearch);
-            searchOverlayClose.addEventListener('click', closeSearch);
-
-            function renderSearchResults(items, append = false) {
-                if (!append) searchResults.innerHTML = '';
-                const resultsHtml = items.map(item => {
-                    const poster = item.poster_path ? TMDB_IMG + item.poster_path : '';
-                    const title = getTitle(item);
-                    const year = getYear(item);
-                    const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '?';
-                    const type = getMediaType(item, searchTypeFilter.value !== 'multi' ? searchTypeFilter.value : null);
-                    const typeLabel = type === 'movie' ? 'Movie' : 'TV';
-                    return `<a class="search-result-card" href="javascript:void(0)" data-id="${item.id}" data-type="${type}" data-title="${esc(title)}" data-poster="${poster}" data-year="${year}">
-                        <img src="${poster}" alt="${esc(title)}" onerror="this.style.background='#222';this.style.opacity='0.5';">
-                        <div class="search-result-info">
-                            <div class="search-result-title">${esc(title)}</div>
-                            <div class="search-result-meta">★ ${rating} · ${year} · ${typeLabel}</div>
-                        </div>
-                    </a>`;
-                }).join('');
-                searchResults.innerHTML += resultsHtml;
-                searchResults.querySelectorAll('.search-result-card').forEach(card => {
-                    card.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const id = card.dataset.id;
-                        const type = card.dataset.type;
-                        const title = card.dataset.title;
-                        const poster = card.dataset.poster;
-                        const year = card.dataset.year;
-                        closeSearch();
-                        addRecent(id, title, poster, year, type);
-                        window.location.href = `/player.html?id=${id}&type=${type}`;
-                    });
-                });
-            }
-
-            async function performSearch(page = 1, append = false) {
-                if (searchIsLoading) return;
-                const query = searchOverlayInput.value.trim();
-                const hasFilters = searchTypeFilter.value !== 'multi' || searchGenreFilter.value !== 'all' || 
-                                  searchYearFilter.value !== 'all' || searchLanguageFilter.value !== 'all' || 
-                                  searchCountryFilter.value !== 'all';
-                if (query.length < 2 && !hasFilters && !append) {
-                    searchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Type to search or use filters</div>';
-                    loadMoreContainer.style.display = 'none';
-                    return;
-                }
-                if (!append) {
-                    searchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Searching...</div>';
-                    searchPage = 1;
-                }
-                searchIsLoading = true;
-                loadMoreBtn.disabled = true;
-                loadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
-                try {
-                    const endpoint = buildSearchEndpoint(page, query);
-                    const data = await tmdbFetch(endpoint);
-                    const items = (data.results || []).filter(m => m.poster_path);
-                    searchTotalPages = data.total_pages || 1;
-                    searchPage = page;
-                    if (items.length === 0 && !append) {
-                        searchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">No results found</div>';
-                        loadMoreContainer.style.display = 'none';
-                        return;
-                    }
-                    renderSearchResults(items, append);
-                    if (searchPage < searchTotalPages) {
-                        loadMoreContainer.style.display = 'block';
-                        loadMoreBtn.disabled = false;
-                        loadMoreBtn.innerHTML = '<i class="fas fa-plus"></i> Load More';
-                    } else {
-                        loadMoreContainer.style.display = 'none';
-                    }
-                } catch (e) {
-                    if (!append) {
-                        searchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Search error</div>';
-                    }
-                    loadMoreContainer.style.display = 'none';
-                } finally {
-                    searchIsLoading = false;
-                    if (searchPage < searchTotalPages) {
-                        loadMoreBtn.disabled = false;
-                        loadMoreBtn.innerHTML = '<i class="fas fa-plus"></i> Load More';
-                    }
-                }
-            }
-
-            loadMoreBtn.addEventListener('click', () => { performSearch(searchPage + 1, true); });
-            searchOverlayInput.addEventListener('input', function() {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => performSearch(1, false), 400);
-            });
-            [searchTypeFilter, searchGenreFilter, searchYearFilter, searchLanguageFilter, searchCountryFilter, searchSortFilter].forEach(filter => {
-                filter.addEventListener('change', () => performSearch(1, false));
-            });
-
-            // ═══════ CREATE CARD ═══════
             function createCard(item, forcedType, progress){
                 const type = getMediaType(item, forcedType);
                 if(type !== 'movie' && type !== 'tv') return null;
@@ -1362,13 +720,6 @@
                 if (navIcon) navIcon.className = watchlist.length > 0 ? 'fas fa-heart' : 'fas fa-bell';
                 refreshHearts();
                 if (currentRoute === 'my-list') renderMyList();
-                document.querySelectorAll('.hero-watchlist-btn').forEach(btn => {
-                    if (btn.dataset.id == id) {
-                        const inWl = watchlist.some(w=>w.id==id);
-                        btn.classList.toggle('active', inWl);
-                        btn.innerHTML = `<i class="fas ${inWl?'fa-check':'fa-plus'}"></i> ${inWl?'In Watchlist':'Add to Watchlist'}`;
-                    }
-                });
             }
 
             function addRecent(id,title,poster,year,type){
@@ -1396,13 +747,9 @@
                     c.querySelector('.card-rating').innerHTML = '<i class="fas fa-clock"></i>';
                     grid.appendChild(c);
                 });
-                const leftBtn = section.querySelector('.scroll-btn.left');
-                const rightBtn = section.querySelector('.scroll-btn.right');
-                if (leftBtn) leftBtn.onclick = () => grid.scrollBy({ left: -grid.clientWidth * 0.8, behavior: 'smooth' });
-                if (rightBtn) rightBtn.onclick = () => grid.scrollBy({ left: grid.clientWidth * 0.8, behavior: 'smooth' });
             }
 
-            // ═══════ MODAL ═══════
+            // Modal
             const modal = document.getElementById('movieModal');
             const modalClose = document.getElementById('modalClose');
             const modalPlayBtn = document.getElementById('modalPlayBtn');
@@ -1423,8 +770,8 @@
                 updateModalWatchlistBtn();
                 try {
                     const endpoint = type === 'movie' 
-                        ? `/movie/${id}?append_to_response=credits,similar,videos,recommendations,external_ids` 
-                        : `/tv/${id}?append_to_response=credits,similar,videos,recommendations,external_ids`;
+                        ? `/movie/${id}?append_to_response=credits` 
+                        : `/tv/${id}?append_to_response=credits`;
                     const data = await tmdbFetch(endpoint);
                     if (!data || !data.id) { document.getElementById('modalTitle').textContent = 'Not Found'; return; }
                     currentModalTitle = getTitle(data);
@@ -1472,13 +819,6 @@
                     toast('Added to My List'); 
                 }
                 saveWl(); refreshHearts(); updateModalWatchlistBtn();
-                document.querySelectorAll('.hero-watchlist-btn').forEach(btn => {
-                    if (btn.dataset.id == currentModalId) {
-                        const inWl = watchlist.some(w=>w.id==currentModalId);
-                        btn.classList.toggle('active', inWl);
-                        btn.innerHTML = `<i class="fas ${inWl?'fa-check':'fa-plus'}"></i> ${inWl?'In Watchlist':'Add to Watchlist'}`;
-                    }
-                });
             });
             
             function closeModal() { modal.classList.remove('active'); document.body.style.overflow = ''; }
@@ -1486,7 +826,7 @@
             modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
             document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && modal.classList.contains('active')) closeModal(); });
 
-            // ═══════ HERO ═══════
+            // Hero
             function buildHero(movies){
                 heroMovies = movies.filter(m=>m.backdrop_path).slice(0,6);
                 const heroEl=document.getElementById('hero');
@@ -1537,7 +877,7 @@
             function hideHero(){ if(heroTimer) clearInterval(heroTimer); document.getElementById('hero').style.display='none'; }
             function showHero(){ document.getElementById('hero').style.display='block'; }
 
-            // ═══════ PAGE HEADER ═══════
+            // Page Header
             function createPageHeader(title, icon, subtitle) {
                 const header = document.createElement('div');
                 header.className = 'page-header';
@@ -1559,7 +899,7 @@
                 return header;
             }
 
-            // ═══════ HOME ROWS ═══════
+            // Home Rows
             function createRowSection(cfg){
                 const sec=document.createElement('div'); sec.className='section';
                 sec.innerHTML=`<h2 class="section-title">${cfg.title}</h2><div class="row-scroll-area"><button class="scroll-btn left"><i class="fas fa-chevron-left"></i></button><div class="row-track" id="grid-${cfg.key}"></div><button class="scroll-btn right"><i class="fas fa-chevron-right"></i></button></div>`;
@@ -1584,7 +924,6 @@
                 if(heroRow && heroRow.data.length) buildHero(heroRow.data); else hideHero();
                 showHideFooter();
                 updateNavActive('home');
-                saveAppState();
             }
 
             function teardownWall(){ if(wallState && wallState.observer) wallState.observer.disconnect(); wallState = null; }
@@ -1609,7 +948,6 @@
                 if(wallState){ const sentinel = document.getElementById('wallSentinel'); wallState.observer = new IntersectionObserver(entries=>{ if(entries[0].isIntersecting) loadWallPage(); },{ rootMargin:'600px' }); wallState.observer.observe(sentinel); }
                 showHideFooter();
                 updateNavActive(currentRoute);
-                saveAppState();
             }
 
             async function loadWallPage(){
@@ -1642,7 +980,6 @@
                     container.innerHTML += `<div class="empty-state"><i class="fas fa-heart"></i><h2>Your list is empty</h2><p>Add movies and shows to your list to watch them later.</p></div>`; 
                     showHideFooter();
                     updateNavActive('my-list');
-                    saveAppState();
                     return; 
                 }
                 const sec = document.createElement('div'); sec.className = 'section'; sec.innerHTML = `<div class="grid-wall" id="grid-mylist"></div>`; container.appendChild(sec);
@@ -1650,9 +987,9 @@
                 watchlist.forEach(item => { const card=createCard({ id:item.id, title:item.title, poster_path:null, backdrop_path:null, release_date:(item.year||'')+'-01-01', vote_average:0 }, item.type); if(!card) return; const img=card.querySelector('img'); if(item.poster) img.src=item.poster; card.querySelector('.card-rating').innerHTML='<i class="fas fa-heart" style="color:var(--red)"></i>'; grid.appendChild(card); });
                 showHideFooter();
                 updateNavActive('my-list');
-                saveAppState();
             }
 
+            // Enhanced Search Page with ALL Filters
             function renderSearchPage(){
                 teardownWall(); hideHero();
                 currentRoute = 'search';
@@ -1660,56 +997,224 @@
                 const container = document.getElementById('sectionsContainer');
                 document.getElementById('mainContent').classList.add('no-hero');
                 container.innerHTML = '';
-                container.appendChild(createPageHeader('Search', 'fa-search', 'Find movies and TV shows'));
+                container.appendChild(createPageHeader('Search', 'fa-search', 'Find movies and TV shows with advanced filters'));
+                
                 const searchSection = document.createElement('div');
                 searchSection.className = 'search-page-container';
                 searchSection.innerHTML = `
                     <div class="search-hero">
                         <div class="search-hero-icon"><i class="fas fa-search"></i></div>
                         <div class="search-input-wrapper">
-                            <input type="text" class="search-input" id="pageSearchInput" placeholder="Search movies, TV shows, genres..." autocomplete="off">
+                            <input type="text" class="search-input" id="pageSearchInput" placeholder="Search movies, TV shows, people..." autocomplete="off">
                             <button class="search-submit-btn" id="pageSearchBtn"><i class="fas fa-arrow-right"></i></button>
                         </div>
                     </div>
-                    <div class="search-results" id="pageSearchResults"></div>
+                    
+                    <div class="filters-section">
+                        <div class="filters-header">
+                            <div class="filters-title"><i class="fas fa-filter"></i> Filters</div>
+                            <button class="clear-filters-btn" id="clearFiltersBtn"><i class="fas fa-times"></i> Clear All</button>
+                        </div>
+                        <div class="filters-grid">
+                            <div class="filter-group">
+                                <label class="filter-label">Type</label>
+                                <select class="filter-select" id="searchTypeFilter">
+                                    <option value="multi">All Types</option>
+                                    <option value="movie">Movies</option>
+                                    <option value="tv">TV Shows</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Genre</label>
+                                <select class="filter-select" id="searchGenreFilter">
+                                    <option value="all">All Genres</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Year</label>
+                                <select class="filter-select" id="searchYearFilter">
+                                    <option value="all">All Years</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Language</label>
+                                <select class="filter-select" id="searchLanguageFilter">
+                                    <option value="all">All Languages</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Country</label>
+                                <select class="filter-select" id="searchCountryFilter">
+                                    <option value="all">All Countries</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Sort By</label>
+                                <select class="filter-select" id="searchSortFilter">
+                                    <option value="popularity.desc">Popularity</option>
+                                    <option value="vote_average.desc">Rating</option>
+                                    <option value="primary_release_date.desc">Release Date</option>
+                                    <option value="original_title.asc">Title A-Z</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="search-results" id="pageSearchResults">
+                        <div style="text-align:center;padding:40px;color:var(--text-muted);">
+                            <i class="fas fa-search" style="font-size:2rem;margin-bottom:10px;display:block;"></i>
+                            Search for movies and TV shows or use filters to browse
+                        </div>
+                    </div>
                     <div class="load-more-container" id="pageLoadMoreContainer" style="display:none;">
                         <button class="load-more-btn" id="pageLoadMoreBtn"><i class="fas fa-plus"></i> Load More</button>
                     </div>
                 `;
                 container.appendChild(searchSection);
                 
+                // Populate filters
+                populateFilterOptions();
+                
+                // Setup search functionality
+                setupSearchFunctionality();
+                
+                showHideFooter();
+                updateNavActive('search');
+            }
+
+            function populateFilterOptions() {
+                // Populate genres
+                const genreSelect = document.getElementById('searchGenreFilter');
+                if (genreSelect && allGenres.length) {
+                    genreSelect.innerHTML = '<option value="all">All Genres</option>';
+                    allGenres.forEach(g => {
+                        const opt = document.createElement('option');
+                        opt.value = g.id;
+                        opt.textContent = g.name;
+                        genreSelect.appendChild(opt);
+                    });
+                }
+                
+                // Populate years
+                const yearSelect = document.getElementById('searchYearFilter');
+                if (yearSelect) {
+                    yearSelect.innerHTML = '<option value="all">All Years</option>';
+                    const currentYear = new Date().getFullYear();
+                    for (let y = currentYear; y >= 1950; y--) {
+                        const opt = document.createElement('option');
+                        opt.value = y;
+                        opt.textContent = y;
+                        yearSelect.appendChild(opt);
+                    }
+                }
+                
+                // Populate languages
+                const langSelect = document.getElementById('searchLanguageFilter');
+                if (langSelect && allLanguages.length) {
+                    langSelect.innerHTML = '<option value="all">All Languages</option>';
+                    allLanguages.forEach(l => {
+                        const opt = document.createElement('option');
+                        opt.value = l.iso_639_1;
+                        opt.textContent = l.english_name || l.name;
+                        langSelect.appendChild(opt);
+                    });
+                }
+                
+                // Populate countries
+                const countrySelect = document.getElementById('searchCountryFilter');
+                if (countrySelect && allCountries.length) {
+                    countrySelect.innerHTML = '<option value="all">All Countries</option>';
+                    allCountries.forEach(c => {
+                        const opt = document.createElement('option');
+                        opt.value = c.iso_3166_1;
+                        opt.textContent = c.english_name || c.native_name;
+                        countrySelect.appendChild(opt);
+                    });
+                }
+            }
+
+            function setupSearchFunctionality() {
                 const pageSearchInput = document.getElementById('pageSearchInput');
                 const pageSearchBtn = document.getElementById('pageSearchBtn');
                 const pageSearchResults = document.getElementById('pageSearchResults');
                 const pageLoadMoreContainer = document.getElementById('pageLoadMoreContainer');
                 const pageLoadMoreBtn = document.getElementById('pageLoadMoreBtn');
+                const clearFiltersBtn = document.getElementById('clearFiltersBtn');
                 
-                let pageSearchTimeout;
+                const searchTypeFilter = document.getElementById('searchTypeFilter');
+                const searchGenreFilter = document.getElementById('searchGenreFilter');
+                const searchYearFilter = document.getElementById('searchYearFilter');
+                const searchLanguageFilter = document.getElementById('searchLanguageFilter');
+                const searchCountryFilter = document.getElementById('searchCountryFilter');
+                const searchSortFilter = document.getElementById('searchSortFilter');
                 
-                function pageSearch(page = 1, append = false) {
+                let searchTimeout;
+                let currentPage = 1;
+                let totalPages = 1;
+                
+                function buildSearchEndpoint(page = 1) {
                     const query = pageSearchInput.value.trim();
-                    if (query.length < 2) {
-                        pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Type to search for movies and TV shows</div>';
+                    const type = searchTypeFilter.value;
+                    const genre = searchGenreFilter.value;
+                    const year = searchYearFilter.value;
+                    const language = searchLanguageFilter.value;
+                    const country = searchCountryFilter.value;
+                    const sort = searchSortFilter.value;
+                    
+                    const hasFilters = genre !== 'all' || year !== 'all' || language !== 'all' || country !== 'all';
+                    
+                    if (query.length >= 2) {
+                        // Search with query
+                        let endpoint = `/search/multi?query=${encodeURIComponent(query)}&page=${page}`;
+                        return endpoint;
+                    } else if (hasFilters) {
+                        // Browse with filters
+                        let base = type === 'tv' ? '/discover/tv' : '/discover/movie';
+                        const params = new URLSearchParams();
+                        if (genre !== 'all') params.set('with_genres', genre);
+                        if (year !== 'all') params.set('primary_release_year', year);
+                        if (language !== 'all') params.set('with_original_language', language);
+                        if (country !== 'all') params.set('with_origin_country', country);
+                        params.set('sort_by', sort);
+                        params.set('page', page);
+                        params.set('vote_count.gte', '10');
+                        return `${base}?${params.toString()}`;
+                    }
+                    return null;
+                }
+                
+                function performSearch(page = 1, append = false) {
+                    const endpoint = buildSearchEndpoint(page);
+                    if (!endpoint) {
+                        pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Type to search or use filters to browse</div>';
                         pageLoadMoreContainer.style.display = 'none';
                         return;
                     }
+                    
                     if (!append) {
                         pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Searching...</div>';
+                        currentPage = 1;
                     }
-                    tmdbFetch(`/search/multi?query=${encodeURIComponent(query)}&page=${page}`).then(data => {
+                    
+                    tmdbFetch(endpoint).then(data => {
                         const items = (data.results || []).filter(m => m.poster_path);
+                        totalPages = data.total_pages || 1;
+                        currentPage = page;
+                        
                         if (items.length === 0 && !append) {
                             pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">No results found</div>';
                             pageLoadMoreContainer.style.display = 'none';
                             return;
                         }
+                        
                         if (!append) pageSearchResults.innerHTML = '';
+                        
                         const resultsHtml = items.map(item => {
                             const poster = item.poster_path ? TMDB_IMG + item.poster_path : '';
                             const title = getTitle(item);
                             const year = getYear(item);
                             const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '?';
-                            const type = getMediaType(item, null);
+                            const type = getMediaType(item, searchTypeFilter.value !== 'multi' ? searchTypeFilter.value : null);
                             const typeLabel = type === 'movie' ? 'Movie' : 'TV';
                             return `<a class="search-result-card" href="javascript:void(0)" data-id="${item.id}" data-type="${type}" data-title="${esc(title)}" data-poster="${poster}" data-year="${year}">
                                 <img src="${poster}" alt="${esc(title)}" onerror="this.style.background='#222';this.style.opacity='0.5';">
@@ -1719,7 +1224,9 @@
                                 </div>
                             </a>`;
                         }).join('');
+                        
                         pageSearchResults.innerHTML += resultsHtml;
+                        
                         pageSearchResults.querySelectorAll('.search-result-card').forEach(card => {
                             card.addEventListener('click', (e) => {
                                 e.preventDefault();
@@ -1732,30 +1239,50 @@
                                 window.location.href = `/player.html?id=${id}&type=${type}`;
                             });
                         });
-                        if (page < (data.total_pages || 1)) {
+                        
+                        if (currentPage < totalPages) {
                             pageLoadMoreContainer.style.display = 'block';
-                            pageLoadMoreBtn.onclick = () => pageSearch(page + 1, true);
+                            pageLoadMoreBtn.onclick = () => performSearch(currentPage + 1, true);
                         } else {
                             pageLoadMoreContainer.style.display = 'none';
                         }
                     }).catch(() => {
-                        pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Search error</div>';
+                        if (!append) {
+                            pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Search error</div>';
+                        }
                         pageLoadMoreContainer.style.display = 'none';
                     });
                 }
                 
+                // Event listeners
                 pageSearchInput.addEventListener('input', function() {
-                    clearTimeout(pageSearchTimeout);
-                    pageSearchTimeout = setTimeout(() => pageSearch(1, false), 400);
-                });
-                pageSearchBtn.addEventListener('click', () => pageSearch(1, false));
-                pageSearchInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') pageSearch(1, false);
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => performSearch(1, false), 400);
                 });
                 
-                showHideFooter();
-                updateNavActive('search');
-                saveAppState();
+                pageSearchBtn.addEventListener('click', () => performSearch(1, false));
+                
+                pageSearchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') performSearch(1, false);
+                });
+                
+                // Filter change events
+                [searchTypeFilter, searchGenreFilter, searchYearFilter, searchLanguageFilter, searchCountryFilter, searchSortFilter].forEach(filter => {
+                    filter.addEventListener('change', () => performSearch(1, false));
+                });
+                
+                // Clear filters
+                clearFiltersBtn.addEventListener('click', () => {
+                    pageSearchInput.value = '';
+                    searchTypeFilter.value = 'multi';
+                    searchGenreFilter.value = 'all';
+                    searchYearFilter.value = 'all';
+                    searchLanguageFilter.value = 'all';
+                    searchCountryFilter.value = 'all';
+                    searchSortFilter.value = 'popularity.desc';
+                    pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Type to search or use filters to browse</div>';
+                    pageLoadMoreContainer.style.display = 'none';
+                });
             }
 
             function render404(path) {
@@ -1779,10 +1306,9 @@
                 `;
                 showHideFooter();
                 updateNavActive('');
-                saveAppState();
             }
 
-            // ═══════ UPDATE NAV ACTIVE ═══════
+            // Update nav active
             function updateNavActive(route) {
                 document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
                 document.querySelectorAll('.bottom-nav-item').forEach(a => a.classList.remove('active'));
@@ -1790,27 +1316,19 @@
                 if (link) link.classList.add('active');
             }
 
-            // ═══════ SHOW/HIDE FOOTER ═══════
             function showHideFooter() {
                 const footerWrapper = document.getElementById('footerWrapper');
                 const container = document.getElementById('sectionsContainer');
                 if (!footerWrapper || !container) return;
                 const hasContent = container.children.length > 0 && container.innerHTML.trim() !== '';
-                const hasEmptyState = container.querySelector('.empty-state') !== null;
-                const hasGrid = container.querySelector('.grid-wall') !== null;
-                const hasGridItems = container.querySelector('.grid-wall')?.children?.length > 0;
-                if (hasContent && (hasGridItems || !hasEmptyState)) {
+                if (hasContent) {
                     footerWrapper.classList.remove('hidden');
-                } else if (hasContent && hasEmptyState && !hasGridItems) {
-                    footerWrapper.classList.add('hidden');
-                } else if (!hasContent) {
-                    footerWrapper.classList.add('hidden');
                 } else {
-                    footerWrapper.classList.remove('hidden');
+                    footerWrapper.classList.add('hidden');
                 }
             }
 
-            // ═══════ ROUTE HANDLER ═══════
+            // Route handler
             function handleRoute(route) {
                 if (route === 'home') renderHome();
                 else if (route === 'movies') renderWall('movies');
@@ -1820,10 +1338,9 @@
                 else if (route === 'search') renderSearchPage();
                 else render404(window.location.pathname);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-                saveAppState();
             }
 
-            // ═══════ NAVIGATION ═══════
+            // Navigation
             function navigateTo(route) {
                 const routeMap = {
                     'home': '/',
@@ -1849,11 +1366,10 @@
                 navigateTo('home');
             });
 
-            // ═══════ BACK TO TOP ═══════
+            // Back to top
             const backBtn = document.getElementById('backToTop');
             window.addEventListener('scroll', () => { 
                 backBtn.classList.toggle('visible', window.scrollY > 600); 
-                document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 30); 
             });
             backBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
@@ -1865,7 +1381,7 @@
                 toast('Watch history cleared');
             });
 
-            // ═══════ BROWSER BACK/FORWARD ═══════
+            // Browser back/forward
             window.addEventListener('popstate', (e) => {
                 const route = e.state?.route || getRouteFromPath(window.location.pathname);
                 handleRoute(route);
@@ -1881,9 +1397,10 @@
                 return '404';
             }
 
-            // ═══════ INIT ═══════
+            // Init
             async function init() {
                 loadStorage();
+                updateWatchlistBadge();
                 if (watchlist.length > 0) document.getElementById('watchlistBtnNav').querySelector('i').className = 'fas fa-heart';
                 await loadConfiguration();
                 renderContinueWatching();
@@ -1898,21 +1415,6 @@
                     setTimeout(() => { const ls = document.getElementById('loadingScreen'); if (ls) ls.remove(); }, 600); 
                 }, 2600);
                 refreshHearts();
-                
-                const observer = new MutationObserver(() => {
-                    showHideFooter();
-                });
-                observer.observe(document.getElementById('sectionsContainer'), { 
-                    childList: true, 
-                    subtree: true 
-                });
-                
-                window.addEventListener('beforeunload', () => {
-                    saveAppState();
-                });
-                
-                console.log('🔒 HR OTT AdBlocker Active - Blocking ads on all players');
-                console.log(`📊 AdBlocker loaded with ${adBlocker.adDomains.length} domains in blocklist`);
             }
             init();
         })();
