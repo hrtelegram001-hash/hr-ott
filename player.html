@@ -45,18 +45,133 @@
         .server-btn { background: transparent; border: 1.5px solid rgba(255,255,255,0.2); color: var(--text-muted); padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: all 0.3s ease; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; flex-shrink: 0; }
         .server-btn:hover { background: rgba(255,255,255,0.08); color: var(--text); border-color: rgba(255,255,255,0.4); }
         .server-btn.active { background: var(--red); border-color: var(--red); color: #fff; box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3); }
-        .player-wrapper-outer { position: relative; margin-bottom: 40px; }
-        .player-controls-top { position: absolute; top: 16px; right: 16px; z-index: 25; display: flex; gap: 12px; }
-        .player-btn { appearance: none; border: 1px solid rgba(255,255,255,0.25); background: rgba(11, 11, 15, 0.85); color: var(--text); border-radius: 8px; padding: 11px 18px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; backdrop-filter: blur(14px); transition: all 0.3s ease; font-family: 'Inter', sans-serif; box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
-        .player-btn:hover { background: var(--red); border-color: var(--red); transform: translateY(-2px); }
-        .player-container { width: 100%; max-width: 100%; background: #000; border-radius: 12px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; min-height: 480px; }
-        .player-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; border: none; background: #000; }
-        .player-loading { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; background: linear-gradient(135deg, #1a1a1f 0%, #2a2a32 100%); z-index: 10; transition: opacity 0.4s ease; }
+        
+        /* Player Wrapper */
+        .player-wrapper-outer { 
+            position: relative; 
+            margin-bottom: 40px; 
+            background: #0a0a0e; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        
+        .player-title-bar {
+            padding: 14px 20px;
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .player-title-bar .title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+        
+        .player-title-bar .title .badge {
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            border-radius: 4px;
+            background: var(--red);
+            color: #fff;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+        }
+        
+        .player-title-bar .title .episode-badge {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.08);
+            padding: 3px 10px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        
+        .player-title-bar .controls {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        
+        .player-title-bar .controls .player-btn {
+            appearance: none;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.06);
+            color: var(--text);
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.25s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .player-title-bar .controls .player-btn:hover {
+            background: var(--red);
+            border-color: var(--red);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(229, 9, 20, 0.3);
+        }
+        
+        .player-title-bar .controls .player-btn i {
+            font-size: 0.85rem;
+        }
+        
+        .player-container { 
+            width: 100%; 
+            max-width: 100%; 
+            background: #000; 
+            position: relative; 
+            aspect-ratio: 16 / 9; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 360px; 
+        }
+        .player-container iframe { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            display: block; 
+            border: none; 
+            background: #000; 
+        }
+        .player-loading { 
+            position: absolute; 
+            inset: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 24px; 
+            background: linear-gradient(135deg, #1a1a1f 0%, #2a2a32 100%); 
+            z-index: 10; 
+            transition: opacity 0.4s ease; 
+        }
         .player-loading.hidden { opacity: 0; pointer-events: none; }
         .spinner { width: 70px; height: 70px; border: 5px solid rgba(229, 9, 20, 0.15); border-top-color: var(--red); border-radius: 50%; animation: spin 1.2s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .loading-text { font-size: 1.1rem; font-weight: 700; }
         .loading-subtext { font-size: 0.9rem; color: var(--text-muted); }
+        
         .ad-disclaimer { display: flex; align-items: flex-start; gap: 16px; background: rgba(229, 9, 20, 0.1); border: 1px solid rgba(229, 9, 20, 0.3); border-radius: 10px; padding: 18px 24px; margin: 40px 0; font-size: 0.95rem; color: rgba(255,255,255,0.85); line-height: 1.7; }
         .ad-disclaimer i { color: var(--red); font-size: 1.4rem; flex-shrink: 0; margin-top: 4px; }
         .cast-section { margin: 60px 0 40px 0; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); }
@@ -76,12 +191,13 @@
         .similar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--poster-min), 1fr)); gap: 10px; }
         .similar-card { position: relative; cursor: pointer; border-radius: 8px; overflow: hidden; background: var(--bg-card); transition: transform 0.3s ease, box-shadow 0.3s ease; text-decoration: none; color: var(--text); }
         .similar-card:hover { transform: scale(1.05); z-index: 10; box-shadow: 0 12px 30px rgba(0,0,0,0.8), 0 0 0 2px rgba(229,9,20,0.5); }
-        .similar-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; }
+        .similar-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; background: #222; }
         .similar-card-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.9) 100%); opacity: 0; transition: opacity 0.3s ease; display: flex; flex-direction: column; justify-content: flex-end; padding: 10px; }
         .similar-card:hover .similar-card-overlay { opacity: 1; }
         .similar-card-title { font-weight: 700; font-size: 0.8rem; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .similar-card-rating { font-size: 0.7rem; color: var(--gold); margin-bottom: 4px; }
         .similar-card-type { font-size: 0.65rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .similar-empty { grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 40px 20px; font-size: 1rem; }
         
         .episode-guide { margin: 60px 0 40px 0; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); }
         .season-cards { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 24px; }
@@ -104,6 +220,7 @@
         @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         .toast.error { border-left-color: #ff6b6b; }
         .toast.success { border-left-color: var(--green); }
+        
         @media (max-width: 768px) {
             .nav { padding: 14px 16px; gap: 12px; }
             .nav-logo { font-size: 1.3rem; }
@@ -116,10 +233,12 @@
             .hero-title { font-size: 2rem; }
             .player-section { padding: 30px 16px; }
             .server-btn { padding: 5px 10px; font-size: 0.75rem; }
-            .player-container { min-height: 280px; }
-            .player-controls-top { top: 12px; right: 12px; gap: 8px; }
-            .player-btn { padding: 9px 14px; font-size: 0.8rem; }
-            .player-btn span { display: none; }
+            .player-container { min-height: 220px; }
+            .player-title-bar { padding: 10px 14px; flex-direction: column; align-items: stretch; gap: 8px; }
+            .player-title-bar .title { font-size: 0.9rem; }
+            .player-title-bar .controls { justify-content: flex-end; }
+            .player-title-bar .controls .player-btn { padding: 6px 10px; font-size: 0.7rem; }
+            .player-title-bar .controls .player-btn span { display: none; }
             .ad-disclaimer { padding: 14px 16px; font-size: 0.9rem; margin: 30px 0; }
             .cast-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 18px; }
             .cast-avatar { width: 100px; height: 100px; }
@@ -161,11 +280,28 @@
                 <div class="server-tabs" id="serverTabs"></div>
             </div>
 
+            <!-- Player Wrapper with Title Bar and Controls at Bottom -->
             <div class="player-wrapper-outer">
-                <div class="player-controls-top">
-                    <button class="player-btn" id="playerReloadBtn" type="button"><i class="fas fa-redo"></i><span>Reload</span></button>
-                    <button class="player-btn" id="playerFullscreenBtn" type="button"><i class="fas fa-expand"></i><span>Fullscreen</span></button>
+                <!-- Title Bar -->
+                <div class="player-title-bar" id="playerTitleBar">
+                    <div class="title" id="playerTitle">
+                        <span id="playerTitleText">Loading...</span>
+                        <span class="badge">HD</span>
+                        <span class="episode-badge" id="playerEpisodeBadge" style="display:none;"></span>
+                    </div>
+                    <div class="controls">
+                        <button class="player-btn" id="playerReloadBtn" type="button">
+                            <i class="fas fa-redo"></i>
+                            <span>Reload</span>
+                        </button>
+                        <button class="player-btn" id="playerFullscreenBtn" type="button">
+                            <i class="fas fa-expand"></i>
+                            <span>Fullscreen</span>
+                        </button>
+                    </div>
                 </div>
+                
+                <!-- Player Container -->
                 <div class="player-container" id="playerContainer">
                     <div class="player-loading" id="playerLoading">
                         <div class="spinner"></div>
@@ -238,7 +374,6 @@
                     const raw = localStorage.getItem(STORAGE_KEY);
                     if (!raw) return null;
                     const state = JSON.parse(raw);
-                    // Check if state is too old (older than 24 hours)
                     if (state.timestamp && (Date.now() - state.timestamp) > 86400000) {
                         localStorage.removeItem(STORAGE_KEY);
                         return null;
@@ -249,17 +384,14 @@
                 }
             }
 
-            function clearState() {
-                localStorage.removeItem(STORAGE_KEY);
-            }
-
-            function updateUrlWithoutReload(id, type, season, episode) {
+            function updateUrlWithoutReload(id, type, season, episode, source) {
                 try {
                     const url = new URL(window.location);
                     url.searchParams.set('id', id);
                     url.searchParams.set('type', type);
                     if (season) url.searchParams.set('s', season);
                     if (episode) url.searchParams.set('e', episode);
+                    if (source) url.searchParams.set('source', source);
                     window.history.replaceState({}, '', url);
                 } catch (e) {
                     console.warn('Could not update URL:', e);
@@ -358,6 +490,24 @@
                 });
             }
 
+            // ==================== UPDATE PLAYER TITLE ====================
+            function updatePlayerTitle() {
+                const titleEl = document.getElementById('playerTitleText');
+                const episodeBadge = document.getElementById('playerEpisodeBadge');
+                
+                if (titleEl) {
+                    const title = document.getElementById('titleText')?.textContent || 'Loading...';
+                    titleEl.textContent = title;
+                }
+                
+                if (currentType === 'tv') {
+                    episodeBadge.style.display = 'inline-block';
+                    episodeBadge.textContent = `S${currentSeason} • E${currentEpisode}`;
+                } else {
+                    episodeBadge.style.display = 'none';
+                }
+            }
+
             // ==================== PLAYER LOAD ====================
             function loadPlayerEmbed(key) {
                 if (isLoading) return;
@@ -418,7 +568,8 @@
                     b.classList.toggle('active', parseInt(b.dataset.source) === key)
                 );
                 
-                // Save state
+                updatePlayerTitle();
+                
                 saveState({
                     id: currentId,
                     type: currentType,
@@ -431,8 +582,7 @@
                     overview: document.getElementById('overviewText').textContent
                 });
                 
-                // Update URL
-                updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode);
+                updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource);
             }
 
             // ==================== SERVER BUTTONS ====================
@@ -458,7 +608,11 @@
                 const castGrid = document.getElementById('castGrid');
                 if (!castGrid) return;
                 castGrid.innerHTML = '';
-                castList.forEach(member => {
+                if (!castList || castList.length === 0) {
+                    castGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:20px;">No cast information available</div>';
+                    return;
+                }
+                castList.slice(0, 12).forEach(member => {
                     const castEl = document.createElement('div');
                     castEl.className = 'cast-member';
                     const photoUrl = member.profile_path ? `${TMDB_IMG}${member.profile_path}` : null;
@@ -478,16 +632,29 @@
                 const similarGrid = document.getElementById('similarGrid');
                 const similarSection = document.getElementById('similarSection');
                 const similarTitle = document.getElementById('similarTitle');
-                if (!similarGrid || !similarSection || !currentId) return;
                 
-                let endpoint = '';
+                if (!similarGrid || !similarSection || !currentId) {
+                    if (similarSection) similarSection.style.display = 'none';
+                    return;
+                }
+                
+                similarGrid.innerHTML = '<div class="similar-empty"><i class="fas fa-spinner fa-spin"></i> Loading similar content...</div>';
+                similarSection.style.display = 'block';
+                
+                let endpoints = [];
                 let titleText = '';
                 
                 if (currentType === 'movie') {
-                    endpoint = `/movie/${currentId}/similar`;
+                    endpoints = [
+                        `/movie/${currentId}/similar`,
+                        `/movie/${currentId}/recommendations`
+                    ];
                     titleText = '<i class="fas fa-film"></i> Similar Movies';
                 } else if (currentType === 'tv') {
-                    endpoint = `/tv/${currentId}/similar`;
+                    endpoints = [
+                        `/tv/${currentId}/similar`,
+                        `/tv/${currentId}/recommendations`
+                    ];
                     titleText = '<i class="fas fa-tv"></i> Similar TV Shows';
                 } else {
                     similarSection.style.display = 'none';
@@ -496,83 +663,98 @@
                 
                 if (similarTitle) similarTitle.innerHTML = titleText;
                 
-                try {
-                    const res = await fetch(`${TMDB_BASE}${endpoint}?api_key=${TMDB_KEY}&language=en-US&page=1`);
-                    if (!res.ok) {
-                        const recEndpoint = currentType === 'movie' ? `/movie/${currentId}/recommendations` : `/tv/${currentId}/recommendations`;
-                        const recRes = await fetch(`${TMDB_BASE}${recEndpoint}?api_key=${TMDB_KEY}&language=en-US&page=1`);
-                        if (!recRes.ok) {
-                            similarSection.style.display = 'none';
-                            return;
+                let allResults = [];
+                
+                for (const endpoint of endpoints) {
+                    try {
+                        const res = await fetch(`${TMDB_BASE}${endpoint}?api_key=${TMDB_KEY}&language=en-US&page=1`);
+                        if (res.ok) {
+                            const data = await res.json();
+                            const results = (data.results || [])
+                                .filter(m => m.poster_path && m.id != currentId)
+                                .slice(0, 12);
+                            if (results.length > 0) {
+                                allResults = results;
+                                break;
+                            }
                         }
-                        const recData = await recRes.json();
-                        const recommendations = (recData.results || []).filter(m => m.poster_path).slice(0, 12);
-                        
-                        if (recommendations.length === 0) {
-                            similarSection.style.display = 'none';
-                            return;
-                        }
-                        
-                        similarSection.style.display = 'block';
-                        similarGrid.innerHTML = '';
-                        
-                        recommendations.forEach(item => {
-                            const card = document.createElement('a');
-                            card.className = 'similar-card';
-                            card.href = `?id=${item.id}&type=${currentType}`;
-                            const poster = item.poster_path ? TMDB_IMG + item.poster_path : '';
-                            const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '?';
-                            const title = getTitle(item);
-                            const year = getYear(item);
-                            const typeLabel = currentType === 'movie' ? 'Movie' : 'TV';
-                            
-                            card.innerHTML = `
-                                <img src="${poster}" alt="${title}" onerror="this.style.background='#222';this.style.opacity='0.5';">
-                                <div class="similar-card-overlay">
-                                    <div class="similar-card-type">${typeLabel} · ${year}</div>
-                                    <div class="similar-card-rating"><i class="fas fa-star"></i> ${rating}</div>
-                                    <div class="similar-card-title">${title}</div>
-                                </div>
-                            `;
-                            similarGrid.appendChild(card);
-                        });
-                        return;
+                    } catch (e) {
+                        console.warn(`Failed to fetch ${endpoint}:`, e);
                     }
-                    
-                    const data = await res.json();
-                    const similar = (data.results || []).filter(m => m.poster_path).slice(0, 12);
-                    
-                    if (similar.length === 0) {
-                        similarSection.style.display = 'none';
-                        return;
-                    }
-                    
-                    similarSection.style.display = 'block';
-                    similarGrid.innerHTML = '';
-                    
-                    similar.forEach(item => {
-                        const card = document.createElement('a');
-                        card.className = 'similar-card';
-                        card.href = `?id=${item.id}&type=${currentType}`;
-                        const poster = item.poster_path ? TMDB_IMG + item.poster_path : '';
-                        const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '?';
-                        const title = getTitle(item);
-                        const year = getYear(item);
-                        const typeLabel = currentType === 'movie' ? 'Movie' : 'TV';
-                        
-                        card.innerHTML = `
-                            <img src="${poster}" alt="${title}" onerror="this.style.background='#222';this.style.opacity='0.5';">
-                            <div class="similar-card-overlay">
-                                <div class="similar-card-type">${typeLabel} · ${year}</div>
-                                <div class="similar-card-rating"><i class="fas fa-star"></i> ${rating}</div>
-                                <div class="similar-card-title">${title}</div>
-                            </div>
-                        `;
-                        similarGrid.appendChild(card);
-                    });
-                } catch (e) { 
-                    similarSection.style.display = 'none'; 
                 }
+                
+                if (allResults.length === 0 && mediaData && mediaData.genres) {
+                    try {
+                        const genreIds = mediaData.genres.map(g => g.id).join(',');
+                        if (genreIds) {
+                            const discoverEndpoint = currentType === 'movie' 
+                                ? `/discover/movie?api_key=${TMDB_KEY}&with_genres=${genreIds}&sort_by=popularity.desc&page=1`
+                                : `/discover/tv?api_key=${TMDB_KEY}&with_genres=${genreIds}&sort_by=popularity.desc&page=1`;
+                            
+                            const res = await fetch(discoverEndpoint);
+                            if (res.ok) {
+                                const data = await res.json();
+                                allResults = (data.results || [])
+                                    .filter(m => m.poster_path && m.id != currentId)
+                                    .slice(0, 12);
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('Genre discovery failed:', e);
+                    }
+                }
+                
+                if (allResults.length === 0) {
+                    try {
+                        const popularEndpoint = currentType === 'movie' 
+                            ? `/movie/popular?api_key=${TMDB_KEY}&page=1`
+                            : `/tv/popular?api_key=${TMDB_KEY}&page=1`;
+                        
+                        const res = await fetch(popularEndpoint);
+                        if (res.ok) {
+                            const data = await res.json();
+                            allResults = (data.results || [])
+                                .filter(m => m.poster_path && m.id != currentId)
+                                .slice(0, 12);
+                        }
+                    } catch (e) {
+                        console.warn('Popular fetch failed:', e);
+                    }
+                }
+                
+                if (allResults.length === 0) {
+                    similarGrid.innerHTML = '<div class="similar-empty"><i class="fas fa-film"></i> No similar content found</div>';
+                    return;
+                }
+                
+                similarGrid.innerHTML = '';
+                
+                allResults.forEach(item => {
+                    const card = document.createElement('a');
+                    card.className = 'similar-card';
+                    card.href = `?id=${item.id}&type=${currentType}`;
+                    const poster = item.poster_path ? TMDB_IMG + item.poster_path : '';
+                    const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '?';
+                    const title = getTitle(item);
+                    const year = getYear(item);
+                    const typeLabel = currentType === 'movie' ? 'Movie' : 'TV Series';
+                    
+                    card.innerHTML = `
+                        <img src="${poster}" alt="${title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 300%22%3E%3Crect fill=%22%23222%22 width=%22200%22 height=%22300%22/%3E%3Ctext x=%22100%22 y=%22150%22 text-anchor=%22middle%22 fill=%22%23666%22 font-size=%2224%22 font-family=%22Inter,sans-serif%22%3ENo Image%3C/text%3E%3C/svg%3E';">
+                        <div class="similar-card-overlay">
+                            <div class="similar-card-type">${typeLabel} · ${year}</div>
+                            <div class="similar-card-rating"><i class="fas fa-star"></i> ${rating}</div>
+                            <div class="similar-card-title">${title}</div>
+                        </div>
+                    `;
+                    
+                    card.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        window.location.href = `?id=${item.id}&type=${currentType}`;
+                    });
+                    
+                    similarGrid.appendChild(card);
+                });
             }
 
             // ==================== EPISODE GUIDE ====================
@@ -582,11 +764,14 @@
                 if (!guide) return;
                 
                 try {
-                    const res = await fetch(`${TMDB_BASE}/tv/${currentId}?api_key=${TMDB_KEY}&append_to_response=external_ids`);
+                    const res = await fetch(`${TMDB_BASE}/tv/${currentId}?api_key=${TMDB_KEY}`);
                     if (!res.ok) return;
                     const data = await res.json();
                     const seasons = data.seasons || [];
-                    if (!seasons.length) return;
+                    if (!seasons.length) {
+                        guide.style.display = 'none';
+                        return;
+                    }
                     
                     guide.style.display = 'block';
                     const select = document.getElementById('seasonsSelect');
@@ -629,7 +814,10 @@
                     };
                     
                     loadSeasonEpisodes(currentSeason, currentId);
-                } catch (e) { console.error('Episode guide error:', e); }
+                } catch (e) { 
+                    console.error('Episode guide error:', e);
+                    guide.style.display = 'none';
+                }
             }
 
             async function loadSeasonEpisodes(s, tvId) {
@@ -640,6 +828,11 @@
                     const eps = data.episodes || [];
                     const grid = document.getElementById('episodesGrid');
                     grid.innerHTML = '';
+                    
+                    if (eps.length === 0) {
+                        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:20px;">No episodes available</div>';
+                        return;
+                    }
                     
                     eps.forEach(ep => {
                         const item = document.createElement('button');
@@ -657,15 +850,17 @@
                         };
                         grid.appendChild(item);
                     });
-                } catch (e) { console.error('Episodes error:', e); }
+                } catch (e) { 
+                    console.error('Episodes error:', e);
+                }
             }
 
             // ==================== FETCH MEDIA DETAILS ====================
             async function fetchMediaDetails(id, type, season, episode) {
                 try {
                     const endpoint = type === 'movie' 
-                        ? `/movie/${id}?append_to_response=credits,external_ids,similar,videos,recommendations` 
-                        : `/tv/${id}?append_to_response=credits,external_ids,similar,videos,recommendations`;
+                        ? `/movie/${id}?append_to_response=credits,external_ids,videos,recommendations` 
+                        : `/tv/${id}?append_to_response=credits,external_ids,videos,recommendations`;
                     const res = await fetch(`${TMDB_BASE}${endpoint}&api_key=${TMDB_KEY}`);
                     if (!res.ok) {
                         document.getElementById('titleText').textContent = 'Error: Media not found';
@@ -685,7 +880,7 @@
                     const backdrop = data.backdrop_path ? TMDB_BACKDROP + data.backdrop_path : poster;
                     const overview = data.overview || 'No description available.';
                     const genres = data.genres || [];
-                    const cast = data.credits?.cast?.slice(0, 12) || [];
+                    const cast = data.credits?.cast || [];
                     
                     document.title = `${title} - HR OTT`;
                     document.getElementById('titleText').textContent = title;
@@ -705,9 +900,11 @@
                     `;
                     document.getElementById('genresRow').innerHTML = genres.map(g => `<div class="genre-tag">${g.name}</div>`).join('') || '<div class="genre-tag">N/A</div>';
                     
-                    if (cast.length > 0) renderCast(cast);
+                    renderCast(cast);
                     
-                    // Save state with media info
+                    // Update player title
+                    updatePlayerTitle();
+                    
                     saveState({
                         id: id,
                         type: type,
@@ -723,6 +920,7 @@
                     if (type === 'tv') {
                         await loadEpisodeGuide();
                     }
+                    
                     await loadSimilarContent();
                     
                     return true;
@@ -735,18 +933,15 @@
 
             // ==================== MAIN INIT ====================
             async function init() {
-                // Parse URL params
                 const urlParams = new URLSearchParams(window.location.search);
                 const pathParts = window.location.pathname.split('/').filter(p => p);
                 
-                // Try to get ID from URL or path
                 let id = urlParams.get('id') || pathParts[1] || null;
                 let type = (urlParams.get('type') || pathParts[2] || 'movie').toLowerCase();
                 let season = parseInt(urlParams.get('s') || '1');
                 let episode = parseInt(urlParams.get('e') || '1');
                 let source = parseInt(urlParams.get('source') || '1');
                 
-                // If no ID in URL, check localStorage
                 if (!id) {
                     const savedState = loadState();
                     if (savedState && savedState.id) {
@@ -767,28 +962,23 @@
                     return;
                 }
                 
-                // Set globals
                 currentId = id;
                 currentType = type;
                 currentSeason = season;
                 currentEpisode = episode;
                 currentSource = source;
                 
-                // Refresh sources and UI
                 refreshPlayerSources();
                 initServerButtons();
                 
-                // Load media details
                 const success = await fetchMediaDetails(id, type, season, episode);
                 
                 if (success) {
-                    // Load the player
                     loadPlayerEmbed(currentSource);
                 }
             }
 
             // ==================== EVENT LISTENERS ====================
-            // Nav scroll
             let navTimeout;
             window.addEventListener('scroll', () => {
                 clearTimeout(navTimeout);
@@ -798,7 +988,6 @@
                 }, 50);
             }, { passive: true });
 
-            // Fullscreen button
             document.getElementById('playerFullscreenBtn')?.addEventListener('click', async () => {
                 const container = document.getElementById('playerContainer');
                 try {
@@ -818,19 +1007,16 @@
                 } catch (e) { console.warn('Fullscreen request failed:', e); }
             });
 
-            // Reload button
             document.getElementById('playerReloadBtn')?.addEventListener('click', () => {
                 loadPlayerEmbed(currentSource);
                 showToast('Reloading player...', 'success');
             });
 
-            // Ad blocker stats
             setInterval(() => {
                 const el = document.getElementById('adblockText');
                 if (el) el.textContent = `Ad Block: ON (${adBlocker.getStats()})`;
             }, 3000);
 
-            // Start the app
             init();
         })();
     </script>
