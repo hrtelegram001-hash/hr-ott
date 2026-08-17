@@ -20,7 +20,8 @@
         .nav-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
         .btn-back { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; background: rgba(255,255,255,0.1); color: var(--text); text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s ease; border: 1px solid rgba(255,255,255,0.15); cursor: pointer; }
         .btn-back:hover { background: var(--red); border-color: var(--red); }
-        .adblock-status { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(70, 211, 105, 0.15); border: 1px solid rgba(70, 211, 105, 0.3); border-radius: 6px; font-size: 0.75rem; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.5px; }
+        .adblock-status { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(70, 211, 105, 0.15); border: 1px solid rgba(70, 211, 105, 0.3); border-radius: 6px; font-size: 0.75rem; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.5px; cursor: default; }
+        .adblock-status .blocked-count { color: var(--text-muted); font-weight: 400; font-size: 0.65rem; }
         .profile-avatar { width: 36px; height: 36px; border-radius: 6px; background: linear-gradient(135deg, var(--red), #4a0408); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; box-shadow: 0 4px 14px var(--red-glow); }
         .player-wrapper { width: 100%; padding-bottom: 80px; margin: 0; display: flex; flex-direction: column; }
         .media-hero { position: relative; width: 100%; height: 100vh; max-height: 100vh; overflow: hidden; display: flex; align-items: flex-end; justify-content: flex-start; padding: 0; margin: 0; }
@@ -254,7 +255,7 @@
         <a href="/" class="nav-logo">HR OTT</a>
         <div class="nav-right">
             <a href="/" class="btn-back"><i class="fas fa-arrow-left"></i><span>Back</span></a>
-            <div class="adblock-status"><i class="fas fa-shield-alt"></i><span id="adblockText">Ad Block: ON</span></div>
+            <div class="adblock-status"><i class="fas fa-shield-alt"></i><span id="adblockText">Ad Block: ON</span> <span class="blocked-count" id="adblockCount"></span></div>
             <div class="profile-avatar">HR</div>
         </div>
     </nav>
@@ -346,7 +347,494 @@
     <script>
         'use strict';
         (function() {
-            // ==================== PERSISTENCE HELPERS ====================
+            // ═══════════════════════════════════════════════
+            // ═══ ENHANCED AD BLOCKER (Like Browser Extension) ═══
+            // ═══════════════════════════════════════════════
+            class EnhancedAdBlocker {
+                constructor() {
+                    this.blockedCount = 0;
+                    this.popupBlocked = 0;
+                    this.scriptBlocked = 0;
+                    this.iframeBlocked = 0;
+                    this.imageBlocked = 0;
+                    
+                    // Comprehensive ad domain list
+                    this.adDomains = [
+                        // Major ad networks
+                        'googlesyndication.com', 'doubleclick.net', 'adservice.google.com',
+                        'googleads.g.doubleclick.net', 'googleadservices.com',
+                        'ads-twitter.com', 'facebook.com/ads', 'fbcdn.net',
+                        'rubiconproject.com', 'pubmatic.com', 'openx.net',
+                        'spotxchange.com', 'adroll.com', 'criteo.com',
+                        'casalemedia.com', 'amazon-adsystem.com',
+                        'taboola.com', 'outbrain.com', 'exoclick.com',
+                        'adnxs.com', 'adsrvr.org', 'adzerk.net',
+                        'adform.net', 'adfox.ru', 'adition.com',
+                        'bidswitch.net', 'bluekai.com', 'contextweb.com',
+                        'doubleverify.com', 'eplanning.net', 'eyeota.net',
+                        'flashtalking.com', 'google-analytics.com',
+                        'googletagmanager.com', 'googletagservices.com',
+                        'gumgum.com', 'indexexchange.com', 'lijit.com',
+                        'lotame.com', 'mopub.com', 'quantcast.com',
+                        'scorecardresearch.com', 'sharethrough.com',
+                        'smartadserver.com', 'sovrn.com', 'spotx.tv',
+                        'taboola.com', 'tremorhub.com', 'turn.com',
+                        'yieldmo.com', 'zedo.com',
+                        
+                        // Video player ad domains
+                        'vidoomy.com', 'adserver.video', 'video-ad.com',
+                        'prebid.org', 'vast.ad', 'vpaid.com',
+                        'ima3.video', 'adserver-video.com',
+                        'video-advertising.com', 'video-ads.com',
+                        'ad-video.com', 'videos-ad.com',
+                        'vast-player.com', 'vpaid-player.com',
+                        'video-ad-sdk.com', 'ad-video-sdk.com',
+                        'jwpcdn.com', 'jwplayer.com', 'jwpsrv.com',
+                        'videojs.com', 'vjs.zencdn.net',
+                        'cdn.videojs.com', 'videojs.net',
+                        'theoplayer.com', 'bitmovin.com',
+                        'dash-player.com', 'hls-js.net',
+                        
+                        // Popup/popunder domains
+                        'popads.net', 'popcash.net', 'popunder.com',
+                        'popup-ad.com', 'pop-under.com', 'adpop.com',
+                        'popad.net', 'popunder.io', 'popup-service.com',
+                        'popup-ad-network.com', 'popup-ads.com',
+                        
+                        // Malware/adware domains
+                        'adware.com', 'malware.com', 'adware-remover.com',
+                        'spyware.com', 'adware-removal.com',
+                        'adware-protection.com', 'malware-protection.com',
+                        
+                        // Redirect/tracking domains
+                        'redirectingat.com', 'redirect-tracker.com',
+                        'ad-redirect.com', 'tracking-ad.com',
+                        'ad-tracking.com', 'tracking-service.com',
+                        'redirect-ad.com', 'ad-traffic.com',
+                        'clicktracking.com', 'ad-track.com',
+                        
+                        // Streaming ad domains
+                        'streaming-ads.com', 'stream-ad.com',
+                        'streaming-ad.com', 'ad-stream.com',
+                        'streamingad.com', 'streamad.com',
+                        'videos-streaming-ads.com', 'live-ad.com',
+                        
+                        // Additional known ad domains
+                        'outlookads.com', 'adnxs.com', 'adexchange.com',
+                        'adserver.com', 'adtech.com', 'advertising.com',
+                        'adx.com', 'bidder.com', 'criteo.com',
+                        'doubleclick.com', 'exelator.com', 'googleadservices.com',
+                        'googletag.com', 'googletagservices.com', 'gravity.com',
+                        'imrworldwide.com', 'insightexpress.com', 'ip2location.com',
+                        'ipinfodb.com', 'ipstack.com', 'leadbolt.net',
+                        'liveperson.net', 'ml314.com', 'moatads.com',
+                        'neustar.biz', 'onclickads.net', 'pointroll.com',
+                        'popads.net', 'poptm.com', 'pubmatic.com',
+                        'pulsemgr.com', 'revsci.net', 'rhythmone.com',
+                        'sitescout.com', 'specificmedia.com', 'spotxchange.com',
+                        'taboola.com', 'tradedoubler.com', 'trafficfactory.biz',
+                        'tremorvideo.com', 'undertone.com', 'vibrantmedia.com',
+                        'videoegg.com', 'vidiem.com', 'virool.com',
+                        'weborama.com', 'yieldmanager.com', 'zedo.com'
+                    ];
+                    
+                    // Ad URL patterns (regex)
+                    this.adPatterns = [
+                        /[/?&]ad(=|_|\.)/i,
+                        /[/?&]advert/i,
+                        /[/?&]banner/i,
+                        /[/?&]sponsor/i,
+                        /[/?&]promo/i,
+                        /[/?&]affiliate/i,
+                        /[/?&]campaign/i,
+                        /[/?&]marketing/i,
+                        /[/?&]clicks?=/, 
+                        /[/?&]impression/,
+                        /[/?&]conversion/,
+                        /doubleclick\.net/i,
+                        /googleadservices/i,
+                        /googlesyndication/i,
+                        /taboola\.com/i,
+                        /outbrain\.com/i,
+                        /popads\.net/i,
+                        /popcash\.net/i,
+                        /exoclick\.com/i,
+                        /adnxs\.com/i,
+                        /openx\.net/i,
+                        /pubmatic\.com/i,
+                        /rubiconproject\.com/i,
+                        /casalemedia\.com/i,
+                        /criteo\.com/i,
+                        /adroll\.com/i,
+                        /amazon-adsystem\.com/i,
+                        /adform\.net/i,
+                        /smartadserver\.com/i,
+                        /yieldmo\.com/i,
+                        /zedo\.com/i,
+                        /spotx\.tv/i,
+                        /vungle\.com/i,
+                        /adserver\.video/i,
+                        /vast\.ad/i,
+                        /vpaid/i,
+                        /ima3\.video/i,
+                        /prebid\.org/i,
+                        /jwplayer\.com\/ads/i,
+                        /videojs\.com\/ads/i,
+                        /theoplayer\.com\/ads/i,
+                        /bitmovin\.com\/ads/i
+                    ];
+                    
+                    this.init();
+                }
+
+                init() {
+                    // Intercept fetch requests
+                    this.interceptFetch();
+                    
+                    // Intercept XMLHttpRequest
+                    this.interceptXHR();
+                    
+                    // Block popups
+                    this.blockPopups();
+                    
+                    // Block iframe creation
+                    this.blockIframes();
+                    
+                    // Block script injection
+                    this.blockScripts();
+                    
+                    // Block image requests
+                    this.blockImages();
+                    
+                    // Block WebSocket connections
+                    this.blockWebSockets();
+                    
+                    // Block navigator.sendBeacon
+                    this.blockBeacon();
+                    
+                    // Block unwanted elements periodically
+                    setInterval(() => this.cleanupAdElements(), 3000);
+                    
+                    // Block ad-related event listeners
+                    this.blockAdEventListeners();
+                    
+                    console.log('🔒 [HR OTT] Enhanced AdBlocker initialized');
+                    console.log(`📊 [HR OTT] ${this.adDomains.length} domains in blocklist`);
+                }
+
+                isAdUrl(url) {
+                    if (!url) return false;
+                    const lowerUrl = url.toLowerCase();
+                    
+                    // Check domain list
+                    for (const domain of this.adDomains) {
+                        if (lowerUrl.includes(domain)) return true;
+                    }
+                    
+                    // Check regex patterns
+                    for (const pattern of this.adPatterns) {
+                        if (pattern.test(lowerUrl)) return true;
+                    }
+                    
+                    return false;
+                }
+
+                interceptFetch() {
+                    const self = this;
+                    const origFetch = window.fetch;
+                    
+                    window.fetch = function(...args) {
+                        const url = String(args[0] || '');
+                        if (self.isAdUrl(url)) {
+                            self.blockedCount++;
+                            self.scriptBlocked++;
+                            console.log(`[AdBlocker] Blocked fetch: ${url}`);
+                            return Promise.reject(new Error('Ad blocked by HR OTT AdBlocker'));
+                        }
+                        return origFetch.apply(this, args);
+                    };
+                }
+
+                interceptXHR() {
+                    const self = this;
+                    const origOpen = XMLHttpRequest.prototype.open;
+                    
+                    XMLHttpRequest.prototype.open = function(method, url, ...rest) {
+                        if (self.isAdUrl(url)) {
+                            self.blockedCount++;
+                            self.scriptBlocked++;
+                            console.log(`[AdBlocker] Blocked XHR: ${url}`);
+                            setTimeout(() => {
+                                try { this.abort(); } catch(e) {}
+                            }, 0);
+                            return;
+                        }
+                        return origOpen.call(this, method, url, ...rest);
+                    };
+                }
+
+                blockPopups() {
+                    const self = this;
+                    const origOpen = window.open;
+                    
+                    window.open = function(url, name, features) {
+                        if (url && self.isAdUrl(url)) {
+                            self.blockedCount++;
+                            self.popupBlocked++;
+                            console.log(`[AdBlocker] Blocked popup: ${url}`);
+                            return {
+                                closed: true,
+                                close: function() {},
+                                focus: function() {},
+                                blur: function() {},
+                                postMessage: function() {}
+                            };
+                        }
+                        return origOpen.call(this, url, name, features);
+                    };
+                    
+                    // Block onclick popups
+                    document.addEventListener('click', function(e) {
+                        const target = e.target.closest('a');
+                        if (target && target.target === '_blank') {
+                            const href = target.href || '';
+                            if (self.isAdUrl(href)) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                self.blockedCount++;
+                                self.popupBlocked++;
+                                console.log(`[AdBlocker] Blocked click popup: ${href}`);
+                                return false;
+                            }
+                        }
+                    }, true);
+                }
+
+                blockIframes() {
+                    const self = this;
+                    const origCreateElement = document.createElement.bind(document);
+                    
+                    document.createElement = function(tagName, options) {
+                        const element = origCreateElement(tagName, options);
+                        if (tagName.toLowerCase() === 'iframe') {
+                            const origSetAttribute = element.setAttribute.bind(element);
+                            element.setAttribute = function(name, value) {
+                                if (name === 'src' && self.isAdUrl(value)) {
+                                    self.blockedCount++;
+                                    self.iframeBlocked++;
+                                    console.log(`[AdBlocker] Blocked iframe: ${value}`);
+                                    value = 'about:blank';
+                                }
+                                return origSetAttribute(name, value);
+                            };
+                            
+                            // Also intercept src property
+                            const desc = Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype, 'src');
+                            if (desc) {
+                                Object.defineProperty(element, 'src', {
+                                    get: function() { return desc.get.call(this); },
+                                    set: function(value) {
+                                        if (self.isAdUrl(value)) {
+                                            self.blockedCount++;
+                                            self.iframeBlocked++;
+                                            console.log(`[AdBlocker] Blocked iframe src: ${value}`);
+                                            value = 'about:blank';
+                                        }
+                                        return desc.set.call(this, value);
+                                    }
+                                });
+                            }
+                        }
+                        return element;
+                    };
+                }
+
+                blockScripts() {
+                    const self = this;
+                    const origCreateElement = document.createElement.bind(document);
+                    
+                    document.createElement = function(tagName, options) {
+                        const element = origCreateElement(tagName, options);
+                        if (tagName.toLowerCase() === 'script') {
+                            const origSetAttribute = element.setAttribute.bind(element);
+                            element.setAttribute = function(name, value) {
+                                if (name === 'src' && self.isAdUrl(value)) {
+                                    self.blockedCount++;
+                                    self.scriptBlocked++;
+                                    console.log(`[AdBlocker] Blocked script: ${value}`);
+                                    return;
+                                }
+                                return origSetAttribute(name, value);
+                            };
+                            
+                            // Intercept src property
+                            const desc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');
+                            if (desc) {
+                                Object.defineProperty(element, 'src', {
+                                    get: function() { return desc.get.call(this); },
+                                    set: function(value) {
+                                        if (self.isAdUrl(value)) {
+                                            self.blockedCount++;
+                                            self.scriptBlocked++;
+                                            console.log(`[AdBlocker] Blocked script src: ${value}`);
+                                            value = '';
+                                        }
+                                        return desc.set.call(this, value);
+                                    }
+                                });
+                            }
+                        }
+                        return element;
+                    };
+                }
+
+                blockImages() {
+                    const self = this;
+                    const origCreateElement = document.createElement.bind(document);
+                    
+                    document.createElement = function(tagName, options) {
+                        const element = origCreateElement(tagName, options);
+                        if (tagName.toLowerCase() === 'img') {
+                            const origSetAttribute = element.setAttribute.bind(element);
+                            element.setAttribute = function(name, value) {
+                                if (name === 'src' && self.isAdUrl(value)) {
+                                    self.blockedCount++;
+                                    self.imageBlocked++;
+                                    console.log(`[AdBlocker] Blocked image: ${value}`);
+                                    value = '';
+                                }
+                                return origSetAttribute(name, value);
+                            };
+                            
+                            // Intercept src property
+                            const desc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+                            if (desc) {
+                                Object.defineProperty(element, 'src', {
+                                    get: function() { return desc.get.call(this); },
+                                    set: function(value) {
+                                        if (self.isAdUrl(value)) {
+                                            self.blockedCount++;
+                                            self.imageBlocked++;
+                                            console.log(`[AdBlocker] Blocked image src: ${value}`);
+                                            value = '';
+                                        }
+                                        return desc.set.call(this, value);
+                                    }
+                                });
+                            }
+                        }
+                        return element;
+                    };
+                }
+
+                blockWebSockets() {
+                    const self = this;
+                    const origWebSocket = window.WebSocket;
+                    
+                    window.WebSocket = function(url, protocols) {
+                        if (self.isAdUrl(url)) {
+                            self.blockedCount++;
+                            console.log(`[AdBlocker] Blocked WebSocket: ${url}`);
+                            return {
+                                readyState: 3,
+                                close: function() {},
+                                send: function() {},
+                                addEventListener: function() {},
+                                removeEventListener: function() {},
+                                dispatchEvent: function() {}
+                            };
+                        }
+                        return new origWebSocket(url, protocols);
+                    };
+                }
+
+                blockBeacon() {
+                    const self = this;
+                    const origSendBeacon = navigator.sendBeacon;
+                    
+                    navigator.sendBeacon = function(url, data) {
+                        if (self.isAdUrl(url)) {
+                            self.blockedCount++;
+                            console.log(`[AdBlocker] Blocked beacon: ${url}`);
+                            return true;
+                        }
+                        return origSendBeacon.call(this, url, data);
+                    };
+                }
+
+                blockAdEventListeners() {
+                    // Block common ad event listeners
+                    const self = this;
+                    const origAddEventListener = EventTarget.prototype.addEventListener;
+                    
+                    EventTarget.prototype.addEventListener = function(type, listener, options) {
+                        // Check if it's an ad-related event
+                        if (type === 'load' || type === 'click' || type === 'mouseover') {
+                            // Check if listener is likely ad-related
+                            const listenerStr = listener.toString ? listener.toString() : '';
+                            if (listenerStr.includes('ad') || listenerStr.includes('banner') || 
+                                listenerStr.includes('popup') || listenerStr.includes('sponsor')) {
+                                console.log('[AdBlocker] Blocked ad event listener');
+                                return;
+                            }
+                        }
+                        return origAddEventListener.call(this, type, listener, options);
+                    };
+                }
+
+                cleanupAdElements() {
+                    // Remove any ad elements that might have slipped through
+                    const selectors = [
+                        '[id*="ad" i]', '[class*="ad" i]', 
+                        '[id*="banner" i]', '[class*="banner" i]',
+                        '[id*="sponsor" i]', '[class*="sponsor" i]',
+                        '[id*="promo" i]', '[class*="promo" i]',
+                        '.ad-container', '.ad-wrapper', '.ad-banner',
+                        '.advertisement', '.google-ads', '.adsbygoogle',
+                        '.ad-slot', '.ad-unit', '.ad-frame',
+                        '[data-ad]', '[data-ad-slot]', '[data-ad-unit]',
+                        '.video-ads', '.player-ads', '.stream-ads'
+                    ];
+                    
+                    try {
+                        document.querySelectorAll(selectors.join(',')).forEach(el => {
+                            if (el && el.parentNode) {
+                                // Check if it's visible
+                                const rect = el.getBoundingClientRect();
+                                if (rect.width > 0 && rect.height > 0 && 
+                                    (rect.width > 200 || rect.height > 40)) {
+                                    el.style.display = 'none';
+                                    el.style.pointerEvents = 'none';
+                                    el.style.opacity = '0';
+                                    el.style.height = '0';
+                                    el.style.overflow = 'hidden';
+                                    // Remove from DOM if it's definitely an ad
+                                    if (el.className.includes('ad') || el.id.includes('ad')) {
+                                        setTimeout(() => {
+                                            if (el.parentNode) el.parentNode.removeChild(el);
+                                        }, 1000);
+                                    }
+                                }
+                            }
+                        });
+                    } catch(e) {}
+                }
+
+                getStats() {
+                    return {
+                        totalBlocked: this.blockedCount,
+                        popupsBlocked: this.popupBlocked,
+                        scriptsBlocked: this.scriptBlocked,
+                        iframesBlocked: this.iframeBlocked,
+                        imagesBlocked: this.imageBlocked
+                    };
+                }
+            }
+
+            // ═══════ INIT AD BLOCKER ═══════
+            const adBlocker = new EnhancedAdBlocker();
+
+            // ═══════ PERSISTENCE HELPERS ═══════
             const STORAGE_KEY = 'hr_ott_player_state';
             
             function saveState(data) {
@@ -398,42 +886,13 @@
                 }
             }
 
-            // ==================== AD BLOCKER ====================
-            class AdBlocker { 
-                constructor() { 
-                    this.blocked = 0; 
-                    this.domains = ['googlesyndication.com','doubleclick.net','adservice.google.com','ads-twitter.com','facebook.com/ads','rubiconproject.com','pubmatic.com','openx.net','spotxchange.com','adroll.com','criteo.com','casalemedia.com','amazon-adsystem.com','taboola.com','outbrain.com','exoclick.com','adnxs.com']; 
-                    this.init(); 
-                } 
-                init() { 
-                    const origFetch = window.fetch; 
-                    const self = this; 
-                    window.fetch = function(...args) { 
-                        const url = String(args[0] || ''); 
-                        if (self.isAd(url)) { 
-                            self.blocked++; 
-                            return Promise.reject(new Error('Ad blocked')); 
-                        } 
-                        return origFetch.apply(this, args); 
-                    }; 
-                } 
-                isAd(url) { 
-                    if (!url) return false; 
-                    const low = url.toLowerCase(); 
-                    for (const d of this.domains) if (low.includes(d)) return true; 
-                    return /[?&]ad[=&]/.test(low); 
-                } 
-                getStats() { return this.blocked; } 
-            }
-            const adBlocker = new AdBlocker();
-
-            // ==================== TMDB CONFIG ====================
+            // ═══════ TMDB CONFIG ═══════
             const TMDB_KEY = '3a87b1db63bc74b8e3fe9266ddc75b30';
             const TMDB_BASE = 'https://api.themoviedb.org/3';
             const TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
             const TMDB_BACKDROP = 'https://image.tmdb.org/t/p/w1280';
 
-            // ==================== SOURCE CONFIG ====================
+            // ═══════ SOURCE CONFIG ═══════
             const sourceConfig = [
                 { id: 1, displayName: 'Videasy', movie: t => `https://player.videasy.net/movie/${t}?color=F5C518&overlay=true`, tv: (t,s,e) => `https://player.videasy.net/tv/${t}/${s}/${e}?color=F5C518&nextEpisode=true&episodeSelector=true&autoplayNextEpisode=true&overlay=true` },
                 { id: 2, displayName: 'Vidzee', movie: t => `https://player.vidzee.wtf/embed/movie/${t}`, tv: (t,s,e) => `https://player.vidzee.wtf/embed/tv/${t}/${s}/${e}` },
@@ -446,7 +905,7 @@
                 { id: 9, displayName: '2Embed', movie: t => `https://www.2embed.cc/embed/${t}`, tv: (t,s,e) => `https://www.2embed.cc/embedtv/${t}&s=${s}&e=${e}` }
             ];
 
-            // ==================== GLOBALS ====================
+            // ═══════ GLOBALS ═══════
             let currentId = null;
             let currentType = 'movie';
             let currentSeason = 1;
@@ -456,7 +915,7 @@
             let mediaData = null;
             const playerSources = {};
 
-            // ==================== HELPERS ====================
+            // ═══════ HELPERS ═══════
             function getTitle(item) { return item.title || item.name || 'Untitled'; }
             function getYear(item) { return (item.release_date || item.first_air_date || '').substring(0, 4); }
 
@@ -479,7 +938,7 @@
                 return i;
             }
 
-            // ==================== PLAYER SOURCES ====================
+            // ═══════ PLAYER SOURCES ═══════
             function refreshPlayerSources() {
                 Object.keys(playerSources).forEach(k => delete playerSources[k]);
                 sourceConfig.forEach(cfg => {
@@ -490,7 +949,7 @@
                 });
             }
 
-            // ==================== UPDATE PLAYER TITLE ====================
+            // ═══════ UPDATE PLAYER TITLE ═══════
             function updatePlayerTitle() {
                 const titleEl = document.getElementById('playerTitleText');
                 const episodeBadge = document.getElementById('playerEpisodeBadge');
@@ -508,7 +967,7 @@
                 }
             }
 
-            // ==================== PLAYER LOAD ====================
+            // ═══════ PLAYER LOAD ═══════
             function loadPlayerEmbed(key) {
                 if (isLoading) return;
                 if (!currentId) return;
@@ -585,7 +1044,7 @@
                 updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource);
             }
 
-            // ==================== SERVER BUTTONS ====================
+            // ═══════ SERVER BUTTONS ═══════
             function initServerButtons() {
                 const container = document.getElementById('serverTabs');
                 if (!container) return;
@@ -603,7 +1062,7 @@
                 });
             }
 
-            // ==================== RENDER CAST ====================
+            // ═══════ RENDER CAST ═══════
             function renderCast(castList) {
                 const castGrid = document.getElementById('castGrid');
                 if (!castGrid) return;
@@ -627,7 +1086,7 @@
                 });
             }
 
-            // ==================== LOAD SIMILAR ====================
+            // ═══════ LOAD SIMILAR ═══════
             async function loadSimilarContent() {
                 const similarGrid = document.getElementById('similarGrid');
                 const similarSection = document.getElementById('similarSection');
@@ -757,7 +1216,7 @@
                 });
             }
 
-            // ==================== EPISODE GUIDE ====================
+            // ═══════ EPISODE GUIDE ═══════
             async function loadEpisodeGuide() {
                 if (currentType !== 'tv' || !currentId) return;
                 const guide = document.getElementById('episodeGuide');
@@ -855,7 +1314,7 @@
                 }
             }
 
-            // ==================== FETCH MEDIA DETAILS ====================
+            // ═══════ FETCH MEDIA DETAILS ═══════
             async function fetchMediaDetails(id, type, season, episode) {
                 try {
                     const endpoint = type === 'movie' 
@@ -902,7 +1361,6 @@
                     
                     renderCast(cast);
                     
-                    // Update player title
                     updatePlayerTitle();
                     
                     saveState({
@@ -931,7 +1389,7 @@
                 }
             }
 
-            // ==================== MAIN INIT ====================
+            // ═══════ MAIN INIT ═══════
             async function init() {
                 const urlParams = new URLSearchParams(window.location.search);
                 const pathParts = window.location.pathname.split('/').filter(p => p);
@@ -976,9 +1434,17 @@
                 if (success) {
                     loadPlayerEmbed(currentSource);
                 }
+                
+                // Show ad blocker stats in console
+                const stats = adBlocker.getStats();
+                console.log(`🛡️ [AdBlocker] Active - ${stats.totalBlocked} ads blocked`);
+                console.log(`   ├─ Popups: ${stats.popupsBlocked}`);
+                console.log(`   ├─ Scripts: ${stats.scriptsBlocked}`);
+                console.log(`   ├─ Iframes: ${stats.iframesBlocked}`);
+                console.log(`   └─ Images: ${stats.imagesBlocked}`);
             }
 
-            // ==================== EVENT LISTENERS ====================
+            // ═══════ EVENT LISTENERS ═══════
             let navTimeout;
             window.addEventListener('scroll', () => {
                 clearTimeout(navTimeout);
@@ -1012,9 +1478,13 @@
                 showToast('Reloading player...', 'success');
             });
 
+            // Update ad blocker status periodically
             setInterval(() => {
+                const stats = adBlocker.getStats();
                 const el = document.getElementById('adblockText');
-                if (el) el.textContent = `Ad Block: ON (${adBlocker.getStats()})`;
+                const countEl = document.getElementById('adblockCount');
+                if (el) el.textContent = 'Ad Block: ON';
+                if (countEl) countEl.textContent = `(${stats.totalBlocked} blocked)`;
             }, 3000);
 
             init();
