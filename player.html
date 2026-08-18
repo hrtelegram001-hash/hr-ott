@@ -14,64 +14,70 @@
             --red: #E50914; --red-dark: #B20710; --red-glow: rgba(229,9,20,0.45); 
             --gold: #f5c518; --text: #ffffff; --text-muted: #b3b3b3; --text-dim: #7c7c85; 
             --green: #46d369; --poster-min: clamp(104px, 14vw, 172px); --bottom-nav-height: 65px; 
+            --touch-target: 44px;
+            --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         html { scroll-behavior:smooth; -webkit-tap-highlight-color:transparent; }
-        body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; overflow-x: hidden; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; overflow-x: hidden; min-height: 100vh; -webkit-font-smoothing: antialiased; padding-bottom: 20px; }
         
-        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 16px clamp(16px, 3vw, 50px); display: flex; align-items: center; gap: 20px; background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%); transition: background 0.3s ease, padding 0.3s ease; }
-        .nav.scrolled { background: rgba(11,11,15,0.98); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 10px clamp(16px, 3vw, 50px); }
-        .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; font-weight: 900; color: var(--red); letter-spacing: 2px; text-transform: uppercase; cursor: pointer; text-shadow: 0 0 20px var(--red-glow); text-decoration: none; }
-        .nav-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
-        .btn-back { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: rgba(255,255,255,0.1); color: var(--text); text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 13px; transition: all 0.2s ease; border: 1px solid rgba(255,255,255,0.15); cursor: pointer; }
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 12px clamp(12px, 3vw, 50px); display: flex; align-items: center; gap: 12px; background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%); transition: background 0.3s ease, padding 0.3s ease; min-height: 60px; }
+        .nav.scrolled { background: rgba(11,11,15,0.98); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 8px clamp(12px, 3vw, 50px); }
+        .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.2rem, 2.5vw, 1.6rem); font-weight: 900; color: var(--red); letter-spacing: 2px; text-transform: uppercase; cursor: pointer; text-shadow: 0 0 20px var(--red-glow); text-decoration: none; flex-shrink: 0; }
+        .nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
+        .btn-back { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: rgba(255,255,255,0.1); color: var(--text); text-decoration: none; border-radius: 6px; font-weight: 600; font-size: clamp(0.65rem, 1.2vw, 0.85rem); transition: all 0.2s ease; border: 1px solid rgba(255,255,255,0.15); cursor: pointer; min-height: var(--touch-target); }
         .btn-back:hover { background: var(--red); border-color: var(--red); }
-        .adblock-status { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(70, 211, 105, 0.15); border: 1px solid rgba(70, 211, 105, 0.3); border-radius: 6px; font-size: 0.7rem; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.5px; cursor: default; }
+        .btn-back:active { transform: scale(0.95); }
+        .adblock-status { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(70, 211, 105, 0.15); border: 1px solid rgba(70, 211, 105, 0.3); border-radius: 6px; font-size: 0.7rem; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.5px; cursor: default; min-height: 32px; }
         .adblock-status .blocked-count { color: var(--text-muted); font-weight: 400; font-size: 0.6rem; }
-        .profile-avatar { width: 32px; height: 32px; border-radius: 6px; background: linear-gradient(135deg, var(--red), #4a0408); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; box-shadow: 0 4px 14px var(--red-glow); }
+        .profile-avatar { width: clamp(28px, 4vw, 32px); height: clamp(28px, 4vw, 32px); border-radius: 6px; background: linear-gradient(135deg, var(--red), #4a0408); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: clamp(10px, 1.2vw, 12px); box-shadow: 0 4px 14px var(--red-glow); flex-shrink: 0; }
         
-        .player-wrapper { width: 100%; padding-bottom: 60px; margin: 0; display: flex; flex-direction: column; }
-        .media-hero { position: relative; width: 100%; height: 65vh; max-height: 65vh; overflow: hidden; display: flex; align-items: flex-end; justify-content: flex-start; padding: 0; margin: 0; min-height: 300px; }
+        .player-wrapper { width: 100%; padding-bottom: 20px; margin: 0; display: flex; flex-direction: column; }
+        .media-hero { position: relative; width: 100%; height: 60vh; max-height: 60vh; overflow: hidden; display: flex; align-items: flex-end; justify-content: flex-start; padding: 0; margin: 0; min-height: 280px; }
         .hero-backdrop { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; background-repeat: no-repeat; filter: brightness(0.3) blur(1px); z-index: 0; transition: opacity 0.5s ease; }
         .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(11, 11, 15, 0) 0%, rgba(11, 11, 15, 0.2) 40%, rgba(11, 11, 15, 0.5) 70%, rgba(11, 11, 15, 0.95) 100%); z-index: 1; }
-        .hero-content { position: relative; z-index: 2; display: grid; grid-template-columns: 200px 1fr; gap: 24px; width: 100%; max-width: 1400px; padding: 30px clamp(16px, 4vw, 80px); padding-bottom: 40px; align-items: flex-end; margin: 0 auto; }
-        .hero-poster { width: 200px; height: 300px; border-radius: 10px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.9); border: 1px solid rgba(255,255,255,0.15); background: var(--bg-card); flex-shrink: 0; }
+        .hero-content { position: relative; z-index: 2; display: grid; grid-template-columns: clamp(120px, 18vw, 200px) 1fr; gap: clamp(12px, 2vw, 24px); width: 100%; max-width: 1400px; padding: clamp(16px, 3vw, 30px) clamp(12px, 4vw, 80px); padding-bottom: clamp(20px, 4vw, 40px); align-items: flex-end; margin: 0 auto; }
+        .hero-poster { width: 100%; aspect-ratio: 2/3; border-radius: 10px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.9); border: 1px solid rgba(255,255,255,0.15); background: var(--bg-card); flex-shrink: 0; max-width: 200px; }
         .hero-poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .hero-info { display: flex; flex-direction: column; gap: 14px; flex: 1; max-width: 650px; }
-        .hero-title { font-size: clamp(1.8rem, 4.5vw, 3.2rem); font-weight: 900; line-height: 1; letter-spacing: -2px; text-shadow: 0 4px 20px rgba(0,0,0,0.8); }
-        .hero-meta { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-weight: 600; font-size: 0.9rem; }
+        .hero-info { display: flex; flex-direction: column; gap: clamp(8px, 1.5vw, 14px); flex: 1; max-width: 650px; }
+        .hero-title { font-size: clamp(1.4rem, 4vw, 3.2rem); font-weight: 900; line-height: 1; letter-spacing: -2px; text-shadow: 0 4px 20px rgba(0,0,0,0.8); }
+        .hero-meta { display: flex; gap: clamp(8px, 1.5vw, 14px); align-items: center; flex-wrap: wrap; font-weight: 600; font-size: clamp(0.75rem, 1.2vw, 0.9rem); }
         .meta-item { display: flex; align-items: center; gap: 6px; }
-        .meta-item.match { color: var(--green); font-weight: 700; font-size: 0.95rem; }
+        .meta-item.match { color: var(--green); font-weight: 700; font-size: clamp(0.8rem, 1.3vw, 0.95rem); }
         .maturity-badge { border: 2px solid rgba(255,255,255,0.5); padding: 3px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
         .hero-genres { display: flex; gap: 8px; flex-wrap: wrap; }
-        .genre-tag { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 4px 12px; font-size: 0.8rem; font-weight: 600; }
-        .hero-description { max-width: 550px; color: rgba(255,255,255,0.85); line-height: 1.6; font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .player-section { background: var(--bg); padding: 20px clamp(16px, 4vw, 80px); max-width: 1400px; margin: 0 auto; width: 100%; }
+        .genre-tag { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 4px 12px; font-size: clamp(0.7rem, 1vw, 0.8rem); font-weight: 600; }
+        .hero-description { max-width: 550px; color: rgba(255,255,255,0.85); line-height: 1.6; font-size: clamp(0.8rem, 1.2vw, 0.9rem); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .player-section { background: var(--bg); padding: clamp(12px, 3vw, 20px) clamp(12px, 4vw, 80px); max-width: 1400px; margin: 0 auto; width: 100%; }
         .server-section { margin-bottom: 12px; }
         .server-label { font-size: 0.75rem; font-weight: 800; color: rgba(255,255,255,0.7); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; display: block; }
-        .server-tabs { display: flex; gap: 6px; flex-wrap: wrap; min-height: 32px; align-items: center; width: 100%; overflow-x: auto; padding-bottom: 4px; }
-        .server-btn { background: transparent; border: 1.5px solid rgba(255,255,255,0.2); color: var(--text-muted); padding: 4px 10px; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 0.7rem; transition: all 0.2s ease; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; flex-shrink: 0; }
+        .server-tabs { display: flex; gap: 6px; flex-wrap: wrap; min-height: 44px; align-items: center; width: 100%; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; }
+        .server-btn { background: transparent; border: 1.5px solid rgba(255,255,255,0.2); color: var(--text-muted); padding: clamp(6px, 1vw, 10px) clamp(8px, 1.5vw, 14px); border-radius: 5px; cursor: pointer; font-weight: 600; font-size: clamp(0.6rem, 1vw, 0.75rem); transition: all 0.2s ease; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; flex-shrink: 0; min-height: var(--touch-target); scroll-snap-align: start; touch-action: manipulation; }
+        .server-btn:active { transform: scale(0.95); }
         .server-btn:hover { background: rgba(255,255,255,0.08); color: var(--text); border-color: rgba(255,255,255,0.4); }
         .server-btn.active { background: var(--red); border-color: var(--red); color: #fff; box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3); }
         .server-btn.fallback { border-color: var(--gold); color: var(--gold); }
         
         .player-wrapper-outer { position: relative; margin-bottom: 20px; background: #0a0a0e; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); }
-        .player-title-bar { padding: 8px 14px; background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; min-height: 40px; }
-        .player-title-bar .title { font-weight: 700; font-size: 0.85rem; color: var(--text); display: flex; align-items: center; gap: 8px; min-width: 0; }
+        .player-title-bar { padding: clamp(6px, 1vw, 10px) clamp(10px, 2vw, 14px); background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; min-height: 44px; }
+        .player-title-bar .title { font-weight: 700; font-size: clamp(0.7rem, 1.2vw, 0.85rem); color: var(--text); display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; }
         .player-title-bar .title .badge { font-size: 0.55rem; font-weight: 800; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; background: var(--red); color: #fff; letter-spacing: 0.5px; flex-shrink: 0; }
         .player-title-bar .title .episode-badge { font-size: 0.6rem; font-weight: 600; color: var(--text-muted); background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 3px; flex-shrink: 0; }
         .player-title-bar .title .source-badge { font-size: 0.55rem; font-weight: 600; background: rgba(70, 211, 105, 0.2); color: var(--green); padding: 2px 6px; border-radius: 3px; flex-shrink: 0; }
         .player-title-bar .controls { display: flex; gap: 4px; flex-shrink: 0; flex-wrap: wrap; }
         .player-title-bar .controls .player-btn { 
             appearance: none; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); 
-            color: var(--text); border-radius: 4px; padding: 4px 10px; font-weight: 600; font-size: 0.7rem; 
+            color: var(--text); border-radius: 4px; padding: clamp(6px, 1vw, 10px) clamp(8px, 1.5vw, 12px); 
+            font-weight: 600; font-size: clamp(0.6rem, 1vw, 0.7rem); 
             cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease; 
-            font-family: 'Inter', sans-serif; min-width: 36px; justify-content: center;
+            font-family: 'Inter', sans-serif; min-width: 36px; justify-content: center; min-height: var(--touch-target);
+            touch-action: manipulation;
         }
+        .player-title-bar .controls .player-btn:active { transform: scale(0.92); }
         .player-title-bar .controls .player-btn:hover { background: var(--red); border-color: var(--red); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3); }
-        .player-title-bar .controls .player-btn i { font-size: 0.7rem; }
+        .player-title-bar .controls .player-btn i { font-size: clamp(0.6rem, 1vw, 0.7rem); }
         .player-title-bar .controls .player-btn.pip-btn:hover { background: #2196F3; border-color: #2196F3; }
         
-        /* 16:9 ASPECT RATIO PLAYER CONTAINER */
         .player-container { 
             position: relative; 
             width: 100%; 
@@ -151,28 +157,32 @@
         .next-episode-overlay .next-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 8px; }
         .next-episode-overlay .next-timer { display: flex; align-items: center; gap: 12px; }
         .next-episode-overlay .next-timer .countdown { font-size: 1.2rem; font-weight: 800; color: var(--gold); }
-        .next-episode-overlay .next-buttons { display: flex; gap: 8px; margin-top: 10px; }
+        .next-episode-overlay .next-buttons { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
         .next-episode-overlay .next-buttons button {
-            padding: 6px 16px; border: none; border-radius: 5px; font-weight: 700; font-size: 0.8rem;
+            padding: clamp(8px, 1.5vw, 12px) clamp(14px, 2vw, 20px); 
+            border: none; border-radius: 5px; font-weight: 700; font-size: clamp(0.7rem, 1vw, 0.8rem);
             cursor: pointer; transition: all 0.2s ease; font-family: 'Inter', sans-serif;
+            min-height: var(--touch-target);
+            touch-action: manipulation;
         }
+        .next-episode-overlay .next-buttons button:active { transform: scale(0.95); }
         .next-episode-overlay .next-buttons .play-next { background: var(--red); color: #fff; }
         .next-episode-overlay .next-buttons .play-next:hover { background: var(--red-dark); transform: scale(1.05); }
         .next-episode-overlay .next-buttons .cancel-next { background: rgba(255,255,255,0.1); color: var(--text-muted); }
         .next-episode-overlay .next-buttons .cancel-next:hover { background: rgba(255,255,255,0.2); }
         
-        /* AD DISCLAIMER */
+        /* AD DISCLAIMER - ALWAYS VISIBLE */
         .ad-disclaimer { 
             display: flex !important;
             align-items: flex-start; 
-            gap: 12px; 
-            background: rgba(229, 9, 20, 0.1); 
-            border: 1px solid rgba(229, 9, 20, 0.3); 
+            gap: clamp(10px, 2vw, 16px); 
+            background: rgba(229, 9, 20, 0.08); 
+            border: 1px solid rgba(229, 9, 20, 0.25); 
             border-radius: 8px; 
-            padding: 12px 16px; 
-            margin: 20px 0; 
-            font-size: 0.85rem; 
-            color: rgba(255,255,255,0.85); 
+            padding: clamp(12px, 2vw, 18px) clamp(14px, 2.5vw, 20px); 
+            margin: 16px 0 20px; 
+            font-size: clamp(0.75rem, 1.2vw, 0.9rem); 
+            color: rgba(255,255,255,0.9); 
             line-height: 1.6; 
             visibility: visible !important;
             opacity: 1 !important;
@@ -183,110 +193,148 @@
             box-sizing: border-box !important;
             min-height: auto !important;
             max-height: none !important;
+            backdrop-filter: blur(8px);
         }
 
-        .ad-disclaimer i { color: var(--red); font-size: 1.1rem; flex-shrink: 0; margin-top: 3px; }
-        .ad-disclaimer-content { flex: 1; }
-        .ad-disclaimer-content strong { display: inline-block; margin-bottom: 4px; }
+        .ad-disclaimer i { color: var(--red); font-size: clamp(1rem, 1.5vw, 1.2rem); flex-shrink: 0; margin-top: 3px; }
+        .ad-disclaimer-content { flex: 1; min-width: 0; }
+        .ad-disclaimer-content strong { display: inline-block; margin-bottom: 4px; font-size: clamp(0.8rem, 1.3vw, 0.95rem); }
         .ad-disclaimer-content p { margin: 0; }
         
         .id-type-badge { display: inline-block; background: rgba(100, 200, 255, 0.15); border: 1px solid rgba(100, 200, 255, 0.3); color: #64c8ff; padding: 2px 6px; border-radius: 3px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 8px; }
         
         .cast-section { margin: 30px 0 20px 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .cast-section h3, .similar-section h3, .details-section h3, .episode-guide h3 { font-size: 1.1rem; margin-bottom: 14px; color: var(--text); font-weight: 800; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-        .cast-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 16px; }
+        .cast-section h3, .similar-section h3, .details-section h3, .episode-guide h3 { font-size: clamp(1rem, 1.8vw, 1.2rem); margin-bottom: 14px; color: var(--text); font-weight: 800; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        .cast-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(80px, 12vw, 120px), 1fr)); gap: clamp(10px, 2vw, 16px); }
         .cast-member { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: transform 0.3s ease; }
+        .cast-member:active { transform: scale(0.95); }
         .cast-member:hover { transform: translateY(-3px); }
-        .cast-avatar { width: 90px; height: 90px; border-radius: 50%; background: var(--bg-card); border: 2px solid rgba(229, 9, 20, 0.2); overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(0,0,0,0.5); transition: all 0.3s ease; }
+        .cast-avatar { width: clamp(60px, 10vw, 90px); height: clamp(60px, 10vw, 90px); border-radius: 50%; background: var(--bg-card); border: 2px solid rgba(229, 9, 20, 0.2); overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(0,0,0,0.5); transition: all 0.3s ease; }
         .cast-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .cast-avatar-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-card) 100%); display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 1.8rem; }
-        .cast-name { font-size: 0.8rem; font-weight: 700; }
-        .cast-character { font-size: 0.7rem; color: var(--text-muted); }
+        .cast-name { font-size: clamp(0.7rem, 1.2vw, 0.8rem); font-weight: 700; }
+        .cast-character { font-size: clamp(0.6rem, 1vw, 0.7rem); color: var(--text-muted); }
         .details-section { margin: 30px 0 20px 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .details-section p { color: rgba(255,255,255,0.8); font-size: 0.9rem; line-height: 1.7; max-width: 900px; }
+        .details-section p { color: rgba(255,255,255,0.8); font-size: clamp(0.8rem, 1.2vw, 0.9rem); line-height: 1.7; max-width: 900px; }
         
         .similar-section { margin: 30px 0 20px 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .similar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--poster-min), 1fr)); gap: 8px; }
+        .similar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(80px, 12vw, 140px), 1fr)); gap: clamp(6px, 1.5vw, 12px); }
         .similar-card { position: relative; cursor: pointer; border-radius: 6px; overflow: hidden; background: var(--bg-card); transition: transform 0.3s ease, box-shadow 0.3s ease; text-decoration: none; color: var(--text); }
+        .similar-card:active { transform: scale(0.95); }
         .similar-card:hover { transform: scale(1.05); z-index: 10; box-shadow: 0 12px 30px rgba(0,0,0,0.8), 0 0 0 2px rgba(229,9,20,0.5); }
         .similar-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; background: #222; }
         .similar-card-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.9) 100%); opacity: 0; transition: opacity 0.3s ease; display: flex; flex-direction: column; justify-content: flex-end; padding: 8px; }
         .similar-card:hover .similar-card-overlay { opacity: 1; }
-        .similar-card-title { font-weight: 700; font-size: 0.75rem; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .similar-card-rating { font-size: 0.65rem; color: var(--gold); margin-bottom: 2px; }
-        .similar-card-type { font-size: 0.6rem; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .similar-card-title { font-weight: 700; font-size: clamp(0.6rem, 1vw, 0.75rem); line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .similar-card-rating { font-size: clamp(0.55rem, 0.9vw, 0.65rem); color: var(--gold); margin-bottom: 2px; }
+        .similar-card-type { font-size: clamp(0.5rem, 0.8vw, 0.6rem); color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
         .similar-empty { grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.9rem; }
         
         .episode-guide { margin: 30px 0 20px 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
         .episode-guide .controls-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; align-items: center; }
-        .episode-guide .controls-row .search-box { flex: 1; min-width: 150px; background: var(--bg-card); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 12px; color: var(--text); font-size: 0.85rem; outline: none; font-family: 'Inter', sans-serif; }
+        .episode-guide .controls-row .search-box { flex: 1; min-width: 150px; background: var(--bg-card); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: clamp(8px, 1.2vw, 10px) 12px; color: var(--text); font-size: clamp(0.75rem, 1.2vw, 0.85rem); outline: none; font-family: 'Inter', sans-serif; min-height: var(--touch-target); }
         .episode-guide .controls-row .search-box:focus { border-color: var(--red); }
-        .episode-guide .controls-row .sort-select { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 12px; color: var(--text); font-size: 0.8rem; outline: none; font-family: 'Inter', sans-serif; cursor: pointer; }
-        .season-cards { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 14px; }
-        .season-card { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden; min-width: 100px; cursor: pointer; transition: all 0.3s ease; flex-shrink: 0; }
+        .episode-guide .controls-row .sort-select { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: clamp(8px, 1.2vw, 10px) 12px; color: var(--text); font-size: clamp(0.7rem, 1.2vw, 0.8rem); outline: none; font-family: 'Inter', sans-serif; cursor: pointer; min-height: var(--touch-target); }
+        .season-cards { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 14px; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; }
+        .season-card { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden; min-width: clamp(80px, 15vw, 120px); cursor: pointer; transition: all 0.3s ease; flex-shrink: 0; scroll-snap-align: start; }
+        .season-card:active { transform: scale(0.95); }
         .season-card:hover { border-color: var(--red); transform: translateY(-2px); }
         .season-card.active { border-color: var(--red); box-shadow: 0 8px 24px rgba(229,9,20,0.25); }
-        .season-poster { width: 100%; height: 110px; object-fit: cover; background: rgba(255,255,255,0.05); }
-        .season-label { padding: 8px; font-size: 0.75rem; font-weight: 700; text-align: center; }
-        .seasons-select { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.15); color: var(--text); padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; cursor: pointer; transition: all 0.3s ease; font-family: 'Inter', sans-serif; margin-bottom: 14px; width: 100%; max-width: 250px; font-weight: 600; }
-        .episodes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; max-height: 500px; overflow-y: auto; }
-        .episode-item { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; overflow: hidden; display: flex; flex-direction: column; position: relative; }
+        .season-poster { width: 100%; height: clamp(80px, 15vw, 110px); object-fit: cover; background: rgba(255,255,255,0.05); }
+        .season-label { padding: 8px; font-size: clamp(0.65rem, 1vw, 0.75rem); font-weight: 700; text-align: center; }
+        .seasons-select { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.15); color: var(--text); padding: clamp(8px, 1.2vw, 10px) 12px; border-radius: 6px; font-size: clamp(0.8rem, 1.2vw, 0.9rem); cursor: pointer; transition: all 0.3s ease; font-family: 'Inter', sans-serif; margin-bottom: 14px; width: 100%; max-width: 250px; font-weight: 600; min-height: var(--touch-target); }
+        .episodes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(130px, 20vw, 180px), 1fr)); gap: clamp(8px, 1.5vw, 12px); max-height: 600px; overflow-y: auto; padding-right: 4px; }
+        .episode-item { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; overflow: hidden; display: flex; flex-direction: column; position: relative; touch-action: manipulation; }
+        .episode-item:active { transform: scale(0.97); }
         .episode-item:hover { border-color: var(--red); background: var(--bg-elevated); transform: translateY(-2px); }
         .episode-item.active { border-color: var(--red); box-shadow: 0 8px 24px rgba(229,9,20,0.25); }
         .episode-item.watched { border-color: var(--green); }
         .episode-item .resume-badge { position: absolute; top: 8px; left: 8px; background: var(--red); color: #fff; font-size: 0.55rem; font-weight: 800; padding: 2px 6px; border-radius: 3px; z-index: 5; text-transform: uppercase; letter-spacing: 0.5px; }
         .episode-item .watched-badge { position: absolute; top: 8px; right: 8px; background: var(--green); color: #fff; font-size: 0.55rem; font-weight: 800; padding: 2px 6px; border-radius: 3px; z-index: 5; text-transform: uppercase; letter-spacing: 0.5px; }
         .episode-thumb { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: rgba(255,255,255,0.04); position: relative; }
-        .episode-content { padding: 8px 10px; text-align: left; flex: 1; display: flex; flex-direction: column; position: relative; }
-        .episode-content .episode-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
-        .episode-num { font-weight: 800; color: var(--red); font-size: 0.75rem; }
-        .episode-actions { display: flex; gap: 4px; }
-        .episode-actions button { background: none; border: 1px solid rgba(255,255,255,0.2); color: var(--text-muted); cursor: pointer; font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; transition: all 0.2s ease; }
+        .episode-content { padding: clamp(6px, 1vw, 10px); text-align: left; flex: 1; display: flex; flex-direction: column; position: relative; }
+        .episode-content .episode-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; gap: 4px; flex-wrap: wrap; }
+        .episode-num { font-weight: 800; color: var(--red); font-size: clamp(0.6rem, 1vw, 0.75rem); }
+        .episode-actions { display: flex; gap: 4px; flex-wrap: wrap; }
+        .episode-actions button { background: none; border: 1px solid rgba(255,255,255,0.2); color: var(--text-muted); cursor: pointer; font-size: clamp(0.55rem, 0.9vw, 0.65rem); padding: clamp(4px, 0.8vw, 6px) clamp(6px, 1vw, 8px); border-radius: 4px; transition: all 0.2s ease; min-height: 32px; touch-action: manipulation; }
+        .episode-actions button:active { transform: scale(0.9); }
         .episode-actions button:hover { color: var(--text); background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.4); }
         .episode-actions button.watched-btn.active { color: var(--green); border-color: var(--green); background: rgba(70, 211, 105, 0.1); }
-        .episode-name { color: var(--text); font-size: 0.8rem; line-height: 1.3; min-height: 2.4em; }
-        .episode-meta { color: var(--text-muted); font-size: 0.7rem; margin-top: 4px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-        .episode-meta .resume-link { color: var(--red); font-weight: 700; font-size: 0.65rem; cursor: pointer; }
-        .episode-meta .resume-link:hover { text-decoration: underline; }
+        .episode-name { color: var(--text); font-size: clamp(0.7rem, 1.1vw, 0.8rem); line-height: 1.3; min-height: 2.4em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .episode-meta { color: var(--text-muted); font-size: clamp(0.6rem, 0.9vw, 0.7rem); margin-top: 4px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .episode-meta .resume-link { color: var(--red); font-weight: 700; font-size: clamp(0.55rem, 0.9vw, 0.65rem); cursor: pointer; padding: 2px 6px; border-radius: 3px; background: rgba(229,9,20,0.1); touch-action: manipulation; }
+        .episode-meta .resume-link:active { transform: scale(0.95); }
+        .episode-meta .resume-link:hover { background: rgba(229,9,20,0.2); }
         .episode-nav-buttons { display: flex; gap: 8px; margin: 10px 0; flex-wrap: wrap; }
-        .episode-nav-buttons button { padding: 6px 14px; border: 1px solid rgba(255,255,255,0.15); border-radius: 5px; background: var(--bg-card); color: var(--text); cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: all 0.2s ease; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 6px; }
+        .episode-nav-buttons button { padding: clamp(8px, 1.2vw, 10px) clamp(14px, 2vw, 20px); border: 1px solid rgba(255,255,255,0.15); border-radius: 5px; background: var(--bg-card); color: var(--text); cursor: pointer; font-weight: 600; font-size: clamp(0.7rem, 1vw, 0.8rem); transition: all 0.2s ease; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 6px; min-height: var(--touch-target); touch-action: manipulation; }
+        .episode-nav-buttons button:active { transform: scale(0.95); }
         .episode-nav-buttons button:hover { background: var(--red); border-color: var(--red); }
-        .episode-nav-buttons button:disabled { opacity: 0.3; cursor: not-allowed; }
+        .episode-nav-buttons button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
         
-        .toast { position: fixed; bottom: 30px; right: 30px; background: rgba(11, 11, 15, 0.98); color: white; padding: 10px 16px; border-radius: 6px; border-left: 3px solid var(--red); z-index: 9999; font-size: 12px; font-weight: 600; box-shadow: 0 8px 30px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 8px; animation: slideIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); max-width: 90vw; backdrop-filter: blur(12px); border: 1px solid rgba(229, 9, 20, 0.3); }
+        .toast { position: fixed; bottom: clamp(20px, 5vh, 40px); right: clamp(16px, 4vw, 40px); background: rgba(11, 11, 15, 0.98); color: white; padding: clamp(10px, 1.5vw, 16px) clamp(14px, 2vw, 20px); border-radius: 6px; border-left: 3px solid var(--red); z-index: 9999; font-size: clamp(0.7rem, 1.2vw, 0.85rem); font-weight: 600; box-shadow: 0 8px 30px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 8px; animation: slideIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); max-width: 90vw; backdrop-filter: blur(12px); border: 1px solid rgba(229, 9, 20, 0.3); }
         @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         .toast.error { border-left-color: #ff6b6b; }
         .toast.success { border-left-color: var(--green); }
         .toast.info { border-left-color: var(--gold); }
         
+        /* Touch-specific improvements */
+        @media (hover: none) {
+            .server-btn:hover { background: transparent; color: var(--text-muted); border-color: rgba(255,255,255,0.2); }
+            .server-btn.active:hover { background: var(--red); border-color: var(--red); color: #fff; }
+            .cast-member:hover { transform: none; }
+            .similar-card:hover { transform: none; }
+            .episode-item:hover { transform: none; border-color: rgba(255,255,255,0.1); background: var(--bg-card); }
+            .season-card:hover { transform: none; border-color: rgba(255,255,255,0.1); }
+            .episode-nav-buttons button:hover { background: var(--bg-card); border-color: rgba(255,255,255,0.15); }
+            .player-title-bar .controls .player-btn:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); transform: none; box-shadow: none; }
+        }
+        
         @media (max-width: 768px) {
-            .nav { padding: 10px 12px; gap: 8px; }
-            .nav-logo { font-size: 1.1rem; }
-            .btn-back { font-size: 0.65rem; padding: 5px 8px; }
+            .nav { padding: 8px 10px; gap: 6px; min-height: 50px; }
+            .nav-logo { font-size: 1rem; }
+            .btn-back { padding: 6px 10px; font-size: 0.6rem; min-height: 36px; }
             .btn-back span { display: none; }
             .adblock-status { display: none; }
-            .media-hero { height: 55vh; min-height: 250px; }
-            .hero-content { grid-template-columns: 1fr; gap: 12px; padding: 16px 12px 30px; }
-            .hero-poster { width: 120px; height: 180px; margin: 0 auto; }
-            .hero-title { font-size: 1.5rem; }
-            .hero-description { -webkit-line-clamp: 2; font-size: 0.8rem; }
-            .player-section { padding: 16px 12px; }
-            .server-btn { padding: 3px 8px; font-size: 0.65rem; }
-            .player-title-bar { padding: 6px 10px; flex-direction: column; align-items: stretch; gap: 4px; min-height: 36px; }
-            .player-title-bar .title { font-size: 0.8rem; }
+            .media-hero { height: 50vh; min-height: 200px; }
+            .hero-content { grid-template-columns: 1fr; gap: 10px; padding: 12px 10px 20px; }
+            .hero-poster { width: 100px; height: 150px; margin: 0 auto; }
+            .hero-title { font-size: 1.3rem; text-align: center; }
+            .hero-description { -webkit-line-clamp: 2; font-size: 0.75rem; text-align: center; }
+            .hero-meta { justify-content: center; font-size: 0.7rem; }
+            .hero-genres { justify-content: center; }
+            .player-section { padding: 12px 10px; }
+            .server-btn { padding: 4px 8px; font-size: 0.6rem; min-height: 36px; }
+            .player-title-bar { padding: 4px 8px; flex-direction: column; align-items: stretch; gap: 4px; min-height: 36px; }
+            .player-title-bar .title { font-size: 0.7rem; }
             .player-title-bar .controls { justify-content: flex-end; flex-wrap: wrap; }
-            .player-title-bar .controls .player-btn { padding: 4px 8px; font-size: 0.6rem; min-width: 28px; }
+            .player-title-bar .controls .player-btn { padding: 4px 8px; font-size: 0.55rem; min-width: 28px; min-height: 32px; }
             .player-title-bar .controls .player-btn span { display: none; }
-            .ad-disclaimer { padding: 10px 12px; font-size: 0.8rem; margin: 16px 0; display: flex !important; }
-            .cast-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; }
-            .cast-avatar { width: 70px; height: 70px; }
-            .cast-name { font-size: 0.7rem; }
-            .cast-character { font-size: 0.65rem; }
-            .episodes-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
-            .similar-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+            .ad-disclaimer { padding: 10px 12px; font-size: 0.7rem; margin: 12px 0; display: flex !important; }
+            .cast-grid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 8px; }
+            .cast-avatar { width: 60px; height: 60px; }
+            .cast-name { font-size: 0.65rem; }
+            .cast-character { font-size: 0.55rem; }
+            .episodes-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+            .similar-grid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
             .next-episode-overlay { bottom: 15px; right: 15px; left: 15px; min-width: auto; }
             .episode-guide .controls-row { flex-direction: column; }
             .episode-guide .controls-row .search-box { width: 100%; }
+            .seasons-select { max-width: 100%; }
+        }
+        
+        @media (max-width: 480px) {
+            .media-hero { height: 45vh; min-height: 160px; }
+            .hero-poster { width: 80px; height: 120px; }
+            .hero-title { font-size: 1.1rem; }
+            .hero-meta { font-size: 0.6rem; gap: 6px; }
+            .genre-tag { font-size: 0.6rem; padding: 2px 8px; }
+            .hero-description { font-size: 0.7rem; -webkit-line-clamp: 3; }
+            .episodes-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+            .similar-grid { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); }
+            .server-tabs { gap: 4px; }
+            .server-btn { padding: 3px 6px; font-size: 0.55rem; min-height: 30px; }
+            .player-title-bar .controls .player-btn { padding: 3px 6px; font-size: 0.5rem; min-height: 28px; min-width: 24px; }
+            .toast { bottom: 16px; right: 16px; left: 16px; font-size: 0.7rem; padding: 10px 14px; max-width: none; }
         }
     </style>
 </head>
@@ -336,7 +384,6 @@
                     </div>
                 </div>
                 
-                <!-- 16:9 ASPECT RATIO PLAYER CONTAINER -->
                 <div class="player-container" id="playerContainer">
                     <div class="player-loading" id="playerLoading">
                         <div class="spinner"></div>
@@ -358,8 +405,8 @@
                 </div>
             </div>
 
-            <!-- FIXED AD DISCLAIMER -->
-            <div class="ad-disclaimer" id="adDisclaimer">
+            <!-- AD DISCLAIMER - ALWAYS VISIBLE ON ALL DEVICES -->
+            <div class="ad-disclaimer" id="adDisclaimer" style="display:flex !important; visibility:visible !important; opacity:1 !important;">
                 <i class="fas fa-ban"></i>
                 <div class="ad-disclaimer-content">
                     <strong><i class="fas fa-shield-alt"></i> HR OTT is completely ad-free!</strong>
@@ -409,10 +456,11 @@
 
     <script>
         'use strict';
+        // ═══════════════════════════════════════════════
+        // ═══ COMPLETE PLAYER SCRIPT ═══
+        // ═══════════════════════════════════════════════
         (function() {
-            // ═══════════════════════════════════════════════
-            // ═══ ENHANCED AD BLOCKER (LIGHTWEIGHT) ═══
-            // ═══════════════════════════════════════════════
+            // ═══════ AD BLOCKER ═══════
             class EnhancedAdBlocker {
                 constructor() {
                     this.blockedCount = 0;
@@ -487,6 +535,7 @@
             const STORAGE_KEY = 'hr_ott_player_state';
             const WATCHED_KEY = 'hr_ott_watched';
             const PROGRESS_KEY = 'hr_ott_progress';
+            const CONTINUE_WATCHING_KEY = 'hr_ott_continue_watching';
             
             function saveState(data) {
                 try {
@@ -549,6 +598,17 @@
                     const key = getWatchedKey(id, season, episode);
                     prog[key] = Math.min(100, Math.max(0, progress));
                     localStorage.setItem(PROGRESS_KEY, JSON.stringify(prog));
+                    
+                    // Update continue watching
+                    try {
+                        const continueWatching = JSON.parse(localStorage.getItem(CONTINUE_WATCHING_KEY) || '{}');
+                        const cKey = `${id}_s${season}_e${episode}`;
+                        continueWatching[cKey] = {
+                            id, season, episode, progress: prog[key],
+                            updatedAt: Date.now()
+                        };
+                        localStorage.setItem(CONTINUE_WATCHING_KEY, JSON.stringify(continueWatching));
+                    } catch(e) {}
                 } catch(e) {}
             }
 
@@ -578,7 +638,6 @@
             const TMDB_BASE = 'https://api.themoviedb.org/3';
             const TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
             const TMDB_BACKDROP = 'https://image.tmdb.org/t/p/w1280';
-            const IMDB_API = 'https://api2.imdb3.shop/api/movies';
 
             // ═══════ SOURCE CONFIG ═══════
             const sourceConfig = [
@@ -604,20 +663,23 @@
             let mediaData = null;
             let isInitialLoad = true;
             let allSeasons = [];
+            let allEpisodes = [];
             let nextEpisodeTimer = null;
             let countdownValue = 10;
             let isNextEpisodeScheduled = false;
+            let episodeGuideLoaded = false;
             const playerSources = {};
 
             // ═══════ HELPERS ═══════
             function getTitle(item) { return item.title || item.name || 'Untitled'; }
             function getYear(item) { return (item.release_date || item.first_air_date || '').substring(0, 4); }
+            
             function showToast(msg, type = 'success') {
                 const t = document.createElement('div');
                 t.className = `toast ${type}`;
                 t.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : type === 'info' ? 'info-circle' : 'exclamation'}-circle"></i>${msg}`;
                 document.body.appendChild(t);
-                setTimeout(() => { t.remove(); }, 2500);
+                setTimeout(() => { t.remove(); }, 3000);
             }
             
             function buildIframe(src) {
@@ -671,7 +733,10 @@
                 const overlay = document.getElementById('nextEpisodeOverlay');
                 const nameEl = document.getElementById('nextEpisodeName');
                 const countdownEl = document.getElementById('nextCountdown');
-                if (!episode) { overlay.classList.remove('visible'); return; }
+                if (!episode || !overlay) { 
+                    if (overlay) overlay.classList.remove('visible'); 
+                    return; 
+                }
                 nameEl.textContent = `S${currentSeason} • E${episode.episode_number}: ${episode.name || 'Unknown'}`;
                 overlay.classList.add('visible');
                 countdownValue = 10;
@@ -691,14 +756,18 @@
 
             function hideNextEpisodeOverlay() {
                 const overlay = document.getElementById('nextEpisodeOverlay');
-                overlay.classList.remove('visible');
+                if (overlay) overlay.classList.remove('visible');
                 if (nextEpisodeTimer) { clearInterval(nextEpisodeTimer); nextEpisodeTimer = null; }
                 isNextEpisodeScheduled = false;
             }
 
             function getCurrentSeasonEpisodes() {
+                // Find the current season in allSeasons
                 const seasonData = allSeasons.find(s => s.season_number === currentSeason);
-                return seasonData?.episodes || [];
+                if (seasonData && seasonData.episodes) {
+                    return seasonData.episodes;
+                }
+                return [];
             }
 
             function playNextEpisode() {
@@ -710,11 +779,27 @@
                     currentEpisode = nextEp.episode_number;
                     refreshPlayerSources();
                     loadPlayerEmbed(currentSource);
-                    updateEpisodeGrid();
+                    renderEpisodes();
                     updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource, currentIdType);
                     showToast(`Playing S${currentSeason} E${currentEpisode}: ${nextEp.name || 'Episode'}`, 'success');
                 } else {
-                    showToast('No more episodes in this season', 'info');
+                    // Check if there's a next season
+                    const currentSeasonIdx = allSeasons.findIndex(s => s.season_number === currentSeason);
+                    if (currentSeasonIdx < allSeasons.length - 1) {
+                        const nextSeason = allSeasons[currentSeasonIdx + 1];
+                        if (nextSeason && nextSeason.episodes && nextSeason.episodes.length > 0) {
+                            currentSeason = nextSeason.season_number;
+                            currentEpisode = nextSeason.episodes[0].episode_number;
+                            refreshPlayerSources();
+                            loadPlayerEmbed(currentSource);
+                            renderEpisodes();
+                            updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource, currentIdType);
+                            showToast(`Playing Season ${currentSeason} Episode ${currentEpisode}`, 'success');
+                            updateSeasonUI();
+                            return;
+                        }
+                    }
+                    showToast('No more episodes available', 'info');
                 }
             }
 
@@ -743,48 +828,7 @@
                 }
             });
 
-            // ═══════ KEYBOARD SHORTCUTS ═══════
-            document.addEventListener('keydown', function(e) {
-                if (e.key === ' ' || e.key === 'Space') {
-                    e.preventDefault();
-                    const iframe = document.querySelector('#playerContainer iframe');
-                    if (iframe) {
-                        try {
-                            const video = iframe.contentDocument?.querySelector('video');
-                            if (video) { if (video.paused) video.play(); else video.pause(); }
-                        } catch(e) {}
-                    }
-                }
-                if (e.key === 'f' || e.key === 'F') {
-                    document.getElementById('playerFullscreenBtn')?.click();
-                }
-                if (e.key === 'ArrowRight') {
-                    e.preventDefault();
-                    try {
-                        const iframe = document.querySelector('#playerContainer iframe');
-                        if (iframe) {
-                            const video = iframe.contentDocument?.querySelector('video');
-                            if (video) video.currentTime = Math.min(video.duration, video.currentTime + 10);
-                        }
-                    } catch(e) {}
-                }
-                if (e.key === 'ArrowLeft') {
-                    e.preventDefault();
-                    try {
-                        const iframe = document.querySelector('#playerContainer iframe');
-                        if (iframe) {
-                            const video = iframe.contentDocument?.querySelector('video');
-                            if (video) video.currentTime = Math.max(0, video.currentTime - 10);
-                        }
-                    } catch(e) {}
-                }
-                if ((e.key === 'n' || e.key === 'N') && currentType === 'tv') {
-                    e.preventDefault();
-                    playNextEpisode();
-                }
-            });
-
-            // ═══════ PLAYER LOAD - OPTIMIZED ═══════
+            // ═══════ PLAYER LOAD ═══════
             function loadPlayerEmbed(key, isFallback = false) {
                 if (isLoading) return;
                 if (!currentId) return;
@@ -891,38 +935,76 @@
                 });
             }
 
-            // ═══════ EPISODE GUIDE ═══════
+            // ═══════ EPISODE GUIDE - OPTIMIZED FOR MANY EPISODES ═══════
             function renderEpisodes() {
                 const grid = document.getElementById('episodesGrid');
                 const search = document.getElementById('episodeSearch')?.value?.toLowerCase() || '';
                 const sort = document.getElementById('episodeSort')?.value || 'number';
                 let eps = getCurrentSeasonEpisodes();
-                if (search) {
-                    eps = eps.filter(e => (e.name || '').toLowerCase().includes(search) || String(e.episode_number).includes(search));
-                }
-                switch(sort) {
-                    case 'name': eps.sort((a,b) => (a.name || '').localeCompare(b.name || '')); break;
-                    case 'watched': eps.sort((a,b) => { const aW = isEpisodeWatched(currentId, currentSeason, a.episode_number); const bW = isEpisodeWatched(currentId, currentSeason, b.episode_number); return aW === bW ? 0 : aW ? -1 : 1; }); break;
-                    case 'unwatched': eps.sort((a,b) => { const aW = isEpisodeWatched(currentId, currentSeason, a.episode_number); const bW = isEpisodeWatched(currentId, currentSeason, b.episode_number); return aW === bW ? 0 : aW ? 1 : -1; }); break;
-                    default: eps.sort((a,b) => a.episode_number - b.episode_number);
-                }
-                grid.innerHTML = '';
-                if (eps.length === 0) {
-                    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:16px;">No episodes found</div>';
+                
+                if (!eps || eps.length === 0) {
+                    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:20px;">No episodes available</div>';
                     return;
                 }
+                
+                // Apply search filter
+                if (search) {
+                    eps = eps.filter(e => {
+                        const nameMatch = (e.name || '').toLowerCase().includes(search);
+                        const numMatch = String(e.episode_number).includes(search);
+                        return nameMatch || numMatch;
+                    });
+                }
+                
+                // Apply sorting
+                switch(sort) {
+                    case 'name': 
+                        eps.sort((a,b) => (a.name || '').localeCompare(b.name || '')); 
+                        break;
+                    case 'watched': 
+                        eps.sort((a,b) => { 
+                            const aW = isEpisodeWatched(currentId, currentSeason, a.episode_number); 
+                            const bW = isEpisodeWatched(currentId, currentSeason, b.episode_number); 
+                            return aW === bW ? 0 : aW ? -1 : 1; 
+                        }); 
+                        break;
+                    case 'unwatched': 
+                        eps.sort((a,b) => { 
+                            const aW = isEpisodeWatched(currentId, currentSeason, a.episode_number); 
+                            const bW = isEpisodeWatched(currentId, currentSeason, b.episode_number); 
+                            return aW === bW ? 0 : aW ? 1 : -1; 
+                        }); 
+                        break;
+                    default: 
+                        eps.sort((a,b) => a.episode_number - b.episode_number);
+                }
+                
+                grid.innerHTML = '';
+                
+                // Use document fragment for better performance
+                const fragment = document.createDocumentFragment();
+                
                 eps.forEach(ep => {
                     const isActive = ep.episode_number === currentEpisode;
                     const isWatched = isEpisodeWatched(currentId, currentSeason, ep.episode_number);
                     const progress = getEpisodeProgress(currentId, currentSeason, ep.episode_number);
                     const hasProgress = progress > 0 && progress < 100;
+                    
                     const item = document.createElement('button');
                     item.type = 'button';
                     item.className = `episode-item ${isActive ? 'active' : ''} ${isWatched ? 'watched' : ''}`;
+                    
                     const still = ep.still_path ? `${TMDB_IMG}${ep.still_path}` : '';
-                    const thumb = still ? `<img class="episode-thumb" src="${still}" alt="" loading="lazy">` : `<div class="episode-thumb" style="display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--text-dim);">EP${ep.episode_number}</div>`;
+                    const thumbHtml = still ? 
+                        `<img class="episode-thumb" src="${still}" alt="" loading="lazy" onerror="this.style.display='none'">` : 
+                        `<div class="episode-thumb" style="display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--text-dim);font-size:0.8rem;">EP${ep.episode_number}</div>`;
+                    
                     item.innerHTML = `
-                        <div class="episode-thumb">${thumb}${isWatched ? '<div class="watched-badge">✓ Watched</div>' : ''}${hasProgress ? `<div class="resume-badge">${Math.round(progress)}%</div>` : ''}</div>
+                        <div style="position:relative;">
+                            ${thumbHtml}
+                            ${isWatched ? '<div class="watched-badge">✓ Watched</div>' : ''}
+                            ${hasProgress ? `<div class="resume-badge">${Math.round(progress)}%</div>` : ''}
+                        </div>
                         <div class="episode-content">
                             <div class="episode-header">
                                 <div class="episode-num">Ep ${ep.episode_number}</div>
@@ -931,41 +1013,77 @@
                                 </div>
                             </div>
                             <div class="episode-name">${ep.name || 'Unknown'}</div>
-                            <div class="episode-meta"><span>${ep.runtime || 'TBA'} min</span>${hasProgress ? `<span class="resume-link" data-resume>${Math.round(progress)}% • Resume</span>` : ''}${isWatched ? '<span style="color:var(--green);">✓ Watched</span>' : ''}</div>
-                        </div>`;
+                            <div class="episode-meta">
+                                <span>${ep.runtime || 'TBA'} min</span>
+                                ${hasProgress ? `<span class="resume-link" data-resume>${Math.round(progress)}% • Resume</span>` : ''}
+                                ${isWatched ? '<span style="color:var(--green);">✓</span>' : ''}
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Click on episode card - FIXED to properly load episode
                     item.addEventListener('click', function(e) {
+                        // Don't trigger if clicking on a button inside
                         if (e.target.closest('button')) return;
-                        if (hasProgress) showToast(`Resuming S${currentSeason} E${ep.episode_number} at ${Math.round(progress)}%`, 'info');
+                        
+                        // If there's progress, show resume option
+                        if (hasProgress) {
+                            showToast(`Resuming S${currentSeason} E${ep.episode_number} at ${Math.round(progress)}%`, 'info');
+                        }
+                        
+                        // Load the episode
                         currentEpisode = ep.episode_number;
                         refreshPlayerSources();
                         loadPlayerEmbed(currentSource);
                         renderEpisodes();
                         updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource, currentIdType);
+                        
+                        // Hide next episode overlay if showing
+                        hideNextEpisodeOverlay();
                     });
+                    
+                    // Watch toggle button
                     const watchBtn = item.querySelector('.watched-btn');
                     watchBtn?.addEventListener('click', function(e) {
-                        e.stopPropagation(); e.preventDefault();
+                        e.stopPropagation(); 
+                        e.preventDefault();
                         const watched = toggleWatched(currentId, currentSeason, ep.episode_number);
                         this.classList.toggle('active', watched);
                         this.innerHTML = `<i class="fas ${watched ? 'fa-check-circle' : 'fa-circle'}"></i>`;
                         this.title = watched ? 'Mark as unwatched' : 'Mark as watched';
                         item.classList.toggle('watched', watched);
                         showToast(watched ? 'Marked as watched' : 'Unmarked as watched', 'success');
-                        renderEpisodes();
+                        // Update stats
+                        updateEpisodeStats();
                     });
+                    
+                    // Resume link
                     const resumeLink = item.querySelector('.resume-link');
                     resumeLink?.addEventListener('click', function(e) {
                         e.stopPropagation();
+                        e.preventDefault();
                         currentEpisode = ep.episode_number;
                         refreshPlayerSources();
                         loadPlayerEmbed(currentSource);
                         showToast(`Resuming S${currentSeason} E${ep.episode_number}`, 'info');
+                        renderEpisodes();
+                        updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource, currentIdType);
+                        hideNextEpisodeOverlay();
                     });
-                    grid.appendChild(item);
+                    
+                    fragment.appendChild(item);
                 });
+                
+                grid.appendChild(fragment);
+                updateEpisodeStats();
+            }
+
+            function updateEpisodeStats() {
+                const eps = getCurrentSeasonEpisodes();
                 const total = eps.length;
                 const watched = eps.filter(e => isEpisodeWatched(currentId, currentSeason, e.episode_number)).length;
-                document.getElementById('episodeStats').textContent = `${watched}/${total} watched`;
+                const statsEl = document.getElementById('episodeStats');
+                if (statsEl) statsEl.textContent = `${watched}/${total} watched`;
             }
 
             function updateEpisodeGrid() { renderEpisodes(); }
@@ -973,14 +1091,35 @@
             document.getElementById('episodeSearch')?.addEventListener('input', renderEpisodes);
             document.getElementById('episodeSort')?.addEventListener('change', renderEpisodes);
 
+            // Navigation buttons
             document.getElementById('prevEpisodeBtn')?.addEventListener('click', function() {
                 const eps = getCurrentSeasonEpisodes();
                 const idx = eps.findIndex(e => e.episode_number === currentEpisode);
                 if (idx > 0) {
                     currentEpisode = eps[idx - 1].episode_number;
-                    refreshPlayerSources(); loadPlayerEmbed(currentSource); renderEpisodes();
+                    refreshPlayerSources(); 
+                    loadPlayerEmbed(currentSource); 
+                    renderEpisodes();
                     updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource, currentIdType);
                     showToast(`Playing S${currentSeason} E${currentEpisode}`, 'success');
+                    hideNextEpisodeOverlay();
+                } else if (idx === 0) {
+                    // Check previous season
+                    const seasonIdx = allSeasons.findIndex(s => s.season_number === currentSeason);
+                    if (seasonIdx > 0) {
+                        const prevSeason = allSeasons[seasonIdx - 1];
+                        if (prevSeason && prevSeason.episodes && prevSeason.episodes.length > 0) {
+                            currentSeason = prevSeason.season_number;
+                            currentEpisode = prevSeason.episodes[prevSeason.episodes.length - 1].episode_number;
+                            refreshPlayerSources();
+                            loadPlayerEmbed(currentSource);
+                            renderEpisodes();
+                            updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource, currentIdType);
+                            updateSeasonUI();
+                            showToast(`Playing S${currentSeason} E${currentEpisode}`, 'success');
+                            hideNextEpisodeOverlay();
+                        }
+                    }
                 }
             });
 
@@ -989,69 +1128,198 @@
                 const idx = eps.findIndex(e => e.episode_number === currentEpisode);
                 if (idx < eps.length - 1) {
                     currentEpisode = eps[idx + 1].episode_number;
-                    refreshPlayerSources(); loadPlayerEmbed(currentSource); renderEpisodes();
+                    refreshPlayerSources(); 
+                    loadPlayerEmbed(currentSource); 
+                    renderEpisodes();
                     updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource, currentIdType);
                     showToast(`Playing S${currentSeason} E${currentEpisode}`, 'success');
+                    hideNextEpisodeOverlay();
+                } else {
+                    // Check next season
+                    const seasonIdx = allSeasons.findIndex(s => s.season_number === currentSeason);
+                    if (seasonIdx < allSeasons.length - 1) {
+                        const nextSeason = allSeasons[seasonIdx + 1];
+                        if (nextSeason && nextSeason.episodes && nextSeason.episodes.length > 0) {
+                            currentSeason = nextSeason.season_number;
+                            currentEpisode = nextSeason.episodes[0].episode_number;
+                            refreshPlayerSources();
+                            loadPlayerEmbed(currentSource);
+                            renderEpisodes();
+                            updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource, currentIdType);
+                            updateSeasonUI();
+                            showToast(`Playing S${currentSeason} E${currentEpisode}`, 'success');
+                            hideNextEpisodeOverlay();
+                        }
+                    } else {
+                        showToast('No more episodes available', 'info');
+                    }
                 }
             });
 
-            // ═══════ EPISODE GUIDE LOADING ═══════
+            function updateSeasonUI() {
+                const select = document.getElementById('seasonsSelect');
+                if (select) select.value = currentSeason;
+                document.querySelectorAll('.season-card').forEach(c => {
+                    c.classList.toggle('active', parseInt(c.dataset.seasonNumber) === currentSeason);
+                });
+            }
+
+            // ═══════ EPISODE GUIDE LOADING - OPTIMIZED FOR MANY SEASONS ═══════
             async function loadEpisodeGuide() {
-                if (currentType !== 'tv' || !currentId || currentIdType !== 'tmdb') return;
+                if (currentType !== 'tv' || !currentId || currentIdType !== 'tmdb') {
+                    document.getElementById('episodeGuide').style.display = 'none';
+                    return;
+                }
+                
                 const guide = document.getElementById('episodeGuide');
                 if (!guide) return;
+                
+                // Show loading state
+                guide.style.display = 'block';
+                document.getElementById('episodesGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:20px;"><i class="fas fa-spinner fa-spin"></i> Loading episodes...</div>';
+                
                 try {
-                    const res = await fetch(`${TMDB_BASE}/tv/${currentId}?api_key=${TMDB_KEY}`);
-                    if (!res.ok) return;
-                    const data = await res.json();
-                    const seasons = data.seasons || [];
-                    if (!seasons.length) { guide.style.display = 'none'; return; }
+                    // First get TV series details to get all seasons
+                    const seriesRes = await fetch(`${TMDB_BASE}/tv/${currentId}?api_key=${TMDB_KEY}`);
+                    if (!seriesRes.ok) { 
+                        guide.style.display = 'none'; 
+                        return; 
+                    }
+                    
+                    const seriesData = await seriesRes.json();
+                    const seasons = (seriesData.seasons || []).filter(s => s.season_number > 0);
+                    
+                    if (!seasons.length) { 
+                        guide.style.display = 'none'; 
+                        return; 
+                    }
+                    
                     guide.style.display = 'block';
                     allSeasons = [];
-                    for (const s of seasons) {
-                        if (s.season_number === 0) continue;
+                    
+                    // Load each season's episodes - limit to 20 seasons max for performance
+                    const seasonsToLoad = seasons.slice(0, 20);
+                    
+                    // Show progress
+                    const statsEl = document.getElementById('episodeStats');
+                    if (statsEl) statsEl.textContent = `Loading ${seasonsToLoad.length} seasons...`;
+                    
+                    for (let i = 0; i < seasonsToLoad.length; i++) {
+                        const s = seasonsToLoad[i];
                         try {
                             const seasonRes = await fetch(`${TMDB_BASE}/tv/${currentId}/season/${s.season_number}?api_key=${TMDB_KEY}`);
                             if (seasonRes.ok) {
                                 const seasonData = await seasonRes.json();
-                                allSeasons.push({ season_number: s.season_number, name: s.name || `Season ${s.season_number}`, poster_path: s.poster_path, episodes: seasonData.episodes || [] });
+                                allSeasons.push({
+                                    season_number: s.season_number,
+                                    name: s.name || `Season ${s.season_number}`,
+                                    poster_path: s.poster_path,
+                                    episodes: seasonData.episodes || []
+                                });
                             }
-                        } catch(e) {}
+                        } catch(e) {
+                            console.warn(`Failed to load season ${s.season_number}:`, e);
+                        }
                     }
-                    if (allSeasons.length === 0) { guide.style.display = 'none'; return; }
-                    if (!allSeasons.find(s => s.season_number === currentSeason)) { currentSeason = allSeasons[0].season_number; }
-                    const select = document.getElementById('seasonsSelect');
-                    const cards = document.getElementById('seasonCards');
-                    select.innerHTML = ''; cards.innerHTML = '';
-                    allSeasons.forEach(s => {
-                        const opt = document.createElement('option');
-                        opt.value = s.season_number; opt.textContent = s.name;
-                        select.appendChild(opt);
-                        const card = document.createElement('button');
-                        card.type = 'button';
-                        card.className = 'season-card' + (s.season_number === currentSeason ? ' active' : '');
-                        card.dataset.seasonNumber = s.season_number;
-                        const p = s.poster_path ? `${TMDB_IMG}${s.poster_path}` : '';
-                        card.innerHTML = (p ? `<img class="season-poster" src="${p}" alt="" loading="lazy">` : `<div class="season-poster" style="display:flex;align-items:center;justify-content:center;font-weight:800;">S${s.season_number}</div>`) + `<div class="season-label">${s.name}</div>`;
-                        card.onclick = () => {
-                            currentSeason = s.season_number; currentEpisode = 1;
-                            refreshPlayerSources(); select.value = currentSeason;
-                            document.querySelectorAll('.season-card').forEach(c => c.classList.toggle('active', c.dataset.seasonNumber == currentSeason));
-                            renderEpisodes(); loadPlayerEmbed(currentSource);
-                            updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource, currentIdType);
-                        };
-                        cards.appendChild(card);
-                    });
-                    select.value = currentSeason;
-                    select.onchange = (e) => {
-                        currentSeason = parseInt(e.target.value); currentEpisode = 1;
-                        refreshPlayerSources();
-                        document.querySelectorAll('.season-card').forEach(c => c.classList.toggle('active', c.dataset.seasonNumber == currentSeason));
-                        renderEpisodes(); loadPlayerEmbed(currentSource);
-                        updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource, currentIdType);
-                    };
+                    
+                    if (allSeasons.length === 0) { 
+                        guide.style.display = 'none'; 
+                        return; 
+                    }
+                    
+                    // Ensure current season exists
+                    if (!allSeasons.find(s => s.season_number === currentSeason)) {
+                        currentSeason = allSeasons[0].season_number;
+                    }
+                    
+                    // Build season cards
+                    buildSeasonUI();
+                    
+                    // Render episodes for current season
                     renderEpisodes();
-                } catch (e) { guide.style.display = 'none'; }
+                    
+                    // Update stats
+                    updateEpisodeStats();
+                    
+                } catch (e) { 
+                    console.error('Episode guide error:', e);
+                    guide.style.display = 'none'; 
+                }
+            }
+
+            function buildSeasonUI() {
+                const select = document.getElementById('seasonsSelect');
+                const cards = document.getElementById('seasonCards');
+                
+                if (!select || !cards) return;
+                
+                select.innerHTML = '';
+                cards.innerHTML = '';
+                
+                allSeasons.forEach(s => {
+                    // Add to select dropdown
+                    const opt = document.createElement('option');
+                    opt.value = s.season_number;
+                    opt.textContent = s.name + ` (${s.episodes?.length || 0} eps)`;
+                    if (s.season_number === currentSeason) opt.selected = true;
+                    select.appendChild(opt);
+                    
+                    // Add season card
+                    const card = document.createElement('button');
+                    card.type = 'button';
+                    card.className = 'season-card' + (s.season_number === currentSeason ? ' active' : '');
+                    card.dataset.seasonNumber = s.season_number;
+                    
+                    const p = s.poster_path ? `${TMDB_IMG}${s.poster_path}` : '';
+                    card.innerHTML = `
+                        ${p ? `<img class="season-poster" src="${p}" alt="" loading="lazy" onerror="this.style.display='none'">` : 
+                         `<div class="season-poster" style="display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.5rem;color:var(--red);">S${s.season_number}</div>`}
+                        <div class="season-label">${s.name} (${s.episodes?.length || 0})</div>
+                    `;
+                    
+                    card.onclick = () => {
+                        currentSeason = s.season_number;
+                        // Find first episode of this season
+                        if (s.episodes && s.episodes.length > 0) {
+                            currentEpisode = s.episodes[0].episode_number;
+                        } else {
+                            currentEpisode = 1;
+                        }
+                        refreshPlayerSources();
+                        select.value = currentSeason;
+                        document.querySelectorAll('.season-card').forEach(c => {
+                            c.classList.toggle('active', parseInt(c.dataset.seasonNumber) === currentSeason);
+                        });
+                        renderEpisodes();
+                        loadPlayerEmbed(currentSource);
+                        updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource, currentIdType);
+                        hideNextEpisodeOverlay();
+                    };
+                    
+                    cards.appendChild(card);
+                });
+                
+                // Select change handler
+                select.onchange = (e) => {
+                    const seasonNum = parseInt(e.target.value);
+                    const seasonData = allSeasons.find(s => s.season_number === seasonNum);
+                    if (seasonData) {
+                        currentSeason = seasonNum;
+                        if (seasonData.episodes && seasonData.episodes.length > 0) {
+                            currentEpisode = seasonData.episodes[0].episode_number;
+                        } else {
+                            currentEpisode = 1;
+                        }
+                        refreshPlayerSources();
+                        document.querySelectorAll('.season-card').forEach(c => {
+                            c.classList.toggle('active', parseInt(c.dataset.seasonNumber) === currentSeason);
+                        });
+                        renderEpisodes();
+                        loadPlayerEmbed(currentSource);
+                        updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource, currentIdType);
+                        hideNextEpisodeOverlay();
+                    }
+                };
             }
 
             // ═══════ RENDER CAST ═══════
@@ -1063,6 +1331,7 @@
                     castGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:16px;">No cast information available</div>';
                     return;
                 }
+                const fragment = document.createDocumentFragment();
                 castList.slice(0, 12).forEach(member => {
                     const castEl = document.createElement('div');
                     castEl.className = 'cast-member';
@@ -1073,8 +1342,9 @@
                         </div>
                         <div class="cast-name">${member.name}</div>
                         ${member.character ? `<div class="cast-character">${member.character}</div>` : ''}`;
-                    castGrid.appendChild(castEl);
+                    fragment.appendChild(castEl);
                 });
+                castGrid.appendChild(fragment);
             }
 
             // ═══════ LOAD SIMILAR ═══════
@@ -1126,6 +1396,7 @@
                 }
                 
                 similarGrid.innerHTML = '';
+                const fragment = document.createDocumentFragment();
                 
                 allResults.forEach(item => {
                     const card = document.createElement('a');
@@ -1138,8 +1409,10 @@
                     const typeLabel = currentType === 'movie' ? 'Movie' : 'TV Series';
                     card.innerHTML = `<img src="${poster}" alt="${title}" loading="lazy" onerror="this.style.background='#222';this.style.opacity='0.5';"><div class="similar-card-overlay"><div class="similar-card-type">${typeLabel} · ${year}</div><div class="similar-card-rating"><i class="fas fa-star"></i> ${rating}</div><div class="similar-card-title">${title}</div></div>`;
                     card.addEventListener('click', (e) => { e.preventDefault(); window.location.href = `?id=${item.id}&type=${currentType}&idType=tmdb`; });
-                    similarGrid.appendChild(card);
+                    fragment.appendChild(card);
                 });
+                
+                similarGrid.appendChild(fragment);
             }
 
             // ═══════ FETCH TMDB MEDIA DETAILS ═══════
@@ -1156,80 +1429,20 @@
                     const data = await res.json();
                     mediaData = data;
                     populateMediaUI(data, type);
+                    
+                    // Load episode guide for TV shows
+                    if (type === 'tv' && currentIdType === 'tmdb') {
+                        await loadEpisodeGuide();
+                    }
+                    
+                    // Load similar content
+                    await loadSimilarContent();
+                    
                     return true;
                 } catch (e) { 
                     console.error('Fetch error:', e); 
                     showToast('Failed to load media', 'error'); 
                     return false; 
-                }
-            }
-
-            // ═══════ FETCH IMDB MEDIA DETAILS ═══════
-            async function fetchIMDbMediaDetails(id, type) {
-                try {
-                    // Try to fetch from IMDb API
-                    const res = await fetch(`${IMDB_API}/info?id=${id}`);
-                    
-                    if (res.ok) {
-                        const data = await res.json();
-                        // Format IMDb data to match TMDB structure
-                        const formattedData = {
-                            id: data.id,
-                            title: data.title,
-                            name: data.title,
-                            overview: data.description || data.overview || 'No description available.',
-                            backdrop_path: data.backdrop_path || data.image,
-                            poster_path: data.poster_path || data.image,
-                            vote_average: parseFloat(data.rating) || data.vote_average || 0,
-                            release_date: data.release_date || '',
-                            first_air_date: data.first_air_date || '',
-                            runtime: data.runtime || 0,
-                            genres: data.genres || [],
-                            credits: { cast: data.cast || [] }
-                        };
-                        
-                        mediaData = formattedData;
-                        populateMediaUI(formattedData, type);
-                        return true;
-                    } else {
-                        // Fallback message for IMDb
-                        document.getElementById('titleText').textContent = 'IMDb Content';
-                        const formattedData = {
-                            id: id,
-                            title: 'IMDb Content',
-                            name: 'IMDb Content',
-                            overview: 'This content is from the IMDb database.',
-                            backdrop_path: '',
-                            poster_path: '',
-                            vote_average: 0,
-                            runtime: 0,
-                            genres: [],
-                            credits: { cast: [] }
-                        };
-                        
-                        mediaData = formattedData;
-                        populateMediaUI(formattedData, type);
-                        return true;
-                    }
-                } catch (e) { 
-                    console.error('IMDb Fetch error:', e); 
-                    // Still proceed with basic info
-                    const formattedData = {
-                        id: id,
-                        title: 'Media Content',
-                        name: 'Media Content',
-                        overview: 'Content from IMDb database',
-                        backdrop_path: '',
-                        poster_path: '',
-                        vote_average: 0,
-                        runtime: 0,
-                        genres: [],
-                        credits: { cast: [] }
-                    };
-                    
-                    mediaData = formattedData;
-                    populateMediaUI(formattedData, type);
-                    return true;
                 }
             }
 
@@ -1255,33 +1468,40 @@
                 const backdropEl = document.getElementById('heroBackdrop');
                 if (backdropEl && backdrop) backdropEl.style.backgroundImage = `url('${backdrop}')`;
                 
-                document.getElementById('metaRow').innerHTML = `<div class="meta-item match">${match}% Match</div><div class="meta-item">${year}</div><div class="meta-item"><span class="maturity-badge">${rating}</span></div><div class="meta-item">${runtime} min</div><div class="meta-item"><i class="fas fa-hd"></i> HD</div>`;
+                document.getElementById('metaRow').innerHTML = `
+                    <div class="meta-item match">${match}% Match</div>
+                    <div class="meta-item">${year}</div>
+                    <div class="meta-item"><span class="maturity-badge">${rating}</span></div>
+                    <div class="meta-item">${runtime} min</div>
+                    <div class="meta-item"><i class="fas fa-hd"></i> HD</div>`;
+                
                 document.getElementById('genresRow').innerHTML = genres.map(g => `<div class="genre-tag">${g.name || g}</div>`).join('') || '<div class="genre-tag">N/A</div>';
                 
                 renderCast(cast);
                 updatePlayerTitle();
                 saveState({ id: currentId, type, season: currentSeason, episode: currentEpisode, source: currentSource, title, poster, backdrop, overview, idType: currentIdType });
-                
-                const promises = [];
-                if (type === 'tv' && currentIdType === 'tmdb') promises.push(loadEpisodeGuide());
-                if (currentIdType === 'tmdb') promises.push(loadSimilarContent());
-                
-                return Promise.all(promises);
             }
 
-            // ═══════ ENSURE DISCLAIMER IS ALWAYS VISIBLE ═══════
+            // ═══════ ENSURE DISCLAIMER VISIBLE ═══════
             function ensureDisclaimerVisible() {
                 const adDisclaimer = document.getElementById('adDisclaimer');
                 if (adDisclaimer) {
-                    adDisclaimer.style.display = 'flex';
-                    adDisclaimer.style.visibility = 'visible';
-                    adDisclaimer.style.opacity = '1';
+                    adDisclaimer.style.display = 'flex !important';
+                    adDisclaimer.style.visibility = 'visible !important';
+                    adDisclaimer.style.opacity = '1 !important';
+                    adDisclaimer.style.position = 'relative';
+                    adDisclaimer.style.zIndex = '5';
                 }
             }
 
             // ═══════ MAIN INIT ═══════
             async function init() {
+                // Ensure disclaimer is visible on all devices
                 ensureDisclaimerVisible();
+                
+                // Force re-check after DOM is fully loaded
+                setTimeout(ensureDisclaimerVisible, 100);
+                setTimeout(ensureDisclaimerVisible, 500);
                 
                 const urlParams = new URLSearchParams(window.location.search);
                 const pathParts = window.location.pathname.split('/').filter(p => p);
@@ -1324,11 +1544,13 @@
                 
                 console.log(`🎬 Loading: ${type} (ID: ${id}, Source: ${idType})`);
                 
-                await Promise.all([
-                    currentIdType === 'imdb' ? fetchIMDbMediaDetails(id, type) : fetchTMDBMediaDetails(id, type),
-                    new Promise(resolve => { setTimeout(() => { loadPlayerEmbed(currentSource); resolve(); }, 100); })
-                ]);
+                // Load media details
+                await fetchTMDBMediaDetails(id, type);
                 
+                // Load player
+                setTimeout(() => { loadPlayerEmbed(currentSource); }, 200);
+                
+                // Update ad block stats
                 const stats = adBlocker.getStats();
                 console.log(`🛡️ [AdBlocker] Active - ${stats.totalBlocked} items blocked`);
             }
@@ -1367,19 +1589,27 @@
                 showToast('Reloading player...', 'success');
             });
 
+            // Update adblock count periodically
             setInterval(() => {
                 const stats = adBlocker.getStats();
                 const countEl = document.getElementById('adblockCount');
                 if (countEl) countEl.textContent = `(${stats.totalBlocked} blocked)`;
             }, 30000);
 
+            // Clean up on page unload
             window.addEventListener('beforeunload', () => {
-                document.querySelectorAll('iframe').forEach(iframe => { try { iframe.src = 'about:blank'; } catch(e) {} });
+                if (nextEpisodeTimer) clearInterval(nextEpisodeTimer);
+                document.querySelectorAll('iframe').forEach(iframe => { 
+                    try { iframe.src = 'about:blank'; } catch(e) {} 
+                });
             });
 
-            document.addEventListener('DOMContentLoaded', ensureDisclaimerVisible);
-            
-            init();
+            // Init on DOM ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
         })();
     </script>
 </body>
