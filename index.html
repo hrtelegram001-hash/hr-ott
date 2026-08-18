@@ -109,76 +109,70 @@
         /* TYPE FILTER BUTTONS - COMPACT */
         .type-filter-buttons {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             justify-content: center;
-            margin: 15px 0 20px;
+            margin: 20px 0;
             flex-wrap: wrap;
         }
         
         .type-filter-btn {
-            padding: 8px 16px;
+            padding: 10px 20px;
             border: 2px solid rgba(255,255,255,0.3);
             background: transparent;
             color: var(--text-muted);
-            border-radius: 20px;
-            font-size: 0.85rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
             font-family: 'Inter', sans-serif;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             white-space: nowrap;
         }
         
         .type-filter-btn i {
-            font-size: 0.8rem;
+            font-size: 0.9rem;
         }
         
         .type-filter-btn:hover {
             border-color: var(--red);
             color: var(--red);
+            transform: translateY(-2px);
         }
         
         .type-filter-btn.active {
             background: var(--red);
             border-color: var(--red);
             color: white;
-            box-shadow: 0 4px 12px rgba(229,9,20,0.4);
+            box-shadow: 0 4px 15px rgba(229,9,20,0.4);
         }
         
-        .filters-section { margin: 20px 0; padding: 15px 20px; background: rgba(22,22,28,0.95); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-        .filters-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-        .filters-title { font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .filters-section { margin: 20px 0; padding: 20px; background: rgba(22,22,28,0.95); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .filters-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+        .filters-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         .filters-title i { color: var(--red); }
-        .clear-filters-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: color 0.2s; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 4px; }
+        .clear-filters-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: color 0.2s; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 5px; }
         .clear-filters-btn:hover { color: var(--red); }
-        .filters-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
-        .filter-group { display: flex; flex-direction: column; gap: 4px; }
-        .filter-label { font-size: 0.65rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-        .filter-select { background: rgba(30,30,36,0.9); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; outline: none; font-family: 'Inter', sans-serif; transition: all 0.2s; width: 100%; }
+        .filters-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+        .filter-group { display: flex; flex-direction: column; gap: 5px; }
+        .filter-label { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .filter-select { background: rgba(30,30,36,0.9); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; outline: none; font-family: 'Inter', sans-serif; transition: all 0.2s; width: 100%; }
         .filter-select:hover { border-color: var(--red); }
         .filter-select:focus { border-color: var(--red); box-shadow: 0 0 10px rgba(229,9,20,0.2); }
         .filter-select option { background: #1a1a1f; }
         
-        /* RESPONSIVE SEARCH RESULTS GRID - 2 COLUMNS ON MOBILE */
+        /* RESPONSIVE SEARCH RESULTS GRID */
         .search-results { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px; 
+            gap: 12px; 
             margin-top: 20px; 
         }
         
-        .search-result-card { cursor: pointer; border-radius: 8px; overflow: hidden; background: var(--bg-card); transition: transform 0.3s, box-shadow 0.3s; text-decoration: none; color: var(--text); }
-        .search-result-card:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(0,0,0,0.8), 0 0 0 2px rgba(229,9,20,0.5); }
-        .search-result-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; }
-        .search-result-info { padding: 8px; }
-        .search-result-title { font-weight: 700; font-size: 0.8rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .search-result-meta { font-size: 0.65rem; color: var(--text-muted); margin-top: 3px; }
-        
-        .load-more-container { text-align: center; padding: 20px 0; margin-top: 10px; position: relative; z-index: 10; }
-        .load-more-btn { background: var(--red); color: #fff; border: none; padding: 12px 30px; border-radius: 8px; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 8px 24px rgba(229,9,20,0.4); position: relative; z-index: 100; }
+        .load-more-container { text-align: center; padding: 25px 0; margin-top: 15px; position: relative; z-index: 10; }
+        .load-more-btn { background: var(--red); color: #fff; border: none; padding: 12px 35px; border-radius: 8px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 8px 24px rgba(229,9,20,0.4); position: relative; z-index: 100; }
         .load-more-btn:hover { background: var(--red-dark); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(229,9,20,0.5); }
         .load-more-btn:disabled { background: #333; cursor: not-allowed; box-shadow: none; transform: none; }
         .load-more-btn.loading { pointer-events: none; opacity: 0.7; }
@@ -281,21 +275,21 @@
         .provider-badge { display: inline-block; background: rgba(229,9,20,0.2); border: 1px solid var(--red); color: var(--red); padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; margin-right: 6px; }
         
         @media (max-width: 1024px) {
-            .search-results { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+            .search-results { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
             .filters-grid { grid-template-columns: repeat(3, 1fr); }
         }
         
         @media (max-width: 768px) {
-            .search-results { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .search-results { grid-template-columns: repeat(3, 1fr); gap: 8px; }
             .filters-grid { grid-template-columns: repeat(2, 1fr); }
-            .type-filter-btn { padding: 6px 12px; font-size: 0.75rem; }
+            .type-filter-btn { padding: 8px 16px; font-size: 0.8rem; }
         }
         
-        @media (max-width: 600px) {
+        @media (max-width: 480px) {
             .search-results { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .filters-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .filter-select { padding: 5px 8px; font-size: 0.7rem; }
-            .type-filter-btn { padding: 6px 10px; font-size: 0.7rem; }
+            .filters-grid { grid-template-columns: 1fr; gap: 8px; }
+            .filter-select { padding: 6px 10px; font-size: 0.75rem; }
+            .type-filter-btn { padding: 6px 12px; font-size: 0.75rem; }
         }
         
         @media (max-width: 900px) {
@@ -431,7 +425,6 @@
             const TMDB_BASE = 'https://api.themoviedb.org/3';
             const TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
             const TMDB_BACK = 'https://image.tmdb.org/t/p/original';
-            const IMDB_API = 'https://api2.imdb3.shop/api/movies/list/filter';
             const MAX_CONCURRENT_REQUESTS = 8;
             const FETCH_TIMEOUT_MS = 12000;
 
@@ -496,22 +489,8 @@
                 new: { title:'New & Popular', type:'mixed', icon:'fa-star', subtitle:'What\'s trending this week', sections: NEW_SECTIONS },
             };
 
-            const DUBBING_OPTIONS = [
-                { label: 'English', value: 'English' },
-                { label: 'Hindi', value: 'Hindi' },
-                { label: 'Punjabi', value: 'Punjabi' },
-                { label: 'Telugu', value: 'Telugu' },
-                { label: 'Tamil', value: 'Tamil' },
-                { label: 'Marathi', value: 'Marathi' },
-                { label: 'Kannada', value: 'Kannada' },
-                { label: 'Malayalam', value: 'Malayalam' },
-                { label: 'Gujarati', value: 'Gujarati' },
-                { label: 'Urdu', value: 'Urdu' },
-            ];
-
             let allGenres = [];
             let allLanguages = [];
-            let allCountries = [];
 
             // ═══ CANVAS STARFIELD ═══
             const canvas = document.getElementById('starCanvas');
@@ -660,78 +639,6 @@
                 }
             }
 
-            // ═══ IMDB API FETCH - FIXED ═══
-            async function imdbFetch(params = {}) {
-                while (appState.pendingRequests >= MAX_CONCURRENT_REQUESTS) {
-                    await new Promise(resolve => appState.requestQueue.push(resolve));
-                }
-                
-                appState.pendingRequests++;
-                
-                // Build query params correctly for the IMDb API
-                const queryParams = new URLSearchParams();
-                queryParams.set('page', params.page || 0);
-                queryParams.set('sort_by', params.sort_by || 'date');
-                queryParams.set('dubbing', params.dubbing || 'English');
-                
-                // Only add type parameter if it's not 'all' or empty
-                if (params.type && params.type !== 'all') {
-                    queryParams.set('type', params.type);
-                }
-                
-                const url = `${IMDB_API}?${queryParams.toString()}`;
-                console.log('IMDb API URL:', url);
-                
-                const controller = new AbortController();
-                appState.activeControllers.push(controller);
-                const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
-                
-                try {
-                    const res = await fetch(url, { 
-                        signal: controller.signal,
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        },
-                        mode: 'cors'
-                    });
-                    clearTimeout(timeoutId);
-                    
-                    if (!res.ok) {
-                        console.warn(`IMDb API Error: ${res.status}`);
-                        return { results: [], pager: { total_pages: 0 } };
-                    }
-                    
-                    const data = await res.json();
-                    console.log('IMDb API Response:', data);
-                    
-                    // Handle different response structures
-                    if (data && data.results) {
-                        return data;
-                    } else if (data && data.data && data.data.results) {
-                        return { results: data.data.results, pager: data.data.pager || { total_pages: 0 } };
-                    } else if (Array.isArray(data)) {
-                        return { results: data, pager: { total_pages: 1 } };
-                    } else {
-                        console.warn('IMDb API: Unexpected response structure', data);
-                        return { results: [], pager: { total_pages: 0 } };
-                    }
-                } catch (e) {
-                    clearTimeout(timeoutId);
-                    if (e.name === 'AbortError') {
-                        console.warn('IMDb API: Request aborted (timeout)');
-                    } else {
-                        console.error('IMDb Fetch Error:', e.message);
-                    }
-                    return { results: [], pager: { total_pages: 0 } };
-                } finally {
-                    appState.pendingRequests--;
-                    appState.activeControllers = appState.activeControllers.filter(c => c !== controller);
-                    const resolve = appState.requestQueue.shift();
-                    if (resolve) resolve();
-                }
-            }
-
             function esc(s) { 
                 const d = document.createElement('div'); 
                 d.textContent = s; 
@@ -750,11 +657,11 @@
             }
 
             function getTitle(item) { 
-                return item.title || item.name || item.original_title || item.original_name || 'Untitled'; 
+                return item.title || item.name || 'Untitled'; 
             }
 
             function getYear(item) { 
-                return (item.release_date || item.first_air_date || item.release_date || '').substring(0, 4); 
+                return (item.release_date || item.first_air_date || '').substring(0, 4); 
             }
 
             function getMediaType(item, forcedType) { 
@@ -771,14 +678,10 @@
                     
                     const langData = await tmdbFetch('/configuration/languages');
                     allLanguages = langData || [];
-                    
-                    const countryData = await tmdbFetch('/configuration/countries');
-                    allCountries = countryData || [];
                 } catch(e) { 
                     console.error('Config load error:', e);
                     allGenres = []; 
                     allLanguages = []; 
-                    allCountries = []; 
                 }
             }
 
@@ -821,30 +724,17 @@
                 }
             }
 
-            // ═══ CREATE CARD FROM TMDB/IMDb ═══
-            function createCard(item, forcedType, progress, isImdb = false) {
-                const type = isImdb ? (item.media_type || forcedType || 'movie') : getMediaType(item, forcedType);
+            // ═══ CREATE CARD ═══
+            function createCard(item, forcedType, progress) {
+                const type = getMediaType(item, forcedType);
                 if(type !== 'movie' && type !== 'tv' && type !== 'mixed') return null;
                 
-                let posterPath, title, year, rating, match, id;
-                
-                if (isImdb) {
-                    // Handle IMDb response format
-                    posterPath = item.backdrop_path || item.poster_path || '';
-                    title = item.title || item.original_title || 'Untitled';
-                    year = item.release_date || item.year || '';
-                    rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '?';
-                    match = item.vote_average ? Math.round(item.vote_average * 10) : 0;
-                    id = item.id || item.imdb_id || '';
-                } else {
-                    posterPath = item.poster_path ? TMDB_IMG + item.poster_path : (item.backdrop_path ? TMDB_IMG + item.backdrop_path : '');
-                    title = getTitle(item);
-                    year = getYear(item);
-                    rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '?';
-                    match = item.vote_average ? Math.round(item.vote_average * 10) : 0;
-                    id = item.id;
-                }
-                
+                const posterPath = item.poster_path ? TMDB_IMG + item.poster_path : (item.backdrop_path ? TMDB_IMG + item.backdrop_path : '');
+                const title = getTitle(item);
+                const year = getYear(item);
+                const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '?';
+                const match = item.vote_average ? Math.round(item.vote_average * 10) : 0;
+                const id = item.id;
                 const top = rating >= 8;
                 
                 const card = document.createElement('a');
@@ -855,7 +745,6 @@
                 card.dataset.title = title;
                 card.dataset.poster = posterPath; 
                 card.dataset.year = year;
-                card.dataset.imdb = isImdb ? 'true' : 'false';
                 
                 card.innerHTML = `
                     <div class="card-thumb">
@@ -867,9 +756,9 @@
                             <div class="card-name">${esc(title)}</div>
                             <div class="card-sub"><span class="match">${match}% Match</span><span>${year || ''}</span><span>${type === 'movie' ? 'Movie' : type === 'tv' ? 'TV' : 'Mixed'}</span></div>
                             <div class="card-buttons">
-                                <button class="circle-btn play-btn" data-play data-id="${id}" data-type="${type}" data-title="${esc(title)}" data-poster="${posterPath}" data-year="${year}" data-imdb="${isImdb ? 'true' : 'false'}" title="Play"><i class="fas fa-play"></i></button>
+                                <button class="circle-btn play-btn" data-play data-id="${id}" data-type="${type}" data-title="${esc(title)}" data-poster="${posterPath}" data-year="${year}" title="Play"><i class="fas fa-play"></i></button>
                                 <button class="circle-btn card-heart" data-heart data-id="${id}" title="My List"><i class="far fa-heart"></i></button>
-                                <button class="circle-btn info-btn" data-info data-id="${id}" data-type="${type}" data-imdb="${isImdb ? 'true' : 'false'}" title="More Info"><i class="fas fa-chevron-down"></i></button>
+                                <button class="circle-btn info-btn" data-info data-id="${id}" data-type="${type}" title="More Info"><i class="fas fa-chevron-down"></i></button>
                             </div>
                         </div>
                     </div>`;
@@ -877,7 +766,7 @@
                 card.addEventListener('click', (e) => { 
                     e.preventDefault(); 
                     e.stopPropagation(); 
-                    openMovieModal(id, type, isImdb); 
+                    openMovieModal(id, type); 
                 });
                 
                 const playBtn = card.querySelector('[data-play]');
@@ -885,8 +774,7 @@
                     e.preventDefault(); 
                     e.stopPropagation();
                     addRecent(playBtn.dataset.id, playBtn.dataset.title, playBtn.dataset.poster, playBtn.dataset.year, playBtn.dataset.type);
-                    const idType = playBtn.dataset.imdb === 'true' ? 'imdb' : 'tmdb';
-                    window.location.href = `/player.html?id=${playBtn.dataset.id}&type=${playBtn.dataset.type}&idType=${idType}`;
+                    window.location.href = `/player.html?id=${playBtn.dataset.id}&type=${playBtn.dataset.type}&idType=tmdb`;
                 });
                 
                 const heartBtn = card.querySelector('[data-heart]');
@@ -901,7 +789,7 @@
                 if (infoBtn) infoBtn.addEventListener('click', (e) => {
                     e.preventDefault(); 
                     e.stopPropagation();
-                    openMovieModal(infoBtn.dataset.id, infoBtn.dataset.type, infoBtn.dataset.imdb === 'true');
+                    openMovieModal(infoBtn.dataset.id, infoBtn.dataset.type);
                 });
                 
                 updateHeart(card, id);
@@ -972,14 +860,13 @@
             const modalClose = document.getElementById('modalClose');
             const modalPlayBtn = document.getElementById('modalPlayBtn');
             const modalWatchlistBtn = document.getElementById('modalWatchlistBtn');
-            let currentModalId = null, currentModalType = 'movie', currentModalTitle = '', currentModalPoster = '', currentModalYear = '', currentModalIsImdb = false;
+            let currentModalId = null, currentModalType = 'movie', currentModalTitle = '', currentModalPoster = '', currentModalYear = '';
 
-            async function openMovieModal(id, type, isImdb = false) {
+            async function openMovieModal(id, type) {
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden';
                 currentModalId = id; 
                 currentModalType = type;
-                currentModalIsImdb = isImdb;
                 
                 document.getElementById('modalBackdrop').src = '';
                 document.getElementById('modalTitle').textContent = 'Loading...';
@@ -993,21 +880,8 @@
                 updateModalWatchlistBtn();
                 
                 try {
-                    let data;
-                    
-                    if (isImdb) {
-                        data = {
-                            id: id,
-                            title: 'IMDb Content',
-                            overview: 'Content from IMDb database',
-                            backdrop_path: '',
-                            vote_average: 7.5,
-                            credits: { cast: [] }
-                        };
-                    } else {
-                        const endpoint = type === 'movie' ? `/movie/${id}?append_to_response=credits` : `/tv/${id}?append_to_response=credits`;
-                        data = await tmdbFetch(endpoint);
-                    }
+                    const endpoint = type === 'movie' ? `/movie/${id}?append_to_response=credits` : `/tv/${id}?append_to_response=credits`;
+                    const data = await tmdbFetch(endpoint);
                     
                     if (!data || !data.id) { 
                         document.getElementById('modalTitle').textContent = 'Not Found'; 
@@ -1025,7 +899,7 @@
                     const cast = data.credits && data.credits.cast ? data.credits.cast.slice(0, 5).map(c => c.name).join(', ') : 'N/A';
                     const genres = data.genres ? data.genres.map(g => g.name).join(', ') : 'N/A';
                     
-                    const providers = !isImdb ? await getWatchProviders(id, type) : [];
+                    const providers = await getWatchProviders(id, type);
                     const providersText = providers.length > 0 ? providers.map(p => `<span class="provider-badge">${p.name}</span>`).join('') : 'Not available in your region';
                     
                     document.getElementById('modalBackdrop').src = backdrop;
@@ -1036,8 +910,7 @@
                     document.getElementById('modalGenres').textContent = genres;
                     document.getElementById('modalProviders').innerHTML = providersText;
                     
-                    const idType = isImdb ? 'imdb' : 'tmdb';
-                    modalPlayBtn.href = `/player.html?id=${id}&type=${type}&idType=${idType}`;
+                    modalPlayBtn.href = `/player.html?id=${id}&type=${type}&idType=tmdb`;
                     updateModalWatchlistBtn();
                 } catch (error) { 
                     console.error('Modal error:', error);
@@ -1058,8 +931,7 @@
             modalPlayBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 addRecent(currentModalId, currentModalTitle, currentModalPoster, currentModalYear, currentModalType);
-                const idType = currentModalIsImdb ? 'imdb' : 'tmdb';
-                window.location.href = `/player.html?id=${currentModalId}&type=${currentModalType}&idType=${idType}`;
+                window.location.href = `/player.html?id=${currentModalId}&type=${currentModalType}&idType=tmdb`;
             });
 
             modalWatchlistBtn.addEventListener('click', () => {
@@ -1149,7 +1021,7 @@
                 
                 heroEl.querySelectorAll('.hero-info').forEach(btn => btn.addEventListener('click', e => { 
                     e.stopPropagation(); 
-                    openMovieModal(btn.dataset.id, btn.dataset.type, false); 
+                    openMovieModal(btn.dataset.id, btn.dataset.type); 
                 }));
                 
                 appState.heroIdx = 0; 
@@ -1248,7 +1120,7 @@
                         const grid = document.getElementById('grid-' + r.cfg.key);
                         if(!grid) return;
                         r.data.slice(0, 12).forEach(m => {
-                            const card = createCard(m, r.cfg.type, null, false);
+                            const card = createCard(m, r.cfg.type, null);
                             if(card) grid.appendChild(card);
                         });
                     });
@@ -1272,7 +1144,7 @@
                 appState.wallState = null; 
             }
 
-            // ═══ WALL PAGES WITH MULTIPLE SECTIONS ═══
+            // ═══ WALL PAGES ═══
             async function renderWall(catKey) {
                 teardownWall(); 
                 hideHero();
@@ -1287,7 +1159,6 @@
                 container.innerHTML = '';
                 container.appendChild(createPageHeader(cfg.title, cfg.icon, cfg.subtitle));
                 
-                // Create section containers
                 cfg.sections.forEach((sec, idx) => {
                     const group = document.createElement('div');
                     group.className = 'wall-section-group';
@@ -1302,7 +1173,6 @@
                     container.appendChild(group);
                 });
                 
-                // Load sections
                 await Promise.all(cfg.sections.map(async (sec, idx) => {
                     try {
                         const data = await tmdbFetch(sec.ep + '1');
@@ -1312,11 +1182,10 @@
                         if (!track) return;
                         
                         results.slice(0, 20).forEach(m => {
-                            const card = createCard(m, sec.type, null, false);
+                            const card = createCard(m, sec.type, null);
                             if (card) track.appendChild(card);
                         });
                         
-                        // Add scroll listeners
                         const leftBtn = document.querySelector(`#wall-group-${idx} .wall-scroll-btn.left`);
                         const rightBtn = document.querySelector(`#wall-group-${idx} .wall-scroll-btn.right`);
                         if (leftBtn) leftBtn.addEventListener('click', () => track.scrollBy({ left: -track.clientWidth * 0.85, behavior: 'smooth' }));
@@ -1356,7 +1225,7 @@
                 
                 const grid = document.getElementById('grid-mylist');
                 appState.watchlist.forEach(item => { 
-                    const card = createCard({ id: item.id, title: item.title, poster_path: null, backdrop_path: null, release_date: (item.year || '') + '-01-01', vote_average: 0 }, item.type, null, false); 
+                    const card = createCard({ id: item.id, title: item.title, poster_path: null, backdrop_path: null, release_date: (item.year || '') + '-01-01', vote_average: 0 }, item.type, null); 
                     if(!card) return; 
                     
                     const img = card.querySelector('img'); 
@@ -1369,7 +1238,7 @@
                 updateNavActive('my-list');
             }
 
-            // ═══ SEARCH PAGE - FIXED WITH COMPACT FILTERS ═══
+            // ═══ SEARCH PAGE - TMDB ONLY ═══
             function renderSearchPage() {
                 teardownWall(); 
                 hideHero(); 
@@ -1392,7 +1261,6 @@
                         </div>
                     </div>
                     
-                    <!-- COMPACT TYPE FILTER BUTTONS -->
                     <div class="type-filter-buttons">
                         <button class="type-filter-btn active" data-type="all"><i class="fas fa-th"></i> All</button>
                         <button class="type-filter-btn" data-type="movie"><i class="fas fa-film"></i> Movies</button>
@@ -1405,20 +1273,6 @@
                             <button class="clear-filters-btn" id="clearFiltersBtn"><i class="fas fa-times"></i> Clear All</button>
                         </div>
                         <div class="filters-grid">
-                            <div class="filter-group">
-                                <label class="filter-label">Source</label>
-                                <select class="filter-select" id="searchSourceFilter">
-                                    <option value="tmdb">TMDB Database</option>
-                                    <option value="imdb">IMDb Database</option>
-                                </select>
-                            </div>
-                            <div class="filter-group">
-                                <label class="filter-label">Dubbing</label>
-                                <select class="filter-select" id="searchDubbingFilter" disabled>
-                                    <option value="all">All Dubs</option>
-                                    ${DUBBING_OPTIONS.map(d => `<option value="${d.value}">${d.label}</option>`).join('')}
-                                </select>
-                            </div>
                             <div class="filter-group">
                                 <label class="filter-label">Genre</label>
                                 <select class="filter-select" id="searchGenreFilter"><option value="all">All Genres</option></select>
@@ -1488,8 +1342,6 @@
                 const pageLoadMoreContainer = document.getElementById('pageLoadMoreContainer');
                 const pageLoadMoreBtn = document.getElementById('pageLoadMoreBtn');
                 const clearFiltersBtn = document.getElementById('clearFiltersBtn');
-                const searchSourceFilter = document.getElementById('searchSourceFilter');
-                const searchDubbingFilter = document.getElementById('searchDubbingFilter');
                 const searchGenreFilter = document.getElementById('searchGenreFilter');
                 const searchYearFilter = document.getElementById('searchYearFilter');
                 const searchLanguageFilter = document.getElementById('searchLanguageFilter');
@@ -1499,52 +1351,43 @@
                 let currentPage = 1, totalPages = 1, isLoading = false;
                 let selectedType = 'all';
                 
-                // TYPE FILTER BUTTONS - ONCLICK FUNCTIONALITY
+                // TYPE FILTER BUTTONS - FIXED
                 typeFilterBtns.forEach(btn => {
                     btn.addEventListener('click', () => {
                         typeFilterBtns.forEach(b => b.classList.remove('active'));
                         btn.classList.add('active');
                         selectedType = btn.dataset.type;
+                        // Reset to page 1 and perform search
+                        currentPage = 1;
                         performSearch(1, false);
                     });
                 });
                 
-                // Toggle dubbing filter based on source
-                searchSourceFilter.addEventListener('change', () => {
-                    const isImdb = searchSourceFilter.value === 'imdb';
-                    searchDubbingFilter.disabled = !isImdb;
-                    if (!isImdb) searchDubbingFilter.value = 'all';
-                    performSearch(1, false);
-                });
-                
                 function buildSearchEndpoint(page = 1) {
                     const query = pageSearchInput.value.trim();
-                    const source = searchSourceFilter.value;
-                    const dubbing = searchDubbingFilter.value;
                     const genre = searchGenreFilter.value;
                     const year = searchYearFilter.value;
                     const language = searchLanguageFilter.value;
                     const sort = searchSortFilter.value;
                     const hasFilters = genre !== 'all' || year !== 'all' || language !== 'all';
                     
-                    // IMDb API endpoint - FIXED
-                    if (source === 'imdb') {
-                        const dubbingParam = dubbing !== 'all' ? dubbing : 'English';
-                        return { 
-                            type: 'imdb', 
-                            endpoint: { 
-                                dubbing: dubbingParam, 
-                                page: page - 1,
-                                type: selectedType === 'all' ? '' : selectedType
-                            } 
-                        };
-                    }
-                    
-                    // TMDB endpoints
+                    // If user typed a search query
                     if (query.length >= 2) {
-                        let base = selectedType === 'all' ? '/search/multi' : `/search/${selectedType}`;
-                        return { type: 'tmdb', endpoint: `${base}?query=${encodeURIComponent(query)}&page=${page}` };
-                    } else if (hasFilters) {
+                        let base = selectedType === 'tv' ? '/search/tv' : selectedType === 'movie' ? '/search/movie' : '/search/multi';
+                        return `${base}?query=${encodeURIComponent(query)}&page=${page}`;
+                    } 
+                    // If filters are applied but no search query
+                    else if (hasFilters || selectedType !== 'all') {
+                        // If only type filter is selected (no other filters)
+                        if (!hasFilters && selectedType !== 'all') {
+                            if (selectedType === 'movie') {
+                                return `/movie/popular?page=${page}`;
+                            } else if (selectedType === 'tv') {
+                                return `/tv/popular?page=${page}`;
+                            }
+                        }
+                        
+                        // If other filters are applied
                         let base = selectedType === 'tv' ? '/discover/tv' : '/discover/movie';
                         const params = new URLSearchParams();
                         if (genre !== 'all') params.set('with_genres', genre);
@@ -1553,16 +1396,18 @@
                         params.set('sort_by', sort); 
                         params.set('page', page); 
                         params.set('vote_count.gte', '10');
-                        return { type: 'tmdb', endpoint: `${base}?${params.toString()}` };
+                        return `${base}?${params.toString()}`;
                     }
-                    return null;
+                    
+                    // Default: show trending
+                    return `/trending/all/week?page=${page}`;
                 }
                 
                 function performSearch(page = 1, append = false) {
                     if (isLoading) return;
                     
-                    const searchConfig = buildSearchEndpoint(page);
-                    if (!searchConfig) {
+                    const endpoint = buildSearchEndpoint(page);
+                    if (!endpoint) {
                         pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Type to search or use filters</div>';
                         pageLoadMoreContainer.style.display = 'none';
                         return;
@@ -1578,42 +1423,9 @@
                         pageLoadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
                     }
                     
-                    const performQuery = async () => {
-                        try {
-                            let data;
-                            if (searchConfig.type === 'imdb') {
-                                data = await imdbFetch(searchConfig.endpoint);
-                                totalPages = data.pager ? data.pager.total_pages : 1;
-                                console.log('IMDb search data:', data);
-                                return { results: data.results || [], totalPages, isImdb: true };
-                            } else {
-                                data = await tmdbFetch(searchConfig.endpoint);
-                                totalPages = data.total_pages || 1;
-                                return { results: data.results || [], totalPages, isImdb: false };
-                            }
-                        } catch (err) {
-                            console.error('Search error:', err);
-                            return { results: [], totalPages: 1, isImdb: false };
-                        }
-                    };
-                    
-                    performQuery().then(({ results, totalPages: tp, isImdb }) => {
-                        totalPages = tp;
-                        let items = results.filter(m => {
-                            if (isImdb) {
-                                return m.backdrop_path || m.poster_path;
-                            } else {
-                                return m.poster_path || m.backdrop_path;
-                            }
-                        });
-                        
-                        // Filter by selected type if not imdb (imdb already filters by type param)
-                        if (!isImdb && selectedType !== 'all') {
-                            items = items.filter(m => {
-                                const mType = m.media_type || 'movie';
-                                return mType === selectedType;
-                            });
-                        }
+                    tmdbFetch(endpoint).then(data => {
+                        totalPages = data.total_pages || 1;
+                        let items = (data.results || []).filter(m => m.poster_path || m.backdrop_path);
                         
                         currentPage = page;
                         
@@ -1627,13 +1439,8 @@
                         if (!append) pageSearchResults.innerHTML = '';
                         
                         items.forEach(item => {
-                            let forcedType = null;
-                            if (isImdb) {
-                                forcedType = item.media_type || (selectedType !== 'all' ? selectedType : 'movie');
-                            } else if (selectedType !== 'all') {
-                                forcedType = selectedType;
-                            }
-                            const card = createCard(item, forcedType, null, isImdb);
+                            let forcedType = selectedType !== 'all' ? selectedType : (item.media_type || 'movie');
+                            const card = createCard(item, forcedType, null);
                             if (card) pageSearchResults.appendChild(card);
                         });
                         
@@ -1660,21 +1467,22 @@
                     appState.searchTimeout = setTimeout(() => {
                         if (pageSearchInput.value.trim().length >= 2) {
                             performSearch(1, false);
+                        } else if (pageSearchInput.value.trim().length === 0) {
+                            // If search is cleared, perform default search based on filters
+                            performSearch(1, false);
                         } else {
-                            pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Type to search or browse by type</div>';
+                            pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Type at least 2 characters to search</div>';
                             pageLoadMoreContainer.style.display = 'none';
                         }
                     }, 500);
                 });
                 
                 pageSearchBtn.addEventListener('click', () => {
-                    if (pageSearchInput.value.trim().length >= 2) {
-                        performSearch(1, false);
-                    }
+                    performSearch(1, false);
                 });
                 
                 pageSearchInput.addEventListener('keypress', (e) => { 
-                    if (e.key === 'Enter' && pageSearchInput.value.trim().length >= 2) {
+                    if (e.key === 'Enter') {
                         performSearch(1, false);
                     }
                 });
@@ -1685,9 +1493,6 @@
                 
                 clearFiltersBtn.addEventListener('click', () => {
                     pageSearchInput.value = '';
-                    searchSourceFilter.value = 'tmdb';
-                    searchDubbingFilter.value = 'all';
-                    searchDubbingFilter.disabled = true;
                     searchGenreFilter.value = 'all';
                     searchYearFilter.value = 'all';
                     searchLanguageFilter.value = 'all';
@@ -1695,9 +1500,13 @@
                     typeFilterBtns.forEach(b => b.classList.remove('active'));
                     typeFilterBtns[0].classList.add('active');
                     selectedType = 'all';
-                    pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Type to search or browse by type</div>';
-                    pageLoadMoreContainer.style.display = 'none';
+                    currentPage = 1;
+                    // Perform default search (trending)
+                    performSearch(1, false);
                 });
+                
+                // Initial load - show trending
+                performSearch(1, false);
                 
                 showHideFooter(); 
                 updateNavActive('search');
