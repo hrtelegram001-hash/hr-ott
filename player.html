@@ -120,7 +120,22 @@
             opacity: 1 !important;
             position: relative;
             z-index: 5;
+            pointer-events: auto !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            min-height: auto !important;
+            max-height: none !important;
         }
+        
+        .ad-disclaimer:not([style*="display: none"]) { 
+            display: flex !important; 
+        }
+        
+        .ad-disclaimer * { 
+            visibility: visible !important; 
+            opacity: 1 !important; 
+        }
+
         .ad-disclaimer i { color: var(--red); font-size: 1.1rem; flex-shrink: 0; margin-top: 3px; }
         .ad-disclaimer-content { flex: 1; }
         .ad-disclaimer-content strong { display: inline-block; margin-bottom: 4px; }
@@ -212,7 +227,7 @@
             .player-title-bar .controls { justify-content: flex-end; flex-wrap: wrap; }
             .player-title-bar .controls .player-btn { padding: 4px 8px; font-size: 0.6rem; min-width: 28px; }
             .player-title-bar .controls .player-btn span { display: none; }
-            .ad-disclaimer { padding: 10px 12px; font-size: 0.8rem; margin: 16px 0; }
+            .ad-disclaimer { padding: 10px 12px; font-size: 0.8rem; margin: 16px 0; display: flex !important; }
             .cast-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; }
             .cast-avatar { width: 70px; height: 70px; }
             .cast-name { font-size: 0.7rem; }
@@ -291,8 +306,8 @@
                 </div>
             </div>
 
-            <!-- Ad Disclaimer - Now Always Visible -->
-            <div class="ad-disclaimer" id="adDisclaimer" style="display: flex !important; visibility: visible !important; opacity: 1 !important;">
+            <!-- FIXED AD DISCLAIMER - ALWAYS VISIBLE -->
+            <div class="ad-disclaimer" id="adDisclaimer">
                 <i class="fas fa-ban"></i>
                 <div class="ad-disclaimer-content">
                     <strong><i class="fas fa-shield-alt"></i> HR OTT is completely ad-free!</strong>
@@ -344,14 +359,13 @@
         'use strict';
         (function() {
             // ═══════════════════════════════════════════════
-            // ═══ FIXED AD BLOCKER - No DOM Manipulation ═══
+            // ═══ ENHANCED AD BLOCKER ═══
             // ═══════════════════════════════════════════════
             class EnhancedAdBlocker {
                 constructor() {
                     this.blockedCount = 0;
                     this._initialized = false;
                     
-                    // Only block known ad domains
                     this.adDomains = [
                         'googlesyndication.com', 'doubleclick.net', 'adservice.google.com',
                         'googleadservices.com', 'taboola.com', 'outbrain.com',
@@ -375,7 +389,6 @@
                     this.interceptFetch();
                     this.interceptXHR();
                     this.blockPopups();
-                    // NO DOM cleanup - This was causing the issue!
                 }
 
                 isAdUrl(url) {
@@ -1060,15 +1073,60 @@
                 } catch (e) { console.error('Fetch error:', e); showToast('Failed to load media', 'error'); return false; }
             }
 
-            // ═══════ MAIN INIT ═══════
-            async function init() {
-                // Force ad disclaimer to be visible
+            // ═══════ ENSURE DISCLAIMER IS ALWAYS VISIBLE ═══════
+            function ensureDisclaimerVisible() {
                 const adDisclaimer = document.getElementById('adDisclaimer');
                 if (adDisclaimer) {
-                    adDisclaimer.style.display = 'flex';
-                    adDisclaimer.style.visibility = 'visible';
-                    adDisclaimer.style.opacity = '1';
+                    // Remove any conflicting inline styles
+                    adDisclaimer.removeAttribute('style');
+                    // Apply mandatory display styles
+                    adDisclaimer.style.cssText = `
+                        display: flex !important;
+                        visibility: visible !important;
+                        opacity: 1 !important;
+                        pointer-events: auto !important;
+                        z-index: 5 !important;
+                        position: relative;
+                        margin: 20px 0;
+                        padding: 12px 16px;
+                        border-radius: 8px;
+                        background: rgba(229, 9, 20, 0.1);
+                        border: 1px solid rgba(229, 9, 20, 0.3);
+                        align-items: flex-start;
+                        gap: 12px;
+                        font-size: 0.85rem;
+                        color: rgba(255,255,255,0.85);
+                        line-height: 1.6;
+                        width: 100%;
+                        box-sizing: border-box;
+                    `;
                 }
+            }
+
+            // ═══════ MUTATION OBSERVER FOR DISCLAIMER ═══════
+            (function() {
+                const adDisclaimer = document.getElementById('adDisclaimer');
+                if (adDisclaimer) {
+                    const observer = new MutationObserver(function(mutations) {
+                        mutations.forEach(function(mutation) {
+                            if (mutation.type === 'attributes') {
+                                ensureDisclaimerVisible();
+                            }
+                        });
+                    });
+                    
+                    observer.observe(adDisclaimer, {
+                        attributes: true,
+                        attributeFilter: ['style', 'class'],
+                        subtree: true
+                    });
+                }
+            })();
+
+            // ═══════ MAIN INIT ═══════
+            async function init() {
+                // FORCE DISCLAIMER VISIBLE
+                ensureDisclaimerVisible();
                 
                 const urlParams = new URLSearchParams(window.location.search);
                 const pathParts = window.location.pathname.split('/').filter(p => p);
@@ -1147,6 +1205,9 @@
                 document.querySelectorAll('iframe').forEach(iframe => { try { iframe.src = 'about:blank'; } catch(e) {} });
             });
 
+            // Ensure disclaimer is visible on page load
+            document.addEventListener('DOMContentLoaded', ensureDisclaimerVisible);
+            
             init();
         })();
     </script>
