@@ -71,7 +71,7 @@
         .player-title-bar .controls .player-btn.pip-btn:hover { background: #2196F3; border-color: #2196F3; }
         
         /* ═══════════════════════════════════════════════
-           16:9 ASPECT RATIO PLAYER CONTAINER
+           16:9 ASPECT RATIO PLAYER CONTAINER - OPTIMIZED
            ═══════════════════════════════════════════════ */
         .player-container { 
             position: relative; 
@@ -81,7 +81,7 @@
             background: #000; 
             border-radius: 0; 
             overflow: hidden; 
-            min-height: 250px; 
+            will-change: auto;
         }
         
         .player-container iframe { 
@@ -94,6 +94,8 @@
             border: none; 
             background: #000; 
             border-radius: 0;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
         }
         
         .player-loading { 
@@ -112,6 +114,7 @@
         .player-loading.hidden { 
             opacity: 0; 
             pointer-events: none; 
+            z-index: -1;
         }
         
         .spinner { 
@@ -159,9 +162,7 @@
         .next-episode-overlay .next-buttons .cancel-next { background: rgba(255,255,255,0.1); color: var(--text-muted); }
         .next-episode-overlay .next-buttons .cancel-next:hover { background: rgba(255,255,255,0.2); }
         
-        /* ═══════════════════════════════════════════════
-           FIXED AD DISCLAIMER - ALWAYS VISIBLE ON ALL DEVICES
-           ═══════════════════════════════════════════════ */
+        /* AD DISCLAIMER */
         .ad-disclaimer { 
             display: flex !important;
             align-items: flex-start; 
@@ -183,15 +184,6 @@
             box-sizing: border-box !important;
             min-height: auto !important;
             max-height: none !important;
-        }
-        
-        .ad-disclaimer:not([style*="display: none"]) { 
-            display: flex !important; 
-        }
-        
-        .ad-disclaimer * { 
-            visibility: visible !important; 
-            opacity: 1 !important; 
         }
 
         .ad-disclaimer i { color: var(--red); font-size: 1.1rem; flex-shrink: 0; margin-top: 3px; }
@@ -364,7 +356,7 @@
                 </div>
             </div>
 
-            <!-- FIXED AD DISCLAIMER - ALWAYS VISIBLE -->
+            <!-- FIXED AD DISCLAIMER -->
             <div class="ad-disclaimer" id="adDisclaimer">
                 <i class="fas fa-ban"></i>
                 <div class="ad-disclaimer-content">
@@ -417,27 +409,18 @@
         'use strict';
         (function() {
             // ═══════════════════════════════════════════════
-            // ═══ ENHANCED AD BLOCKER ═══
+            // ═══ ENHANCED AD BLOCKER (LIGHTWEIGHT) ═══
             // ═══════════════════════════════════════════════
             class EnhancedAdBlocker {
                 constructor() {
                     this.blockedCount = 0;
                     this._initialized = false;
-                    
                     this.adDomains = [
                         'googlesyndication.com', 'doubleclick.net', 'adservice.google.com',
                         'googleadservices.com', 'taboola.com', 'outbrain.com',
                         'exoclick.com', 'popads.net', 'popcash.net', 'adnxs.com',
                         'pubmatic.com', 'criteo.com', 'adroll.com'
                     ];
-                    
-                    this.adPatterns = [
-                        /doubleclick\.net/i, /googlesyndication/i, /googleadservices/i,
-                        /taboola\.com/i, /outbrain\.com/i, /popads\.net/i,
-                        /popcash\.net/i, /adnxs\.com/i, /pubmatic\.com/i,
-                        /criteo\.com/i, /adroll\.com/i, /exoclick\.com/i
-                    ];
-                    
                     this.init();
                 }
 
@@ -452,13 +435,7 @@
                 isAdUrl(url) {
                     if (!url) return false;
                     const lowerUrl = url.toLowerCase();
-                    for (const domain of this.adDomains) {
-                        if (lowerUrl.includes(domain)) return true;
-                    }
-                    for (const pattern of this.adPatterns) {
-                        if (pattern.test(lowerUrl)) return true;
-                    }
-                    return false;
+                    return this.adDomains.some(domain => lowerUrl.includes(domain));
                 }
 
                 interceptFetch() {
@@ -468,7 +445,7 @@
                         const url = String(args[0] || '');
                         if (self.isAdUrl(url)) {
                             self.blockedCount++;
-                            return Promise.reject(new Error('Ad blocked by HR OTT'));
+                            return Promise.reject(new Error('Ad blocked'));
                         }
                         return origFetch.apply(this, args);
                     };
@@ -634,8 +611,9 @@
                 t.className = `toast ${type}`;
                 t.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : type === 'info' ? 'info-circle' : 'exclamation'}-circle"></i>${msg}`;
                 document.body.appendChild(t);
-                setTimeout(() => t.remove(), 2500);
+                setTimeout(() => { t.remove(); }, 2500);
             }
+            
             function buildIframe(src) {
                 const i = document.createElement('iframe');
                 i.src = src;
@@ -645,7 +623,7 @@
                 i.setAttribute('webkitallowfullscreen', 'true');
                 i.setAttribute('mozallowfullscreen', 'true');
                 i.referrerPolicy = 'no-referrer';
-                i.loading = 'eager';
+                i.loading = 'lazy';
                 return i;
             }
 
@@ -791,37 +769,70 @@
                 }
             });
 
-            // ═══════ PLAYER LOAD ═══════
+            // ═══════ PLAYER LOAD - OPTIMIZED ═══════
             function loadPlayerEmbed(key, isFallback = false) {
                 if (isLoading) return;
                 if (!currentId) return;
                 isLoading = true;
+                
+                // Debounce rapid calls
+                if (loadPlayerEmbed.timeout) clearTimeout(loadPlayerEmbed.timeout);
+                
                 refreshPlayerSources();
                 const source = playerSources[key];
                 if (!source) { isLoading = false; tryFallback(key); return; }
+                
                 currentSource = key;
                 const container = document.getElementById('playerContainer');
                 const oldIframe = container.querySelector('iframe');
-                if (oldIframe) { try { oldIframe.src = 'about:blank'; oldIframe.remove(); } catch(e) {} }
+                
+                // Clean up old iframe
+                if (oldIframe) {
+                    try {
+                        oldIframe.src = 'about:blank';
+                        oldIframe.remove();
+                    } catch(e) {}
+                }
+                
                 const loading = document.getElementById('playerLoading');
                 loading.classList.remove('hidden');
                 document.getElementById('loadingSubtext').textContent = isFallback ? `Trying ${source.displayName}...` : `Loading ${source.displayName}...`;
+                
                 const iframe = buildIframe(source.url);
                 let loaded = false;
                 let timeoutId = null;
-                timeoutId = setTimeout(() => { 
-                    if (!loaded) { loading.classList.add('hidden'); isLoading = false; tryFallback(key); }
-                }, 12000);
-                iframe.onload = () => { 
+                
+                timeoutId = setTimeout(() => {
                     if (!loaded) {
-                        loaded = true; clearTimeout(timeoutId); loading.classList.add('hidden'); 
-                        isLoading = false; setLastWorkingServer(key);
+                        loaded = true;
+                        clearTimeout(timeoutId);
+                        loading.classList.add('hidden');
+                        isLoading = false;
+                        tryFallback(key);
+                    }
+                }, 15000); // Increased timeout
+
+                iframe.onload = () => {
+                    if (!loaded) {
+                        loaded = true;
+                        clearTimeout(timeoutId);
+                        loading.classList.add('hidden');
+                        isLoading = false;
+                        setLastWorkingServer(key);
                         if (!isInitialLoad && !isFallback) showToast(`Playing with ${source.displayName}`, 'success');
                     }
                 };
-                iframe.onerror = () => { 
-                    if (!loaded) { loaded = true; clearTimeout(timeoutId); isLoading = false; loading.classList.add('hidden'); tryFallback(key); }
+                
+                iframe.onerror = () => {
+                    if (!loaded) {
+                        loaded = true;
+                        clearTimeout(timeoutId);
+                        isLoading = false;
+                        loading.classList.add('hidden');
+                        tryFallback(key);
+                    }
                 };
+                
                 container.appendChild(iframe);
                 document.querySelectorAll('.server-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.source) === key));
                 updatePlayerTitle();
@@ -835,11 +846,11 @@
                 const currentIdx = sources.indexOf(failedKey);
                 for (let i = currentIdx + 1; i < sources.length; i++) {
                     const nextKey = sources[i];
-                    if (nextKey !== failedKey) { showToast(`Server ${failedKey} failed, trying Server ${nextKey}...`, 'info'); loadPlayerEmbed(nextKey, true); return; }
-                }
-                for (let i = 0; i < sources.length; i++) {
-                    const nextKey = sources[i];
-                    if (nextKey !== failedKey && playerSources[nextKey]) { showToast(`All servers failed, trying Server ${nextKey}...`, 'info'); loadPlayerEmbed(nextKey, true); return; }
+                    if (nextKey !== failedKey) {
+                        showToast(`Server ${failedKey} failed, trying Server ${nextKey}...`, 'info');
+                        loadPlayerEmbed(nextKey, true);
+                        return;
+                    }
                 }
                 showToast('All servers failed. Please try again later.', 'error');
                 isLoading = false;
@@ -1135,53 +1146,14 @@
             function ensureDisclaimerVisible() {
                 const adDisclaimer = document.getElementById('adDisclaimer');
                 if (adDisclaimer) {
-                    adDisclaimer.removeAttribute('style');
-                    adDisclaimer.style.cssText = `
-                        display: flex !important;
-                        visibility: visible !important;
-                        opacity: 1 !important;
-                        pointer-events: auto !important;
-                        z-index: 5 !important;
-                        position: relative;
-                        margin: 20px 0;
-                        padding: 12px 16px;
-                        border-radius: 8px;
-                        background: rgba(229, 9, 20, 0.1);
-                        border: 1px solid rgba(229, 9, 20, 0.3);
-                        align-items: flex-start;
-                        gap: 12px;
-                        font-size: 0.85rem;
-                        color: rgba(255,255,255,0.85);
-                        line-height: 1.6;
-                        width: 100%;
-                        box-sizing: border-box;
-                    `;
+                    adDisclaimer.style.display = 'flex';
+                    adDisclaimer.style.visibility = 'visible';
+                    adDisclaimer.style.opacity = '1';
                 }
             }
 
-            // ═══════ MUTATION OBSERVER FOR DISCLAIMER ═══════
-            (function() {
-                const adDisclaimer = document.getElementById('adDisclaimer');
-                if (adDisclaimer) {
-                    const observer = new MutationObserver(function(mutations) {
-                        mutations.forEach(function(mutation) {
-                            if (mutation.type === 'attributes') {
-                                ensureDisclaimerVisible();
-                            }
-                        });
-                    });
-                    
-                    observer.observe(adDisclaimer, {
-                        attributes: true,
-                        attributeFilter: ['style', 'class'],
-                        subtree: true
-                    });
-                }
-            })();
-
             // ═══════ MAIN INIT ═══════
             async function init() {
-                // FORCE DISCLAIMER VISIBLE
                 ensureDisclaimerVisible();
                 
                 const urlParams = new URLSearchParams(window.location.search);
@@ -1191,6 +1163,7 @@
                 let season = parseInt(urlParams.get('s') || '1');
                 let episode = parseInt(urlParams.get('e') || '1');
                 let source = parseInt(urlParams.get('source') || getLastWorkingServer());
+                
                 if (!id) {
                     const savedState = loadState();
                     if (savedState && savedState.id) {
@@ -1200,21 +1173,25 @@
                         showToast(`Resuming: ${savedState.title || id}`, 'success');
                     }
                 }
+                
                 if (!id) {
                     document.getElementById('titleText').textContent = 'Error: No ID';
                     document.getElementById('overviewText').textContent = 'Please provide a media ID in the URL.';
                     showToast('No media ID provided', 'error');
                     return;
                 }
+                
                 currentId = id; currentType = type; currentSeason = season; currentEpisode = episode; currentSource = source;
                 refreshPlayerSources();
                 initServerButtons();
+                
                 await Promise.all([
                     fetchMediaDetails(id, type, season, episode),
                     new Promise(resolve => { setTimeout(() => { loadPlayerEmbed(currentSource); resolve(); }, 100); })
                 ]);
+                
                 const stats = adBlocker.getStats();
-                console.log(`🛡️ [AdBlocker] Active - ${stats.totalBlocked} ads blocked`);
+                console.log(`🛡️ [AdBlocker] Active`);
             }
 
             // ═══════ EVENT LISTENERS ═══════
@@ -1255,7 +1232,7 @@
                 const stats = adBlocker.getStats();
                 const countEl = document.getElementById('adblockCount');
                 if (countEl) countEl.textContent = `(${stats.totalBlocked} blocked)`;
-            }, 15000);
+            }, 30000);
 
             window.addEventListener('beforeunload', () => {
                 document.querySelectorAll('iframe').forEach(iframe => { try { iframe.src = 'about:blank'; } catch(e) {} });
