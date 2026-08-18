@@ -59,6 +59,7 @@
         .player-title-bar .title { font-weight: 700; font-size: 0.85rem; color: var(--text); display: flex; align-items: center; gap: 8px; min-width: 0; }
         .player-title-bar .title .badge { font-size: 0.55rem; font-weight: 800; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; background: var(--red); color: #fff; letter-spacing: 0.5px; flex-shrink: 0; }
         .player-title-bar .title .episode-badge { font-size: 0.6rem; font-weight: 600; color: var(--text-muted); background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 3px; flex-shrink: 0; }
+        .player-title-bar .title .source-badge { font-size: 0.55rem; font-weight: 600; background: rgba(70, 211, 105, 0.2); color: var(--green); padding: 2px 6px; border-radius: 3px; flex-shrink: 0; }
         .player-title-bar .controls { display: flex; gap: 4px; flex-shrink: 0; flex-wrap: wrap; }
         .player-title-bar .controls .player-btn { 
             appearance: none; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); 
@@ -70,9 +71,7 @@
         .player-title-bar .controls .player-btn i { font-size: 0.7rem; }
         .player-title-bar .controls .player-btn.pip-btn:hover { background: #2196F3; border-color: #2196F3; }
         
-        /* ═══════════════════════════════════════════════
-           16:9 ASPECT RATIO PLAYER CONTAINER - OPTIMIZED
-           ═══════════════════════════════════════════════ */
+        /* 16:9 ASPECT RATIO PLAYER CONTAINER */
         .player-container { 
             position: relative; 
             width: 100%; 
@@ -190,6 +189,8 @@
         .ad-disclaimer-content { flex: 1; }
         .ad-disclaimer-content strong { display: inline-block; margin-bottom: 4px; }
         .ad-disclaimer-content p { margin: 0; }
+        
+        .id-type-badge { display: inline-block; background: rgba(100, 200, 255, 0.15); border: 1px solid rgba(100, 200, 255, 0.3); color: #64c8ff; padding: 2px 6px; border-radius: 3px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 8px; }
         
         .cast-section { margin: 30px 0 20px 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
         .cast-section h3, .similar-section h3, .details-section h3, .episode-guide h3 { font-size: 1.1rem; margin-bottom: 14px; color: var(--text); font-weight: 800; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
@@ -325,6 +326,7 @@
                     <div class="title" id="playerTitle">
                         <span id="playerTitleText">Loading...</span>
                         <span class="badge">HD</span>
+                        <span id="playerIdTypeBadge" class="source-badge" style="display:none;"></span>
                         <span class="episode-badge" id="playerEpisodeBadge" style="display:none;"></span>
                     </div>
                     <div class="controls">
@@ -493,7 +495,8 @@
                         season: data.season || 1, episode: data.episode || 1,
                         source: data.source || 1, title: data.title || null,
                         poster: data.poster || null, backdrop: data.backdrop || null,
-                        overview: data.overview || null, timestamp: Date.now()
+                        overview: data.overview || null, idType: data.idType || 'tmdb',
+                        timestamp: Date.now()
                     };
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
                 } catch (e) {}
@@ -557,11 +560,12 @@
                 try { localStorage.setItem('hr_ott_last_server', String(source)); } catch(e) {}
             }
 
-            function updateUrlWithoutReload(id, type, season, episode, source) {
+            function updateUrlWithoutReload(id, type, season, episode, source, idType) {
                 try {
                     const url = new URL(window.location);
                     url.searchParams.set('id', id);
                     url.searchParams.set('type', type);
+                    url.searchParams.set('idType', idType || 'tmdb');
                     if (season) url.searchParams.set('s', season);
                     if (episode) url.searchParams.set('e', episode);
                     if (source) url.searchParams.set('source', source);
@@ -574,6 +578,7 @@
             const TMDB_BASE = 'https://api.themoviedb.org/3';
             const TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
             const TMDB_BACKDROP = 'https://image.tmdb.org/t/p/w1280';
+            const IMDB_API = 'https://api2.imdb3.shop/api/movies';
 
             // ═══════ SOURCE CONFIG ═══════
             const sourceConfig = [
@@ -594,6 +599,7 @@
             let currentSeason = 1;
             let currentEpisode = 1;
             let currentSource = 1;
+            let currentIdType = 'tmdb';
             let isLoading = false;
             let mediaData = null;
             let isInitialLoad = true;
@@ -639,10 +645,19 @@
             function updatePlayerTitle() {
                 const titleEl = document.getElementById('playerTitleText');
                 const episodeBadge = document.getElementById('playerEpisodeBadge');
+                const idTypeBadge = document.getElementById('playerIdTypeBadge');
+                
                 if (titleEl) {
                     const title = document.getElementById('titleText')?.textContent || 'Loading...';
                     titleEl.textContent = title;
                 }
+                
+                if (idTypeBadge) {
+                    const typeText = currentIdType === 'imdb' ? 'IMDb' : 'TMDB';
+                    idTypeBadge.textContent = typeText;
+                    idTypeBadge.style.display = 'inline-block';
+                }
+                
                 if (currentType === 'tv') {
                     episodeBadge.style.display = 'inline-block';
                     episodeBadge.textContent = `S${currentSeason} • E${currentEpisode}`;
@@ -696,7 +711,7 @@
                     refreshPlayerSources();
                     loadPlayerEmbed(currentSource);
                     updateEpisodeGrid();
-                    updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource);
+                    updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource, currentIdType);
                     showToast(`Playing S${currentSeason} E${currentEpisode}: ${nextEp.name || 'Episode'}`, 'success');
                 } else {
                     showToast('No more episodes in this season', 'info');
@@ -810,7 +825,7 @@
                         isLoading = false;
                         tryFallback(key);
                     }
-                }, 15000); // Increased timeout
+                }, 15000);
 
                 iframe.onload = () => {
                     if (!loaded) {
@@ -836,8 +851,8 @@
                 container.appendChild(iframe);
                 document.querySelectorAll('.server-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.source) === key));
                 updatePlayerTitle();
-                saveState({ id: currentId, type: currentType, season: currentSeason, episode: currentEpisode, source: currentSource, title: document.getElementById('titleText').textContent, poster: document.getElementById('posterImg').src, backdrop: document.getElementById('heroBackdrop').style.backgroundImage, overview: document.getElementById('overviewText').textContent });
-                updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource);
+                saveState({ id: currentId, type: currentType, season: currentSeason, episode: currentEpisode, source: currentSource, title: document.getElementById('titleText').textContent, poster: document.getElementById('posterImg').src, backdrop: document.getElementById('heroBackdrop').style.backgroundImage, overview: document.getElementById('overviewText').textContent, idType: currentIdType });
+                updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource, currentIdType);
                 isInitialLoad = false;
             }
 
@@ -925,7 +940,7 @@
                         refreshPlayerSources();
                         loadPlayerEmbed(currentSource);
                         renderEpisodes();
-                        updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource);
+                        updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource, currentIdType);
                     });
                     const watchBtn = item.querySelector('.watched-btn');
                     watchBtn?.addEventListener('click', function(e) {
@@ -964,7 +979,7 @@
                 if (idx > 0) {
                     currentEpisode = eps[idx - 1].episode_number;
                     refreshPlayerSources(); loadPlayerEmbed(currentSource); renderEpisodes();
-                    updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource);
+                    updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource, currentIdType);
                     showToast(`Playing S${currentSeason} E${currentEpisode}`, 'success');
                 }
             });
@@ -975,14 +990,14 @@
                 if (idx < eps.length - 1) {
                     currentEpisode = eps[idx + 1].episode_number;
                     refreshPlayerSources(); loadPlayerEmbed(currentSource); renderEpisodes();
-                    updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource);
+                    updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource, currentIdType);
                     showToast(`Playing S${currentSeason} E${currentEpisode}`, 'success');
                 }
             });
 
             // ═══════ EPISODE GUIDE LOADING ═══════
             async function loadEpisodeGuide() {
-                if (currentType !== 'tv' || !currentId) return;
+                if (currentType !== 'tv' || !currentId || currentIdType !== 'tmdb') return;
                 const guide = document.getElementById('episodeGuide');
                 if (!guide) return;
                 try {
@@ -1023,7 +1038,7 @@
                             refreshPlayerSources(); select.value = currentSeason;
                             document.querySelectorAll('.season-card').forEach(c => c.classList.toggle('active', c.dataset.seasonNumber == currentSeason));
                             renderEpisodes(); loadPlayerEmbed(currentSource);
-                            updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource);
+                            updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource, currentIdType);
                         };
                         cards.appendChild(card);
                     });
@@ -1033,7 +1048,7 @@
                         refreshPlayerSources();
                         document.querySelectorAll('.season-card').forEach(c => c.classList.toggle('active', c.dataset.seasonNumber == currentSeason));
                         renderEpisodes(); loadPlayerEmbed(currentSource);
-                        updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource);
+                        updateUrlWithoutReload(currentId, currentType, currentSeason, currentEpisode, currentSource, currentIdType);
                     };
                     renderEpisodes();
                 } catch (e) { guide.style.display = 'none'; }
@@ -1067,16 +1082,33 @@
                 const similarGrid = document.getElementById('similarGrid');
                 const similarSection = document.getElementById('similarSection');
                 const similarTitle = document.getElementById('similarTitle');
-                if (!similarGrid || !similarSection || !currentId) { if (similarSection) similarSection.style.display = 'none'; return; }
+                
+                if (!similarGrid || !similarSection || !currentId || currentIdType !== 'tmdb') { 
+                    if (similarSection) similarSection.style.display = 'none'; 
+                    return; 
+                }
+                
                 similarGrid.innerHTML = '<div class="similar-empty"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
                 similarSection.style.display = 'block';
+                
                 let endpoints = [];
                 let titleText = '';
-                if (currentType === 'movie') { endpoints = [`/movie/${currentId}/similar`, `/movie/${currentId}/recommendations`]; titleText = '<i class="fas fa-film"></i> Similar Movies'; }
-                else if (currentType === 'tv') { endpoints = [`/tv/${currentId}/similar`, `/tv/${currentId}/recommendations`]; titleText = '<i class="fas fa-tv"></i> Similar TV Shows'; }
-                else { similarSection.style.display = 'none'; return; }
+                
+                if (currentType === 'movie') { 
+                    endpoints = [`/movie/${currentId}/similar`, `/movie/${currentId}/recommendations`]; 
+                    titleText = '<i class="fas fa-film"></i> Similar Movies'; 
+                } else if (currentType === 'tv') { 
+                    endpoints = [`/tv/${currentId}/similar`, `/tv/${currentId}/recommendations`]; 
+                    titleText = '<i class="fas fa-tv"></i> Similar TV Shows'; 
+                } else { 
+                    similarSection.style.display = 'none'; 
+                    return; 
+                }
+                
                 if (similarTitle) similarTitle.innerHTML = titleText;
+                
                 let allResults = [];
+                
                 for (const endpoint of endpoints) {
                     try {
                         const res = await fetch(`${TMDB_BASE}${endpoint}?api_key=${TMDB_KEY}&language=en-US&page=1`);
@@ -1087,59 +1119,154 @@
                         }
                     } catch (e) {}
                 }
-                if (allResults.length === 0) { similarGrid.innerHTML = '<div class="similar-empty"><i class="fas fa-film"></i> No similar content found</div>'; return; }
+                
+                if (allResults.length === 0) { 
+                    similarGrid.innerHTML = '<div class="similar-empty"><i class="fas fa-film"></i> No similar content found</div>'; 
+                    return; 
+                }
+                
                 similarGrid.innerHTML = '';
+                
                 allResults.forEach(item => {
                     const card = document.createElement('a');
                     card.className = 'similar-card';
-                    card.href = `?id=${item.id}&type=${currentType}`;
+                    card.href = `?id=${item.id}&type=${currentType}&idType=tmdb`;
                     const poster = item.poster_path ? TMDB_IMG + item.poster_path : '';
                     const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '?';
                     const title = getTitle(item);
                     const year = getYear(item);
                     const typeLabel = currentType === 'movie' ? 'Movie' : 'TV Series';
                     card.innerHTML = `<img src="${poster}" alt="${title}" loading="lazy" onerror="this.style.background='#222';this.style.opacity='0.5';"><div class="similar-card-overlay"><div class="similar-card-type">${typeLabel} · ${year}</div><div class="similar-card-rating"><i class="fas fa-star"></i> ${rating}</div><div class="similar-card-title">${title}</div></div>`;
-                    card.addEventListener('click', (e) => { e.preventDefault(); window.location.href = `?id=${item.id}&type=${currentType}`; });
+                    card.addEventListener('click', (e) => { e.preventDefault(); window.location.href = `?id=${item.id}&type=${currentType}&idType=tmdb`; });
                     similarGrid.appendChild(card);
                 });
             }
 
-            // ═══════ FETCH MEDIA DETAILS ═══════
-            async function fetchMediaDetails(id, type, season, episode) {
+            // ═══════ FETCH TMDB MEDIA DETAILS ═══════
+            async function fetchTMDBMediaDetails(id, type) {
                 try {
                     const endpoint = type === 'movie' ? `/movie/${id}?append_to_response=credits` : `/tv/${id}?append_to_response=credits`;
                     const res = await fetch(`${TMDB_BASE}${endpoint}&api_key=${TMDB_KEY}`);
-                    if (!res.ok) { document.getElementById('titleText').textContent = 'Error: Media not found'; showToast('Failed to load media details', 'error'); return false; }
+                    if (!res.ok) { 
+                        document.getElementById('titleText').textContent = 'Error: Media not found'; 
+                        showToast('Failed to load media details', 'error'); 
+                        return false; 
+                    }
+                    
                     const data = await res.json();
                     mediaData = data;
-                    const title = getTitle(data);
-                    const year = getYear(data);
-                    const match = data.vote_average ? Math.round(data.vote_average * 10) : 0;
-                    const rating = data.vote_average ? Number(data.vote_average).toFixed(1) : '?';
-                    const runtime = data.runtime || (data.episode_run_time?.[0]) || '?';
-                    const poster = data.poster_path ? TMDB_IMG + data.poster_path : '';
-                    const backdrop = data.backdrop_path ? TMDB_BACKDROP + data.backdrop_path : poster;
-                    const overview = data.overview || 'No description available.';
-                    const genres = data.genres || [];
-                    const cast = data.credits?.cast || [];
-                    document.title = `${title} - HR OTT`;
-                    document.getElementById('titleText').textContent = title;
-                    if (poster) document.getElementById('posterImg').src = poster;
-                    document.getElementById('overviewText').textContent = overview;
-                    document.getElementById('descText').textContent = overview;
-                    const backdropEl = document.getElementById('heroBackdrop');
-                    if (backdropEl && backdrop) backdropEl.style.backgroundImage = `url('${backdrop}')`;
-                    document.getElementById('metaRow').innerHTML = `<div class="meta-item match">${match}% Match</div><div class="meta-item">${year}</div><div class="meta-item"><span class="maturity-badge">${rating}</span></div><div class="meta-item">${runtime} min</div><div class="meta-item"><i class="fas fa-hd"></i> HD</div>`;
-                    document.getElementById('genresRow').innerHTML = genres.map(g => `<div class="genre-tag">${g.name}</div>`).join('') || '<div class="genre-tag">N/A</div>';
-                    renderCast(cast);
-                    updatePlayerTitle();
-                    saveState({ id, type, season, episode, source: currentSource, title, poster, backdrop, overview });
-                    const promises = [];
-                    if (type === 'tv') promises.push(loadEpisodeGuide());
-                    promises.push(loadSimilarContent());
-                    await Promise.all(promises);
+                    populateMediaUI(data, type);
                     return true;
-                } catch (e) { console.error('Fetch error:', e); showToast('Failed to load media', 'error'); return false; }
+                } catch (e) { 
+                    console.error('Fetch error:', e); 
+                    showToast('Failed to load media', 'error'); 
+                    return false; 
+                }
+            }
+
+            // ═══════ FETCH IMDB MEDIA DETAILS ═══════
+            async function fetchIMDbMediaDetails(id, type) {
+                try {
+                    // Try to fetch from IMDb API
+                    const res = await fetch(`${IMDB_API}/info?id=${id}`);
+                    
+                    if (res.ok) {
+                        const data = await res.json();
+                        // Format IMDb data to match TMDB structure
+                        const formattedData = {
+                            id: data.id,
+                            title: data.title,
+                            name: data.title,
+                            overview: data.description || data.overview || 'No description available.',
+                            backdrop_path: data.backdrop_path || data.image,
+                            poster_path: data.poster_path || data.image,
+                            vote_average: parseFloat(data.rating) || data.vote_average || 0,
+                            release_date: data.release_date || '',
+                            first_air_date: data.first_air_date || '',
+                            runtime: data.runtime || 0,
+                            genres: data.genres || [],
+                            credits: { cast: data.cast || [] }
+                        };
+                        
+                        mediaData = formattedData;
+                        populateMediaUI(formattedData, type);
+                        return true;
+                    } else {
+                        // Fallback message for IMDb
+                        document.getElementById('titleText').textContent = 'IMDb Content';
+                        const formattedData = {
+                            id: id,
+                            title: 'IMDb Content',
+                            name: 'IMDb Content',
+                            overview: 'This content is from the IMDb database.',
+                            backdrop_path: '',
+                            poster_path: '',
+                            vote_average: 0,
+                            runtime: 0,
+                            genres: [],
+                            credits: { cast: [] }
+                        };
+                        
+                        mediaData = formattedData;
+                        populateMediaUI(formattedData, type);
+                        return true;
+                    }
+                } catch (e) { 
+                    console.error('IMDb Fetch error:', e); 
+                    // Still proceed with basic info
+                    const formattedData = {
+                        id: id,
+                        title: 'Media Content',
+                        name: 'Media Content',
+                        overview: 'Content from IMDb database',
+                        backdrop_path: '',
+                        poster_path: '',
+                        vote_average: 0,
+                        runtime: 0,
+                        genres: [],
+                        credits: { cast: [] }
+                    };
+                    
+                    mediaData = formattedData;
+                    populateMediaUI(formattedData, type);
+                    return true;
+                }
+            }
+
+            // ═══════ POPULATE UI ═══════
+            function populateMediaUI(data, type) {
+                const title = getTitle(data);
+                const year = getYear(data);
+                const match = data.vote_average ? Math.round(data.vote_average * 10) : 0;
+                const rating = data.vote_average ? Number(data.vote_average).toFixed(1) : '?';
+                const runtime = data.runtime || (data.episode_run_time?.[0]) || '?';
+                const poster = data.poster_path ? (data.poster_path.startsWith('http') ? data.poster_path : TMDB_IMG + data.poster_path) : '';
+                const backdrop = data.backdrop_path ? (data.backdrop_path.startsWith('http') ? data.backdrop_path : TMDB_BACKDROP + data.backdrop_path) : poster;
+                const overview = data.overview || 'No description available.';
+                const genres = data.genres || [];
+                const cast = data.credits?.cast || [];
+                
+                document.title = `${title} - HR OTT`;
+                document.getElementById('titleText').textContent = title;
+                if (poster) document.getElementById('posterImg').src = poster;
+                document.getElementById('overviewText').textContent = overview;
+                document.getElementById('descText').textContent = overview;
+                
+                const backdropEl = document.getElementById('heroBackdrop');
+                if (backdropEl && backdrop) backdropEl.style.backgroundImage = `url('${backdrop}')`;
+                
+                document.getElementById('metaRow').innerHTML = `<div class="meta-item match">${match}% Match</div><div class="meta-item">${year}</div><div class="meta-item"><span class="maturity-badge">${rating}</span></div><div class="meta-item">${runtime} min</div><div class="meta-item"><i class="fas fa-hd"></i> HD</div>`;
+                document.getElementById('genresRow').innerHTML = genres.map(g => `<div class="genre-tag">${g.name || g}</div>`).join('') || '<div class="genre-tag">N/A</div>';
+                
+                renderCast(cast);
+                updatePlayerTitle();
+                saveState({ id: currentId, type, season: currentSeason, episode: currentEpisode, source: currentSource, title, poster, backdrop, overview, idType: currentIdType });
+                
+                const promises = [];
+                if (type === 'tv' && currentIdType === 'tmdb') promises.push(loadEpisodeGuide());
+                if (currentIdType === 'tmdb') promises.push(loadSimilarContent());
+                
+                return Promise.all(promises);
             }
 
             // ═══════ ENSURE DISCLAIMER IS ALWAYS VISIBLE ═══════
@@ -1160,6 +1287,7 @@
                 const pathParts = window.location.pathname.split('/').filter(p => p);
                 let id = urlParams.get('id') || pathParts[1] || null;
                 let type = (urlParams.get('type') || pathParts[2] || 'movie').toLowerCase();
+                let idType = (urlParams.get('idType') || 'tmdb').toLowerCase();
                 let season = parseInt(urlParams.get('s') || '1');
                 let episode = parseInt(urlParams.get('e') || '1');
                 let source = parseInt(urlParams.get('source') || getLastWorkingServer());
@@ -1167,8 +1295,11 @@
                 if (!id) {
                     const savedState = loadState();
                     if (savedState && savedState.id) {
-                        id = savedState.id; type = savedState.type || 'movie';
-                        season = savedState.season || 1; episode = savedState.episode || 1;
+                        id = savedState.id; 
+                        type = savedState.type || 'movie';
+                        idType = savedState.idType || 'tmdb';
+                        season = savedState.season || 1; 
+                        episode = savedState.episode || 1;
                         source = savedState.source || getLastWorkingServer();
                         showToast(`Resuming: ${savedState.title || id}`, 'success');
                     }
@@ -1181,17 +1312,25 @@
                     return;
                 }
                 
-                currentId = id; currentType = type; currentSeason = season; currentEpisode = episode; currentSource = source;
+                currentId = id; 
+                currentType = type; 
+                currentIdType = idType;
+                currentSeason = season; 
+                currentEpisode = episode; 
+                currentSource = source;
+                
                 refreshPlayerSources();
                 initServerButtons();
                 
+                console.log(`🎬 Loading: ${type} (ID: ${id}, Source: ${idType})`);
+                
                 await Promise.all([
-                    fetchMediaDetails(id, type, season, episode),
+                    currentIdType === 'imdb' ? fetchIMDbMediaDetails(id, type) : fetchTMDBMediaDetails(id, type),
                     new Promise(resolve => { setTimeout(() => { loadPlayerEmbed(currentSource); resolve(); }, 100); })
                 ]);
                 
                 const stats = adBlocker.getStats();
-                console.log(`🛡️ [AdBlocker] Active`);
+                console.log(`🛡️ [AdBlocker] Active - ${stats.totalBlocked} items blocked`);
             }
 
             // ═══════ EVENT LISTENERS ═══════
