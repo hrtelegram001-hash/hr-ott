@@ -97,104 +97,218 @@
         .wall-scroll-area:hover .wall-scroll-btn { opacity: 1; }
         .wall-scroll-btn:hover { color: var(--red); }
 
-        .search-page-container { max-width: 1400px; margin: 0 auto; padding: 20px var(--pad); }
-        .search-hero { text-align: center; padding: 20px 0 30px; }
-        .search-hero-icon { font-size: 3rem; color: var(--red); margin-bottom: 15px; }
-        .search-input-wrapper { max-width: 600px; margin: 0 auto; position: relative; }
-        .search-input { width: 100%; padding: 16px 50px 16px 20px; background: rgba(30,30,36,0.9); border: 2px solid rgba(255,255,255,0.1); border-radius: 50px; color: #fff; font-size: 1.1rem; outline: none; font-family: 'Inter', sans-serif; transition: all 0.3s; }
-        .search-input:focus { border-color: var(--red); box-shadow: 0 0 30px rgba(229,9,20,0.2); }
-        .search-submit-btn { position: absolute; right: 5px; top: 50%; transform: translateY(-50%); width: 45px; height: 45px; border-radius: 50%; background: var(--red); border: none; color: white; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; }
-        .search-submit-btn:hover { background: var(--red-dark); transform: translateY(-50%) scale(1.1); }
-        
-        /* TYPE FILTER BUTTONS - COMPACT */
-        .type-filter-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-        
-        .type-filter-btn {
-            padding: 10px 20px;
-            border: 2px solid rgba(255,255,255,0.3);
-            background: transparent;
-            color: var(--text-muted);
-            border-radius: 25px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Inter', sans-serif;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
-        }
-        
-        .type-filter-btn i {
-            font-size: 0.9rem;
-        }
-        
-        .type-filter-btn:hover {
-            border-color: var(--red);
-            color: var(--red);
-            transform: translateY(-2px);
-        }
-        
-        .type-filter-btn.active {
-            background: var(--red);
-            border-color: var(--red);
-            color: white;
-            box-shadow: 0 4px 15px rgba(229,9,20,0.4);
-        }
-        
-        .filters-section { margin: 20px 0; padding: 20px; background: rgba(22,22,28,0.95); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-        .filters-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
-        .filters-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-        .filters-title i { color: var(--red); }
-        .clear-filters-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: color 0.2s; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 5px; }
-        .clear-filters-btn:hover { color: var(--red); }
-        .filters-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
-        .filter-group { display: flex; flex-direction: column; gap: 5px; }
-        .filter-label { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-        .filter-select { background: rgba(30,30,36,0.9); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; outline: none; font-family: 'Inter', sans-serif; transition: all 0.2s; width: 100%; }
-        .filter-select:hover { border-color: var(--red); }
-        .filter-select:focus { border-color: var(--red); box-shadow: 0 0 10px rgba(229,9,20,0.2); }
-        .filter-select option { background: #1a1a1f; }
-        
-        /* Update the search results grid CSS */
+      /* Optimized Search Page Styles */
+.search-page-container { 
+    max-width: 1400px; 
+    margin: 0 auto; 
+    padding: 15px var(--pad); 
+}
+
+.search-hero { 
+    text-align: center; 
+    padding: 15px 0 20px; 
+}
+
+.search-hero-icon { 
+    font-size: 2.5rem; 
+    color: var(--red); 
+    margin-bottom: 10px; 
+}
+
+.search-input-wrapper { 
+    max-width: 500px; 
+    margin: 0 auto; 
+    position: relative; 
+}
+
+.search-input { 
+    width: 100%; 
+    padding: 14px 45px 14px 18px; 
+    background: rgba(30,30,36,0.9); 
+    border: 2px solid rgba(255,255,255,0.1); 
+    border-radius: 25px; 
+    color: #fff; 
+    font-size: 0.95rem; 
+    outline: none; 
+    font-family: 'Inter', sans-serif; 
+    transition: all 0.3s; 
+}
+
+.search-submit-btn { 
+    position: absolute; 
+    right: 4px; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    width: 38px; 
+    height: 38px; 
+    border-radius: 50%; 
+    background: var(--red); 
+    border: none; 
+    color: white; 
+    cursor: pointer; 
+    transition: all 0.3s; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+}
+
+/* COMPACT TYPE FILTER BUTTONS */
+.type-filter-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.type-filter-btn {
+    padding: 6px 14px;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+    color: var(--text-muted);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    min-width: auto;
+}
+
+.type-filter-btn i {
+    font-size: 0.7rem;
+}
+
+.type-filter-btn:hover {
+    border-color: var(--red);
+    color: var(--red);
+    background: rgba(229,9,20,0.1);
+}
+
+.type-filter-btn.active {
+    background: var(--red);
+    border-color: var(--red);
+    color: white;
+    box-shadow: 0 2px 10px rgba(229,9,20,0.3);
+}
+
+/* COMPACT FILTERS SECTION */
+.filters-section { 
+    margin: 15px 0; 
+    padding: 12px 15px; 
+    background: rgba(22,22,28,0.95); 
+    border-radius: 10px; 
+    border: 1px solid rgba(255,255,255,0.08); 
+}
+
+.filters-header { 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    margin-bottom: 10px; 
+}
+
+.filters-title { 
+    font-size: 0.85rem; 
+    font-weight: 700; 
+    display: flex; 
+    align-items: center; 
+    gap: 6px; 
+}
+
+.filters-title i { 
+    color: var(--red); 
+    font-size: 0.8rem;
+}
+
+.clear-filters-btn { 
+    background: none; 
+    border: none; 
+    color: var(--text-muted); 
+    cursor: pointer; 
+    font-size: 0.7rem; 
+    font-weight: 600; 
+    transition: color 0.2s; 
+    font-family: 'Inter', sans-serif; 
+    display: flex; 
+    align-items: center; 
+    gap: 4px; 
+    padding: 4px 8px;
+}
+
+.clear-filters-btn:hover { 
+    color: var(--red); 
+}
+
+.filters-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
+    gap: 8px; 
+}
+
+.filter-group { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 3px; 
+}
+
+.filter-label { 
+    font-size: 0.6rem; 
+    font-weight: 600; 
+    color: var(--text-muted); 
+    text-transform: uppercase; 
+    letter-spacing: 0.3px; 
+}
+
+.filter-select { 
+    background: rgba(30,30,36,0.9); 
+    border: 1px solid rgba(255,255,255,0.15); 
+    color: #fff; 
+    padding: 5px 8px; 
+    border-radius: 5px; 
+    font-size: 0.7rem; 
+    cursor: pointer; 
+    outline: none; 
+    font-family: 'Inter', sans-serif; 
+    transition: all 0.2s; 
+    width: 100%; 
+}
+
+.filter-select:hover { 
+    border-color: var(--red); 
+}
+
+.filter-select:focus { 
+    border-color: var(--red); 
+    box-shadow: 0 0 8px rgba(229,9,20,0.2); 
+}
+
+.filter-select option { 
+    background: #1a1a1f; 
+}
+
+/* SEARCH RESULTS - 3 COLUMNS */
 .search-results { 
     display: grid; 
-    grid-template-columns: repeat(3, 1fr); /* 3 columns on desktop */
-    gap: 12px; 
-    margin-top: 20px; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 10px; 
+    margin-top: 15px; 
 }
 
-/* For tablets */
-@media (max-width: 1024px) {
-    .search-results { 
-        grid-template-columns: repeat(3, 1fr); /* Keep 3 columns on tablets */
-        gap: 10px;
-    }
+/* Card adjustments for search results */
+.search-results .card {
+    width: 100%;
+    margin: 0;
 }
 
-/* For mobile */
-@media (max-width: 768px) {
-    .search-results { 
-        grid-template-columns: repeat(2, 1fr); /* 2 columns on mobile */
-        gap: 8px;
-    }
+.search-results .card-thumb {
+    aspect-ratio: 2/3;
 }
 
-/* For small mobile */
-@media (max-width: 480px) {
-    .search-results { 
-        grid-template-columns: repeat(2, 1fr); /* Keep 2 columns on small mobile */
-        gap: 6px;
-    }
-}
-        
         .load-more-container { text-align: center; padding: 25px 0; margin-top: 15px; position: relative; z-index: 10; }
         .load-more-btn { background: var(--red); color: #fff; border: none; padding: 12px 35px; border-radius: 8px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 8px 24px rgba(229,9,20,0.4); position: relative; z-index: 100; }
         .load-more-btn:hover { background: var(--red-dark); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(229,9,20,0.5); }
@@ -298,23 +412,70 @@
         .bottom-nav-item:hover { color: var(--text); }
         .provider-badge { display: inline-block; background: rgba(229,9,20,0.2); border: 1px solid var(--red); color: var(--red); padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; margin-right: 6px; }
         
-        @media (max-width: 1024px) {
-            .search-results { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
-            .filters-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-        
-        @media (max-width: 768px) {
-            .search-results { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-            .filters-grid { grid-template-columns: repeat(2, 1fr); }
-            .type-filter-btn { padding: 8px 16px; font-size: 0.8rem; }
-        }
-        
-        @media (max-width: 480px) {
-            .search-results { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .filters-grid { grid-template-columns: 1fr; gap: 8px; }
-            .filter-select { padding: 6px 10px; font-size: 0.75rem; }
-            .type-filter-btn { padding: 6px 12px; font-size: 0.75rem; }
-        }
+        /* RESPONSIVE BREAKPOINTS */
+@media (max-width: 1024px) {
+    .search-results { 
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 8px; 
+    }
+    
+    .filters-grid { 
+        grid-template-columns: repeat(4, 1fr); 
+    }
+}
+
+@media (max-width: 768px) {
+    .search-results { 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 8px; 
+    }
+    
+    .filters-grid { 
+        grid-template-columns: repeat(2, 1fr); 
+    }
+    
+    .type-filter-btn { 
+        padding: 5px 10px; 
+        font-size: 0.7rem; 
+    }
+    
+    .search-input { 
+        padding: 12px 40px 12px 15px; 
+        font-size: 0.85rem; 
+    }
+    
+    .search-submit-btn { 
+        width: 32px; 
+        height: 32px; 
+    }
+}
+
+@media (max-width: 480px) {
+    .search-results { 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 6px; 
+    }
+    
+    .filters-grid { 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 6px; 
+    }
+    
+    .filter-select { 
+        padding: 4px 6px; 
+        font-size: 0.65rem; 
+    }
+    
+    .type-filter-btn { 
+        padding: 4px 8px; 
+        font-size: 0.65rem; 
+        gap: 3px;
+    }
+    
+    .type-filter-btn i {
+        font-size: 0.6rem;
+    }
+}
         
         @media (max-width: 900px) {
             .nav-links { display: none; }
@@ -1262,7 +1423,7 @@
                 updateNavActive('my-list');
             }
 
-            // ═══ SEARCH PAGE - TMDB ONLY WITH 3 COLUMNS ═══
+            // ═══ SEARCH PAGE - OPTIMIZED ═══
 function renderSearchPage() {
     teardownWall(); 
     hideHero(); 
@@ -1288,41 +1449,41 @@ function renderSearchPage() {
         <div class="type-filter-buttons">
             <button class="type-filter-btn active" data-type="all"><i class="fas fa-th"></i> All</button>
             <button class="type-filter-btn" data-type="movie"><i class="fas fa-film"></i> Movies</button>
-            <button class="type-filter-btn" data-type="tv"><i class="fas fa-tv"></i> TV Shows</button>
+            <button class="type-filter-btn" data-type="tv"><i class="fas fa-tv"></i> TV</button>
         </div>
         
         <div class="filters-section">
             <div class="filters-header">
                 <div class="filters-title"><i class="fas fa-filter"></i> Filters</div>
-                <button class="clear-filters-btn" id="clearFiltersBtn"><i class="fas fa-times"></i> Clear All</button>
+                <button class="clear-filters-btn" id="clearFiltersBtn"><i class="fas fa-times"></i> Clear</button>
             </div>
             <div class="filters-grid">
                 <div class="filter-group">
                     <label class="filter-label">Genre</label>
-                    <select class="filter-select" id="searchGenreFilter"><option value="all">All Genres</option></select>
+                    <select class="filter-select" id="searchGenreFilter"><option value="all">All</option></select>
                 </div>
                 <div class="filter-group">
                     <label class="filter-label">Year</label>
-                    <select class="filter-select" id="searchYearFilter"><option value="all">All Years</option></select>
+                    <select class="filter-select" id="searchYearFilter"><option value="all">All</option></select>
                 </div>
                 <div class="filter-group">
                     <label class="filter-label">Language</label>
-                    <select class="filter-select" id="searchLanguageFilter"><option value="all">All Languages</option></select>
+                    <select class="filter-select" id="searchLanguageFilter"><option value="all">All</option></select>
                 </div>
                 <div class="filter-group">
-                    <label class="filter-label">Sort By</label>
+                    <label class="filter-label">Sort</label>
                     <select class="filter-select" id="searchSortFilter">
-                        <option value="popularity.desc">Popularity</option>
+                        <option value="popularity.desc">Popular</option>
                         <option value="vote_average.desc">Rating</option>
-                        <option value="primary_release_date.desc">Release Date</option>
-                        <option value="original_title.asc">Title A-Z</option>
+                        <option value="primary_release_date.desc">Newest</option>
+                        <option value="original_title.asc">A-Z</option>
                     </select>
                 </div>
             </div>
         </div>
         <div class="search-results" id="pageSearchResults">
-            <div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;">
-                <i class="fas fa-search" style="margin-right:10px;"></i>Search for movies and TV shows or browse by type
+            <div style="text-align:center;padding:30px;color:var(--text-muted);grid-column:1/-1;">
+                <i class="fas fa-search" style="margin-right:8px;"></i>Search or browse content
             </div>
         </div>
         <div class="load-more-container" id="pageLoadMoreContainer" style="display:none;">
@@ -1331,9 +1492,10 @@ function renderSearchPage() {
     
     container.appendChild(searchSection);
     
+    // Populate genres
     const genreSelect = document.getElementById('searchGenreFilter');
     if (genreSelect && allGenres.length) {
-        allGenres.forEach(g => {
+        allGenres.slice(0, 20).forEach(g => { // Limit to top 20 genres for compact dropdown
             const opt = document.createElement('option');
             opt.value = g.id; 
             opt.textContent = g.name;
@@ -1341,10 +1503,11 @@ function renderSearchPage() {
         });
     }
     
+    // Populate years
     const yearSelect = document.getElementById('searchYearFilter');
     if (yearSelect) {
         const currentYear = new Date().getFullYear();
-        for (let y = currentYear; y >= 1950; y--) {
+        for (let y = currentYear; y >= 2000; y--) { // Start from 2000 for compact dropdown
             const opt = document.createElement('option');
             opt.value = y; 
             opt.textContent = y;
@@ -1352,13 +1515,18 @@ function renderSearchPage() {
         }
     }
     
+    // Populate languages
     const langSelect = document.getElementById('searchLanguageFilter');
     if (langSelect && allLanguages.length) {
-        allLanguages.forEach(l => {
-            const opt = document.createElement('option');
-            opt.value = l.iso_639_1; 
-            opt.textContent = l.english_name || l.name;
-            langSelect.appendChild(opt);
+        const popularLangs = ['en', 'hi', 'es', 'fr', 'de', 'ja', 'ko', 'zh', 'ta', 'te'];
+        popularLangs.forEach(code => {
+            const lang = allLanguages.find(l => l.iso_639_1 === code);
+            if (lang) {
+                const opt = document.createElement('option');
+                opt.value = code; 
+                opt.textContent = lang.english_name || lang.name;
+                langSelect.appendChild(opt);
+            }
         });
     }
     
@@ -1377,13 +1545,12 @@ function renderSearchPage() {
     let currentPage = 1, totalPages = 1, isLoading = false;
     let selectedType = 'all';
     
-    // TYPE FILTER BUTTONS - FIXED
+    // TYPE FILTER BUTTONS
     typeFilterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             typeFilterBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             selectedType = btn.dataset.type;
-            // Reset to page 1 and perform search
             currentPage = 1;
             performSearch(1, false);
         });
@@ -1397,23 +1564,15 @@ function renderSearchPage() {
         const sort = searchSortFilter.value;
         const hasFilters = genre !== 'all' || year !== 'all' || language !== 'all';
         
-        // If user typed a search query
         if (query.length >= 2) {
             let base = selectedType === 'tv' ? '/search/tv' : selectedType === 'movie' ? '/search/movie' : '/search/multi';
             return `${base}?query=${encodeURIComponent(query)}&page=${page}`;
-        } 
-        // If filters are applied but no search query
-        else if (hasFilters || selectedType !== 'all') {
-            // If only type filter is selected (no other filters)
+        } else if (hasFilters || selectedType !== 'all') {
             if (!hasFilters && selectedType !== 'all') {
-                if (selectedType === 'movie') {
-                    return `/movie/popular?page=${page}`;
-                } else if (selectedType === 'tv') {
-                    return `/tv/popular?page=${page}`;
-                }
+                if (selectedType === 'movie') return `/movie/popular?page=${page}`;
+                else if (selectedType === 'tv') return `/tv/popular?page=${page}`;
             }
             
-            // If other filters are applied
             let base = selectedType === 'tv' ? '/discover/tv' : '/discover/movie';
             const params = new URLSearchParams();
             if (genre !== 'all') params.set('with_genres', genre);
@@ -1425,7 +1584,6 @@ function renderSearchPage() {
             return `${base}?${params.toString()}`;
         }
         
-        // Default: show trending
         return `/trending/all/week?page=${page}`;
     }
     
@@ -1433,15 +1591,11 @@ function renderSearchPage() {
         if (isLoading) return;
         
         const endpoint = buildSearchEndpoint(page);
-        if (!endpoint) {
-            pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Type to search or use filters</div>';
-            pageLoadMoreContainer.style.display = 'none';
-            return;
-        }
+        if (!endpoint) return;
         
         isLoading = true;
         if (!append) {
-            pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-spinner fa-spin" style="margin-right:10px;"></i> Searching...</div>';
+            pageSearchResults.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i> Loading...</div>';
             currentPage = 1; 
             pageLoadMoreContainer.style.display = 'none';
         } else {
@@ -1456,7 +1610,7 @@ function renderSearchPage() {
             currentPage = page;
             
             if (items.length === 0 && !append) {
-                pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-frown-open" style="margin-right:10px;"></i>No results found</div>';
+                pageSearchResults.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-frown-open" style="margin-right:8px;"></i>No results found</div>';
                 pageLoadMoreContainer.style.display = 'none';
                 isLoading = false;
                 return;
@@ -1464,7 +1618,10 @@ function renderSearchPage() {
             
             if (!append) pageSearchResults.innerHTML = '';
             
-            items.forEach(item => {
+            // Show only first 18 items for initial load (6 rows of 3)
+            const itemsToShow = !append ? items.slice(0, 18) : items;
+            
+            itemsToShow.forEach(item => {
                 let forcedType = selectedType !== 'all' ? selectedType : (item.media_type || 'movie');
                 const card = createCard(item, forcedType, null);
                 if (card) pageSearchResults.appendChild(card);
@@ -1482,7 +1639,7 @@ function renderSearchPage() {
             isLoading = false;
         }).catch(err => {
             console.error('Search error:', err);
-            if (!append) pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;">Search error - please try again</div>';
+            if (!append) pageSearchResults.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-muted);grid-column:1/-1;">Error - please try again</div>';
             pageLoadMoreContainer.style.display = 'none';
             isLoading = false;
         });
@@ -1491,26 +1648,14 @@ function renderSearchPage() {
     pageSearchInput.addEventListener('input', function() {
         clearTimeout(appState.searchTimeout);
         appState.searchTimeout = setTimeout(() => {
-            if (pageSearchInput.value.trim().length >= 2) {
-                performSearch(1, false);
-            } else if (pageSearchInput.value.trim().length === 0) {
-                // If search is cleared, perform default search based on filters
-                performSearch(1, false);
-            } else {
-                pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Type at least 2 characters to search</div>';
-                pageLoadMoreContainer.style.display = 'none';
-            }
+            performSearch(1, false);
         }, 500);
     });
     
-    pageSearchBtn.addEventListener('click', () => {
-        performSearch(1, false);
-    });
+    pageSearchBtn.addEventListener('click', () => performSearch(1, false));
     
     pageSearchInput.addEventListener('keypress', (e) => { 
-        if (e.key === 'Enter') {
-            performSearch(1, false);
-        }
+        if (e.key === 'Enter') performSearch(1, false);
     });
     
     [searchGenreFilter, searchYearFilter, searchLanguageFilter, searchSortFilter].forEach(filter => {
@@ -1527,11 +1672,10 @@ function renderSearchPage() {
         typeFilterBtns[0].classList.add('active');
         selectedType = 'all';
         currentPage = 1;
-        // Perform default search (trending)
         performSearch(1, false);
     });
     
-    // Initial load - show trending
+    // Initial load
     performSearch(1, false);
     
     showHideFooter(); 
