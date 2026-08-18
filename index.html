@@ -85,7 +85,6 @@
         .breadcrumb .separator { color: var(--text-dim); }
         .breadcrumb .current { color: var(--text); font-weight: 600; }
 
-        /* WALL PAGE SECTIONS */
         .wall-section-group { margin-bottom: 30px; }
         .wall-section-title { font-size: 1.3rem; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 12px; letter-spacing: -0.3px; padding: 0 var(--pad); margin-bottom: 15px; }
         .wall-section-title::before { content:''; width:4px; height:22px; border-radius:2px; background: var(--red); box-shadow: 0 0 12px var(--red-glow); }
@@ -119,13 +118,22 @@
         .filter-select:hover { border-color: var(--red); }
         .filter-select:focus { border-color: var(--red); box-shadow: 0 0 10px rgba(229,9,20,0.2); }
         .filter-select option { background: #1a1a1f; }
-        .search-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-top: 20px; }
+        
+        /* FIXED: Responsive search results grid */
+        .search-results { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px; 
+            margin-top: 20px; 
+        }
+        
         .search-result-card { cursor: pointer; border-radius: 8px; overflow: hidden; background: var(--bg-card); transition: transform 0.3s, box-shadow 0.3s; text-decoration: none; color: var(--text); }
         .search-result-card:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(0,0,0,0.8), 0 0 0 2px rgba(229,9,20,0.5); }
         .search-result-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; }
         .search-result-info { padding: 10px; }
         .search-result-title { font-weight: 700; font-size: 0.85rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .search-result-meta { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
+        
         .load-more-container { text-align: center; padding: 30px 0; margin-top: 20px; position: relative; z-index: 10; }
         .load-more-btn { background: var(--red); color: #fff; border: none; padding: 14px 40px; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 8px 24px rgba(229,9,20,0.4); position: relative; z-index: 100; }
         .load-more-btn:hover { background: var(--red-dark); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(229,9,20,0.5); }
@@ -147,7 +155,12 @@
         .scroll-btn.left { left: 0; }
         .section:hover .scroll-btn, .continue-watching-section:hover .scroll-btn { opacity: 1; }
         .scroll-btn:hover { color: var(--red); }
-        .grid-wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--poster-min), 1fr)); gap: var(--gap); padding: 8px var(--pad) 20px; }
+        .grid-wall { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(var(--poster-min), 1fr)); 
+            gap: var(--gap); 
+            padding: 8px var(--pad) 20px; 
+        }
         .card { flex: 0 0 auto; width: var(--poster-min); position: relative; cursor: pointer; border-radius: 8px; overflow: hidden; background: var(--bg-card); transition: transform 0.35s cubic-bezier(0.5,0,0.1,1), box-shadow 0.35s; box-shadow: 0 4px 14px rgba(0,0,0,0.5); text-decoration: none; color: var(--text); display: block; }
         .grid-wall .card { width: 100%; }
         .card-thumb { position: relative; width: 100%; aspect-ratio: 2/3; background: #14141a; overflow: hidden; }
@@ -223,6 +236,24 @@
         .bottom-nav-item.active { color: var(--red); }
         .bottom-nav-item:hover { color: var(--text); }
         .provider-badge { display: inline-block; background: rgba(229,9,20,0.2); border: 1px solid var(--red); color: var(--red); padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; margin-right: 6px; }
+        
+        @media (max-width: 1024px) {
+            /* 3 columns on tablets */
+            .search-results { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+        }
+        
+        @media (max-width: 768px) {
+            /* 2 columns on mobile landscape/small tablets */
+            .search-results { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+            .filters-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        @media (max-width: 600px) {
+            /* 1 column on mobile portrait - FIXED */
+            .search-results { grid-template-columns: 1fr; }
+            .filters-grid { grid-template-columns: 1fr; }
+        }
+        
         @media (max-width: 900px) {
             .nav-links { display: none; }
             .hero { height: calc(78vh - var(--nav-height)); }
@@ -239,8 +270,6 @@
             .toast { bottom: 80px; }
             body { padding-bottom: var(--bottom-nav-height); }
             .page-header { padding: 15px var(--pad); }
-            .filters-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
-            .filters-section { top: calc(var(--nav-height) + 70px); }
         }
     </style>
 </head>
@@ -386,7 +415,6 @@
                 { key:'prime', title:'🎬 On Prime Video', ep:'/discover/movie?with_watch_providers=119&watch_region=IN&sort_by=popularity.desc&page=', type:'movie' },
             ];
 
-            // MOVIES/SERIES PAGE SECTIONS
             const MOVIE_SECTIONS = [
                 { title:'Popular', ep:'/movie/popular?page=', type:'movie' },
                 { title:'Top Rated', ep:'/movie/top_rated?page=', type:'movie' },
@@ -413,7 +441,6 @@
                 { title:'Reality', ep:'/discover/tv?with_genres=10764&sort_by=popularity.desc&page=', type:'tv' },
             ];
 
-            // NEW & POPULAR SECTIONS - FIXED TO USE TRENDING ALL
             const NEW_SECTIONS = [
                 { title:'🔥 Trending All (Movies & Shows)', ep:'/trending/all/week?page=', type:'mixed' },
                 { title:'🎬 Trending Movies', ep:'/trending/movie/week?page=', type:'movie' },
@@ -430,7 +457,6 @@
                 new: { title:'New & Popular', type:'mixed', icon:'fa-star', subtitle:'What\'s trending this week', sections: NEW_SECTIONS },
             };
 
-            // DUBBING OPTIONS FROM IMDB API
             const DUBBING_OPTIONS = [
                 { label: 'English', value: 'English' },
                 { label: 'Hindi', value: 'Hindi' },
@@ -575,11 +601,17 @@
                     const res = await fetch(url, { signal: controller.signal });
                     clearTimeout(timeoutId);
                     
-                    if (!res.ok) return { results: [], genres: [], total_pages: 0, page: 1 };
-                    return await res.json();
+                    if (!res.ok) {
+                        console.warn(`TMDB API Error: ${res.status} for ${endpoint}`);
+                        return { results: [], genres: [], total_pages: 0, page: 1 };
+                    }
+                    const data = await res.json();
+                    return data || { results: [], genres: [], total_pages: 0, page: 1 };
                 } catch (e) {
                     clearTimeout(timeoutId);
-                    if (e.name !== 'AbortError') console.error('TMDB Fetch Error:', e);
+                    if (e.name !== 'AbortError') {
+                        console.error('TMDB Fetch Error:', e.message);
+                    }
                     return { results: [], genres: [], total_pages: 0, page: 1 };
                 } finally {
                     appState.pendingRequests--;
@@ -606,11 +638,15 @@
                     const res = await fetch(url, { signal: controller.signal });
                     clearTimeout(timeoutId);
                     
-                    if (!res.ok) return { results: [], pager: { total_pages: 0 } };
-                    return await res.json();
+                    if (!res.ok) {
+                        console.warn(`IMDb API Error: ${res.status}`);
+                        return { results: [], pager: { total_pages: 0 } };
+                    }
+                    const data = await res.json();
+                    return data || { results: [], pager: { total_pages: 0 } };
                 } catch (e) {
                     clearTimeout(timeoutId);
-                    console.error('IMDb Fetch Error:', e);
+                    console.error('IMDb Fetch Error:', e.message);
                     return { results: [], pager: { total_pages: 0 } };
                 } finally {
                     appState.pendingRequests--;
@@ -772,7 +808,6 @@
                     e.preventDefault(); 
                     e.stopPropagation();
                     addRecent(playBtn.dataset.id, playBtn.dataset.title, playBtn.dataset.poster, playBtn.dataset.year, playBtn.dataset.type);
-                    // Support both TMDB and IMDb IDs
                     const idType = playBtn.dataset.imdb === 'true' ? 'imdb' : 'tmdb';
                     window.location.href = `/player.html?id=${playBtn.dataset.id}&type=${playBtn.dataset.type}&idType=${idType}`;
                 });
@@ -884,8 +919,6 @@
                     let data;
                     
                     if (isImdb) {
-                        // For IMDb API - we'd need a details endpoint
-                        // For now, use basic info from IMDb data
                         data = {
                             id: id,
                             title: 'IMDb Content',
@@ -1259,7 +1292,7 @@
                 updateNavActive('my-list');
             }
 
-            // ═══ SEARCH PAGE WITH DUBBING FILTER ═══
+            // ═══ SEARCH PAGE - FIXED ═══
             function renderSearchPage() {
                 teardownWall(); 
                 hideHero(); 
@@ -1333,7 +1366,7 @@
                         </div>
                     </div>
                     <div class="search-results" id="pageSearchResults">
-                        <div style="text-align:center;padding:40px;color:var(--text-muted);">Search for movies and TV shows or use filters to browse</div>
+                        <div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Search for movies and TV shows or use filters to browse</div>
                     </div>
                     <div class="load-more-container" id="pageLoadMoreContainer" style="display:none;">
                         <button class="load-more-btn" id="pageLoadMoreBtn"><i class="fas fa-plus"></i> <span>Load More</span></button>
@@ -1393,6 +1426,7 @@
                     const isImdb = searchSourceFilter.value === 'imdb';
                     searchDubbingFilter.disabled = !isImdb;
                     if (!isImdb) searchDubbingFilter.value = 'all';
+                    performSearch(1, false);
                 });
                 
                 function buildSearchEndpoint(page = 1) {
@@ -1413,9 +1447,10 @@
                     }
                     
                     // TMDB endpoints
-                    if (query.length >= 2) return { type: 'tmdb', endpoint: `/search/multi?query=${encodeURIComponent(query)}&page=${page}` };
-                    else if (hasFilters) {
-                        let base = type === 'tv' ? '/discover/tv' : '/discover/movie';
+                    if (query.length >= 2) {
+                        return { type: 'tmdb', endpoint: `/search/multi?query=${encodeURIComponent(query)}&page=${page}` };
+                    } else if (hasFilters) {
+                        let base = type === 'tv' ? '/discover/tv' : type === 'movie' ? '/discover/movie' : '/discover/movie';
                         const params = new URLSearchParams();
                         if (genre !== 'all') params.set('with_genres', genre);
                         if (year !== 'all') params.set('primary_release_year', year);
@@ -1433,14 +1468,14 @@
                     
                     const searchConfig = buildSearchEndpoint(page);
                     if (!searchConfig) {
-                        pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Type to search or use filters to browse</div>';
+                        pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Type to search or use filters to browse</div>';
                         pageLoadMoreContainer.style.display = 'none';
                         return;
                     }
                     
                     isLoading = true;
                     if (!append) {
-                        pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Searching...</div>';
+                        pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-spinner fa-spin" style="margin-right:10px;"></i> Searching...</div>';
                         currentPage = 1; 
                         pageLoadMoreContainer.style.display = 'none';
                     } else {
@@ -1472,7 +1507,7 @@
                         currentPage = page;
                         
                         if (items.length === 0 && !append) {
-                            pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">No results found</div>';
+                            pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-frown-open" style="margin-right:10px;"></i>No results found</div>';
                             pageLoadMoreContainer.style.display = 'none';
                             return;
                         }
@@ -1484,7 +1519,7 @@
                             if (card) pageSearchResults.appendChild(card);
                         });
                         
-                        if (currentPage < totalPages) {
+                        if (currentPage < totalPages && items.length > 0) {
                             pageLoadMoreContainer.style.display = 'block';
                             pageLoadMoreBtn.classList.remove('loading');
                             pageLoadMoreBtn.innerHTML = '<i class="fas fa-plus"></i> <span>Load More</span>';
@@ -1494,7 +1529,7 @@
                         }
                     }).catch(err => {
                         console.error('Search error:', err);
-                        if (!append) pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Search error</div>';
+                        if (!append) pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;">Search error - please try again</div>';
                         pageLoadMoreContainer.style.display = 'none';
                     }).finally(() => {
                         isLoading = false;
@@ -1505,15 +1540,26 @@
                 
                 pageSearchInput.addEventListener('input', function() {
                     clearTimeout(appState.searchTimeout);
-                    appState.searchTimeout = setTimeout(() => performSearch(1, false), 400);
+                    appState.searchTimeout = setTimeout(() => {
+                        if (pageSearchInput.value.trim().length >= 2) {
+                            performSearch(1, false);
+                        }
+                    }, 500);
                 });
                 
-                pageSearchBtn.addEventListener('click', () => performSearch(1, false));
+                pageSearchBtn.addEventListener('click', () => {
+                    if (pageSearchInput.value.trim().length >= 2) {
+                        performSearch(1, false);
+                    }
+                });
+                
                 pageSearchInput.addEventListener('keypress', (e) => { 
-                    if (e.key === 'Enter') performSearch(1, false); 
+                    if (e.key === 'Enter' && pageSearchInput.value.trim().length >= 2) {
+                        performSearch(1, false);
+                    }
                 });
                 
-                [searchSourceFilter, searchDubbingFilter, searchTypeFilter, searchGenreFilter, searchYearFilter, searchLanguageFilter, searchSortFilter].forEach(filter => {
+                [searchTypeFilter, searchGenreFilter, searchYearFilter, searchLanguageFilter, searchSortFilter].forEach(filter => {
                     filter.addEventListener('change', () => performSearch(1, false));
                 });
                 
@@ -1527,7 +1573,7 @@
                     searchYearFilter.value = 'all';
                     searchLanguageFilter.value = 'all';
                     searchSortFilter.value = 'popularity.desc';
-                    pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Type to search or use filters to browse</div>';
+                    pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Type to search or use filters to browse</div>';
                     pageLoadMoreContainer.style.display = 'none';
                 });
                 
