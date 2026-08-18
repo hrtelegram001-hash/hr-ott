@@ -319,28 +319,30 @@
     <script>
         'use strict';
         (function() {
-            // ═══ CANVAS STARFIELD ═══
-            const canvas = document.getElementById('starCanvas');
-            const ctx = canvas.getContext('2d');
-            let stars = [];
-            function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-            function createStars(n) { stars = []; for(let i=0;i<n;i++) stars.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*1.5+0.5, a:Math.random(), da:(Math.random()*0.04+0.008), s:Math.random()*0.06+0.02 }); }
-            createStars(150);
-            function drawStars() { ctx.clearRect(0,0,canvas.width,canvas.height); stars.forEach(s => { ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fillStyle = `rgba(255,250,255,${s.a * 0.5})`; ctx.fill(); s.a += s.da; if(s.a<=0.1 || s.a>=0.9) s.da*=-1; s.y += s.s; if(s.y>canvas.height){ s.y=0; s.x=Math.random()*canvas.width; } }); requestAnimationFrame(drawStars); }
-            drawStars();
+            // ═══ GLOBAL STATE ═══
+            let appState = {
+                watchlist: [],
+                recent: [],
+                heroMovies: [],
+                heroIdx: 0,
+                heroTimer: null,
+                currentRoute: 'home',
+                wallState: null,
+                pendingRequests: 0,
+                requestQueue: [],
+                rafId: null,
+                starAnimationRunning: true,
+                searchTimeout: null,
+                inactivityTimeout: null,
+                activeControllers: [] // Track all AbortControllers
+            };
 
-            // ═══ CURSOR GLOW ═══
-            const cursorGlow = document.getElementById('cursorGlow');
-            let rafId=null, mx=0, my=0;
-            document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; if(!rafId) rafId = requestAnimationFrame(()=>{ cursorGlow.style.transform = `translate(${mx}px, ${my}px)`; rafId=null; }); });
-
-            // ═══ API CONFIG ═══
             const TMDB_KEY = '3a87b1db63bc74b8e3fe9266ddc75b30';
             const TMDB_BASE = 'https://api.themoviedb.org/3';
             const TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
             const TMDB_BACK = 'https://image.tmdb.org/t/p/original';
+            const MAX_CONCURRENT_REQUESTS = 6;
+            const FETCH_TIMEOUT_MS = 12000;
 
             const HOME_ROWS = [
                 { key:'trending', title:'Trending Now', ep:'/trending/movie/week?page=', type:'movie', hero:true },
@@ -362,90 +364,241 @@
                 { key:'animation', title:'Animation', ep:'/discover/movie?with_genres=16&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'realitytv', title:'Reality & Talk Shows', ep:'/discover/tv?with_genres=10764,10767&sort_by=popularity.desc&page=', type:'tv' },
             ];
+            
             const WALLS = {
                 movies: { title:'Movies', ep:'/discover/movie?sort_by=popularity.desc&vote_count.gte=50&page=', type:'movie', icon:'fa-film', subtitle:'Browse all movies in our collection' },
                 tv: { title:'TV Shows', ep:'/discover/tv?sort_by=popularity.desc&vote_count.gte=50&page=', type:'tv', icon:'fa-tv', subtitle:'Discover amazing TV series' },
                 new: { title:'New & Popular', ep:'/trending/all/week?page=', type:'mixed', icon:'fa-star', subtitle:'What\'s trending this week' },
             };
 
-            let watchlist=[], recent=[], heroMovies=[], heroIdx=0, heroTimer;
-            let wallState = null;
-            let currentRoute = 'home';
             let allGenres = [];
             let allLanguages = [];
             let allCountries = [];
 
+            // ═══ CANVAS STARFIELD ═══
+            const canvas = document.getElementById('starCanvas');
+            const ctx = canvas.getContext('2d');
+            let stars = [];
+
+            function resizeCanvas() { 
+                canvas.width = window.innerWidth; 
+                canvas.height = window.innerHeight; 
+            }
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            function createStars(n) { 
+                stars = []; 
+                for(let i=0; i<n; i++) {
+                    stars.push({ 
+                        x: Math.random() * canvas.width, 
+                        y: Math.random() * canvas.height, 
+                        r: Math.random() * 1.5 + 0.5, 
+                        a: Math.random(), 
+                        da: (Math.random() * 0.04 + 0.008), 
+                        s: Math.random() * 0.06 + 0.02 
+                    }); 
+                }
+            }
+            
+            createStars(150);
+
+            function drawStars() { 
+                if (!appState.starAnimationRunning) {
+                    // Still request frame but don't draw
+                    appState.rafId = requestAnimationFrame(drawStars);
+                    return;
+                }
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                stars.forEach(s => { 
+                    ctx.beginPath(); 
+                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); 
+                    ctx.fillStyle = `rgba(255,250,255,${s.a * 0.5})`; 
+                    ctx.fill(); 
+                    s.a += s.da; 
+                    if(s.a <= 0.1 || s.a >= 0.9) s.da *= -1; 
+                    s.y += s.s; 
+                    if(s.y > canvas.height){ 
+                        s.y = 0; 
+                        s.x = Math.random() * canvas.width; 
+                    } 
+                }); 
+                appState.rafId = requestAnimationFrame(drawStars); 
+            }
+            
+            drawStars();
+
+            // ═══ INACTIVITY TIMER ═══
+            function resetInactivityTimer() {
+                clearTimeout(appState.inactivityTimeout);
+                appState.starAnimationRunning = true;
+                appState.inactivityTimeout = setTimeout(() => { 
+                    appState.starAnimationRunning = false; 
+                }, 45000); // Stop after 45 seconds of inactivity
+            }
+            
+            document.addEventListener('mousemove', resetInactivityTimer);
+            document.addEventListener('click', resetInactivityTimer);
+            document.addEventListener('scroll', resetInactivityTimer);
+
+            // ═══ CURSOR GLOW ═══
+            const cursorGlow = document.getElementById('cursorGlow');
+            let mx = 0, my = 0;
+            document.addEventListener('mousemove', e => { 
+                mx = e.clientX; 
+                my = e.clientY; 
+                if(!appState.rafId) {
+                    appState.rafId = requestAnimationFrame(() => { 
+                        cursorGlow.style.transform = `translate(${mx}px, ${my}px)`; 
+                        appState.rafId = null; 
+                    }); 
+                }
+            });
+
             // ═══ STORAGE ═══
             function loadStorage() { 
                 try { 
-                    watchlist = JSON.parse(localStorage.HR_wl||'[]'); 
-                    recent = JSON.parse(localStorage.HR_rec||'[]');
-                } catch(e){ watchlist=[]; recent=[]; } 
+                    appState.watchlist = JSON.parse(localStorage.HR_wl || '[]'); 
+                    appState.recent = JSON.parse(localStorage.HR_rec || '[]');
+                } catch(e) { 
+                    appState.watchlist = []; 
+                    appState.recent = []; 
+                } 
             }
-            function saveWl(){ localStorage.HR_wl = JSON.stringify(watchlist); updateWatchlistBadge(); }
-            function saveRec(){ localStorage.HR_rec = JSON.stringify(recent); }
+
+            function saveWl() { 
+                localStorage.HR_wl = JSON.stringify(appState.watchlist); 
+                updateWatchlistBadge(); 
+            }
+
+            function saveRec() { 
+                localStorage.HR_rec = JSON.stringify(appState.recent); 
+            }
+
             function updateWatchlistBadge() {
                 const badge = document.getElementById('watchlistBadge');
                 if (badge) {
-                    badge.textContent = watchlist.length;
-                    badge.classList.toggle('visible', watchlist.length > 0);
+                    badge.textContent = appState.watchlist.length;
+                    badge.classList.toggle('visible', appState.watchlist.length > 0);
                 }
             }
 
             // ═══ HELPERS ═══
             async function tmdbFetch(endpoint) {
+                // Queue if too many requests
+                while (appState.pendingRequests >= MAX_CONCURRENT_REQUESTS) {
+                    await new Promise(resolve => appState.requestQueue.push(resolve));
+                }
+                
+                appState.pendingRequests++;
                 const sep = endpoint.includes('?') ? '&' : '?';
                 const url = `${TMDB_BASE}${endpoint}${sep}api_key=${TMDB_KEY}`;
+                
+                const controller = new AbortController();
+                appState.activeControllers.push(controller);
+                const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+                
                 try {
-                    const res = await fetch(url);
+                    const res = await fetch(url, { signal: controller.signal });
+                    clearTimeout(timeoutId);
+                    
                     if (!res.ok) return { results: [], genres: [], total_pages: 0, page: 1 };
                     return await res.json();
-                } catch (e) { return { results: [], genres: [], total_pages: 0, page: 1 }; }
+                } catch (e) {
+                    clearTimeout(timeoutId);
+                    if (e.name !== 'AbortError') console.error('TMDB Fetch Error:', e);
+                    return { results: [], genres: [], total_pages: 0, page: 1 };
+                } finally {
+                    appState.pendingRequests--;
+                    appState.activeControllers = appState.activeControllers.filter(c => c !== controller);
+                    const resolve = appState.requestQueue.shift();
+                    if (resolve) resolve();
+                }
             }
-            function esc(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
-            function toast(msg){ const t=document.createElement('div'); t.className='toast show'; t.innerHTML=`<i class="fas fa-check-circle" style="color:#46d369"></i> ${msg}`; document.body.appendChild(t); setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=>t.remove(), 400); },2200); }
-            function getTitle(item) { return item.title || item.name || 'Untitled'; }
-            function getYear(item) { return (item.release_date || item.first_air_date || '').substring(0,4); }
-            function getMediaType(item, forcedType) { return forcedType || item.media_type || 'movie'; }
+
+            function esc(s) { 
+                const d = document.createElement('div'); 
+                d.textContent = s; 
+                return d.innerHTML; 
+            }
+
+            function toast(msg) { 
+                const t = document.createElement('div'); 
+                t.className = 'toast show'; 
+                t.innerHTML = `<i class="fas fa-check-circle" style="color:#46d369"></i> ${msg}`; 
+                document.body.appendChild(t); 
+                setTimeout(() => { 
+                    t.classList.remove('show'); 
+                    setTimeout(() => t.remove(), 400); 
+                }, 2200); 
+            }
+
+            function getTitle(item) { 
+                return item.title || item.name || 'Untitled'; 
+            }
+
+            function getYear(item) { 
+                return (item.release_date || item.first_air_date || '').substring(0, 4); 
+            }
+
+            function getMediaType(item, forcedType) { 
+                return forcedType || item.media_type || 'movie'; 
+            }
 
             // ═══ LOAD CONFIG ═══
             async function loadConfiguration() {
                 try {
                     const movieGenres = await tmdbFetch('/genre/movie/list');
                     const tvGenres = await tmdbFetch('/genre/tv/list');
-                    const combined = [...(movieGenres.genres||[]), ...(tvGenres.genres||[])];
-                    allGenres = combined.filter((v,i,a)=>a.findIndex(t=>t.id===v.id)===i);
+                    const combined = [...(movieGenres.genres || []), ...(tvGenres.genres || [])];
+                    allGenres = combined.filter((v, i, a) => a.findIndex(t => t.id === v.id) === i);
+                    
                     const langData = await tmdbFetch('/configuration/languages');
                     allLanguages = langData || [];
+                    
                     const countryData = await tmdbFetch('/configuration/countries');
                     allCountries = countryData || [];
-                } catch(e) { allGenres = []; allLanguages = []; allCountries = []; }
+                } catch(e) { 
+                    console.error('Config load error:', e);
+                    allGenres = []; 
+                    allLanguages = []; 
+                    allCountries = []; 
+                }
             }
 
             // ═══ CREATE CARD ═══
-            function createCard(item, forcedType, progress){
+            function createCard(item, forcedType, progress) {
                 const type = getMediaType(item, forcedType);
                 if(type !== 'movie' && type !== 'tv') return null;
+                
                 const posterPath = item.poster_path ? TMDB_IMG + item.poster_path : (item.backdrop_path ? TMDB_IMG + item.backdrop_path : '');
                 const title = getTitle(item);
                 const year = getYear(item);
-                const rating = item.vote_average?Number(item.vote_average).toFixed(1):'?';
+                const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '?';
                 const match = item.vote_average ? Math.round(item.vote_average * 10) : 0;
                 const id = item.id;
                 const top = item.vote_average >= 8;
+                
                 const card = document.createElement('a');
-                card.className='card'; card.href = 'javascript:void(0)';
-                card.dataset.id = id; card.dataset.type = type; card.dataset.title = title;
-                card.dataset.poster = posterPath; card.dataset.year = year;
+                card.className = 'card'; 
+                card.href = 'javascript:void(0)';
+                card.dataset.id = id; 
+                card.dataset.type = type; 
+                card.dataset.title = title;
+                card.dataset.poster = posterPath; 
+                card.dataset.year = year;
+                
                 card.innerHTML = `
                     <div class="card-thumb">
                         <img src="${posterPath}" loading="lazy" alt="${esc(title)}" onerror="this.style.background='#1a1a20';this.style.opacity='0';">
                         <div class="card-rating"><i class="fas fa-star"></i>${rating}</div>
-                        ${top?'<div class="card-toplist">Top</div>':''}
+                        ${top ? '<div class="card-toplist">Top</div>' : ''}
                         ${progress ? `<div class="progress-bar" style="width:${progress}%"></div>` : ''}
                         <div class="card-overlay">
                             <div class="card-name">${esc(title)}</div>
-                            <div class="card-sub"><span class="match">${match}% Match</span><span>${year||''}</span><span>${type === 'movie' ? 'Movie' : 'TV'}</span></div>
+                            <div class="card-sub"><span class="match">${match}% Match</span><span>${year || ''}</span><span>${type === 'movie' ? 'Movie' : 'TV'}</span></div>
                             <div class="card-buttons">
                                 <button class="circle-btn play-btn" data-play data-id="${id}" data-type="${type}" data-title="${esc(title)}" data-poster="${posterPath}" data-year="${year}" title="Play"><i class="fas fa-play"></i></button>
                                 <button class="circle-btn card-heart" data-heart data-id="${id}" title="My List"><i class="far fa-heart"></i></button>
@@ -453,56 +606,92 @@
                             </div>
                         </div>
                     </div>`;
-                card.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); openMovieModal(id, type); });
+                
+                card.addEventListener('click', (e) => { 
+                    e.preventDefault(); 
+                    e.stopPropagation(); 
+                    openMovieModal(id, type); 
+                });
+                
                 const playBtn = card.querySelector('[data-play]');
                 if (playBtn) playBtn.addEventListener('click', (e) => {
-                    e.preventDefault(); e.stopPropagation();
+                    e.preventDefault(); 
+                    e.stopPropagation();
                     addRecent(playBtn.dataset.id, playBtn.dataset.title, playBtn.dataset.poster, playBtn.dataset.year, playBtn.dataset.type);
                     window.location.href = `/player.html?id=${playBtn.dataset.id}&type=${playBtn.dataset.type}`;
                 });
+                
                 const heartBtn = card.querySelector('[data-heart]');
                 if (heartBtn) heartBtn.addEventListener('click', (e) => {
-                    e.preventDefault(); e.stopPropagation();
+                    e.preventDefault(); 
+                    e.stopPropagation();
                     toggleWl(heartBtn.dataset.id, card.dataset.title, card.dataset.poster, card.dataset.year, card.dataset.type);
                     updateHeart(card, heartBtn.dataset.id);
                 });
+                
                 const infoBtn = card.querySelector('[data-info]');
                 if (infoBtn) infoBtn.addEventListener('click', (e) => {
-                    e.preventDefault(); e.stopPropagation();
+                    e.preventDefault(); 
+                    e.stopPropagation();
                     openMovieModal(infoBtn.dataset.id, infoBtn.dataset.type);
                 });
+                
                 updateHeart(card, id);
                 return card;
             }
 
-            function updateHeart(card, id){ const i = card.querySelector('.card-heart i'); if (i) i.className = watchlist.some(w=>w.id==id) ? 'fas fa-heart' : 'far fa-heart'; }
-            function refreshHearts(){ document.querySelectorAll('.card').forEach(c=>updateHeart(c,c.dataset.id)); }
-            function toggleWl(id,title,poster,year,type){
-                const idx=watchlist.findIndex(w=>w.id==id);
-                if(idx>=0){ watchlist.splice(idx,1); toast('Removed from My List'); }
-                else { watchlist.push({id,title,poster,year,type}); toast('Added to My List'); }
+            function updateHeart(card, id) { 
+                const i = card.querySelector('.card-heart i'); 
+                if (i) i.className = appState.watchlist.some(w => w.id == id) ? 'fas fa-heart' : 'far fa-heart'; 
+            }
+
+            function refreshHearts() { 
+                document.querySelectorAll('.card').forEach(c => updateHeart(c, c.dataset.id)); 
+            }
+
+            function toggleWl(id, title, poster, year, type) {
+                const idx = appState.watchlist.findIndex(w => w.id == id);
+                if(idx >= 0) { 
+                    appState.watchlist.splice(idx, 1); 
+                    toast('Removed from My List'); 
+                } else { 
+                    appState.watchlist.push({id, title, poster, year, type}); 
+                    toast('Added to My List'); 
+                }
                 saveWl();
+                
                 const navIcon = document.getElementById('watchlistBtnNav').querySelector('i');
-                if (navIcon) navIcon.className = watchlist.length > 0 ? 'fas fa-heart' : 'fas fa-bell';
+                if (navIcon) navIcon.className = appState.watchlist.length > 0 ? 'fas fa-heart' : 'fas fa-bell';
+                
                 refreshHearts();
-                if (currentRoute === 'my-list') renderMyList();
+                if (appState.currentRoute === 'my-list') renderMyList();
             }
-            function addRecent(id,title,poster,year,type){
-                recent=recent.filter(r=>r.id!=id);
-                recent.unshift({id,title,poster,year,type, progress: Math.floor(Math.random()*80)+10});
-                if(recent.length>12) recent.pop();
-                saveRec(); renderContinueWatching();
+
+            function addRecent(id, title, poster, year, type) {
+                appState.recent = appState.recent.filter(r => r.id != id);
+                appState.recent.unshift({id, title, poster, year, type, progress: Math.floor(Math.random() * 80) + 10});
+                if(appState.recent.length > 12) appState.recent.pop();
+                saveRec(); 
+                renderContinueWatching();
             }
-            function renderContinueWatching(){
+
+            function renderContinueWatching() {
                 const section = document.getElementById('continueWatchingSection');
                 const grid = document.getElementById('recentGrid');
                 if (!section || !grid) return;
-                if (recent.length === 0 || currentRoute !== 'home') { section.classList.remove('visible'); return; }
+                
+                if (appState.recent.length === 0 || appState.currentRoute !== 'home') { 
+                    section.classList.remove('visible'); 
+                    return; 
+                }
+                
                 section.classList.add('visible');
                 grid.innerHTML = '';
-                recent.slice(0, 10).forEach(r => {
+                
+                appState.recent.slice(0, 10).forEach(r => {
                     const c = createCard({ id: r.id, title: r.title, poster_path: null, backdrop_path: null, release_date: (r.year || '') + '-01-01', vote_average: 0 }, r.type, r.progress);
                     if (!c) return;
+                    
                     const img = c.querySelector('img');
                     if (r.poster) img.src = r.poster;
                     c.querySelector('.card-rating').innerHTML = '<i class="fas fa-clock"></i>';
@@ -520,7 +709,9 @@
             async function openMovieModal(id, type) {
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden';
-                currentModalId = id; currentModalType = type;
+                currentModalId = id; 
+                currentModalType = type;
+                
                 document.getElementById('modalBackdrop').src = '';
                 document.getElementById('modalTitle').textContent = 'Loading...';
                 document.getElementById('modalDesc').textContent = '';
@@ -528,32 +719,46 @@
                 document.getElementById('modalCast').textContent = '-';
                 document.getElementById('modalGenres').textContent = '-';
                 document.getElementById('modalType').textContent = type === 'movie' ? 'Movie' : 'TV Show';
+                
                 updateModalWatchlistBtn();
+                
                 try {
                     const endpoint = type === 'movie' ? `/movie/${id}?append_to_response=credits` : `/tv/${id}?append_to_response=credits`;
                     const data = await tmdbFetch(endpoint);
-                    if (!data || !data.id) { document.getElementById('modalTitle').textContent = 'Not Found'; return; }
+                    
+                    if (!data || !data.id) { 
+                        document.getElementById('modalTitle').textContent = 'Not Found'; 
+                        return; 
+                    }
+                    
                     currentModalTitle = getTitle(data);
                     currentModalYear = getYear(data);
                     currentModalPoster = data.poster_path ? TMDB_IMG + data.poster_path : '';
+                    
                     const rating = data.vote_average ? Number(data.vote_average).toFixed(1) : '?';
                     const match = data.vote_average ? Math.round(data.vote_average * 10) : 0;
                     const runtime = data.runtime || (data.episode_run_time && data.episode_run_time[0]) || '?';
                     const backdrop = data.backdrop_path ? TMDB_BACK + data.backdrop_path : (data.poster_path ? TMDB_IMG + data.poster_path : '');
                     const cast = data.credits && data.credits.cast ? data.credits.cast.slice(0, 5).map(c => c.name).join(', ') : 'N/A';
                     const genres = data.genres ? data.genres.map(g => g.name).join(', ') : 'N/A';
+                    
                     document.getElementById('modalBackdrop').src = backdrop;
                     document.getElementById('modalTitle').textContent = currentModalTitle;
                     document.getElementById('modalDesc').textContent = data.overview || 'No description available.';
                     document.getElementById('modalMeta').innerHTML = `<span class="match" style="color: var(--green); font-weight: 700;">${match}% Match</span><span>${currentModalYear}</span><span class="maturity-badge">${rating}</span><span>${runtime} min</span>`;
                     document.getElementById('modalCast').textContent = cast;
                     document.getElementById('modalGenres').textContent = genres;
+                    
                     modalPlayBtn.href = `/player.html?id=${id}&type=${type}`;
                     updateModalWatchlistBtn();
-                } catch (error) { document.getElementById('modalTitle').textContent = 'Error loading details'; }
+                } catch (error) { 
+                    console.error('Modal error:', error);
+                    document.getElementById('modalTitle').textContent = 'Error loading details'; 
+                }
             }
+
             function updateModalWatchlistBtn() {
-                if (watchlist.some(w=>w.id==currentModalId)) {
+                if (appState.watchlist.some(w => w.id == currentModalId)) {
                     modalWatchlistBtn.innerHTML = '<i class="fas fa-check"></i> In Watchlist';
                     modalWatchlistBtn.style.background = 'var(--red)';
                 } else {
@@ -561,40 +766,66 @@
                     modalWatchlistBtn.style.background = 'rgba(229,9,20,0.2)';
                 }
             }
+
             modalPlayBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 addRecent(currentModalId, currentModalTitle, currentModalPoster, currentModalYear, currentModalType);
                 window.location.href = `/player.html?id=${currentModalId}&type=${currentModalType}`;
             });
+
             modalWatchlistBtn.addEventListener('click', () => {
-                if (watchlist.some(w=>w.id==currentModalId)) { watchlist = watchlist.filter(w=>w.id!=currentModalId); toast('Removed from My List'); }
-                else { watchlist.push({id:currentModalId, title:currentModalTitle, poster:currentModalPoster, year:currentModalYear, type:currentModalType}); toast('Added to My List'); }
-                saveWl(); refreshHearts(); updateModalWatchlistBtn();
+                if (appState.watchlist.some(w => w.id == currentModalId)) { 
+                    appState.watchlist = appState.watchlist.filter(w => w.id != currentModalId); 
+                    toast('Removed from My List'); 
+                } else { 
+                    appState.watchlist.push({id: currentModalId, title: currentModalTitle, poster: currentModalPoster, year: currentModalYear, type: currentModalType}); 
+                    toast('Added to My List'); 
+                }
+                saveWl(); 
+                refreshHearts(); 
+                updateModalWatchlistBtn();
             });
-            function closeModal() { modal.classList.remove('active'); document.body.style.overflow = ''; }
+
+            function closeModal() { 
+                modal.classList.remove('active'); 
+                document.body.style.overflow = ''; 
+            }
+
             modalClose.addEventListener('click', closeModal);
-            modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
-            document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && modal.classList.contains('active')) closeModal(); });
+            modal.addEventListener('click', (e) => { 
+                if(e.target === modal) closeModal(); 
+            });
+            document.addEventListener('keydown', (e) => { 
+                if(e.key === 'Escape' && modal.classList.contains('active')) closeModal(); 
+            });
 
             // ═══ HERO ═══
-            function buildHero(movies){
-                heroMovies = movies.filter(m=>m.backdrop_path).slice(0,6);
-                const heroEl=document.getElementById('hero');
+            function buildHero(movies) {
+                appState.heroMovies = movies.filter(m => m.backdrop_path).slice(0, 6);
+                const heroEl = document.getElementById('hero');
                 heroEl.innerHTML = '<div class="hero-dots" id="heroDots"></div>';
                 const dotsEl = document.getElementById('heroDots');
-                if(heroMovies.length===0){ heroEl.style.display='none'; return; }
-                heroEl.style.display='block';
-                heroMovies.forEach((m,i)=>{
-                    const slide=document.createElement('div');
-                    slide.className='hero-slide'+(i===0?' active':'');
-                    slide.style.backgroundImage=`url(${TMDB_BACK+m.backdrop_path})`;
+                
+                if(appState.heroMovies.length === 0) { 
+                    heroEl.style.display = 'none'; 
+                    return; 
+                }
+                
+                heroEl.style.display = 'block';
+                
+                appState.heroMovies.forEach((m, i) => {
+                    const slide = document.createElement('div');
+                    slide.className = 'hero-slide' + (i === 0 ? ' active' : '');
+                    slide.style.backgroundImage = `url(${TMDB_BACK + m.backdrop_path})`;
+                    
                     const title = esc(getTitle(m));
                     const year = getYear(m);
                     const type = getMediaType(m, null);
-                    const rating = m.vote_average?Number(m.vote_average).toFixed(1):'?';
+                    const rating = m.vote_average ? Number(m.vote_average).toFixed(1) : '?';
                     const match = m.vote_average ? Math.round(m.vote_average * 10) : 0;
-                    const inWatchlist = watchlist.some(w=>w.id==m.id);
-                    slide.innerHTML=`
+                    const inWatchlist = appState.watchlist.some(w => w.id == m.id);
+                    
+                    slide.innerHTML = `
                         <div class="hero-overlay"></div>
                         <div class="hero-content">
                             <div class="hero-label">H R O T T P R E S E N T</div>
@@ -606,24 +837,64 @@
                             </div>
                             <div class="hero-buttons">
                                 <a class="hero-watch" href="/player.html?id=${m.id}&type=${type}"><i class="fas fa-play"></i> Play Now</a>
-                                <button class="hero-watchlist-btn ${inWatchlist?'active':''}" data-id="${m.id}" data-title="${esc(title)}" data-poster="${m.poster_path?TMDB_IMG+m.poster_path:''}" data-year="${year}" data-type="${type}"><i class="fas ${inWatchlist?'fa-check':'fa-plus'}"></i> ${inWatchlist?'In Watchlist':'Add to Watchlist'}</button>
+                                <button class="hero-watchlist-btn ${inWatchlist ? 'active' : ''}" data-id="${m.id}" data-title="${esc(title)}" data-poster="${m.poster_path ? TMDB_IMG + m.poster_path : ''}" data-year="${year}" data-type="${type}"><i class="fas ${inWatchlist ? 'fa-check' : 'fa-plus'}"></i> ${inWatchlist ? 'In Watchlist' : 'Add to Watchlist'}</button>
                                 <button class="hero-info" data-id="${m.id}" data-type="${type}"><i class="fas fa-info-circle"></i> More Info</button>
                             </div>
                         </div>`;
+                    
                     heroEl.appendChild(slide);
-                    const dot=document.createElement('div');
-                    dot.className='hero-dot'+(i===0?' active':'');
-                    dot.addEventListener('click',()=>goHero(i));
+                    
+                    const dot = document.createElement('div');
+                    dot.className = 'hero-dot' + (i === 0 ? ' active' : '');
+                    dot.addEventListener('click', () => goHero(i));
                     dotsEl.appendChild(dot);
                 });
-                heroEl.querySelectorAll('.hero-watchlist-btn').forEach(btn => btn.addEventListener('click', e => { e.stopPropagation(); toggleWl(btn.dataset.id, btn.dataset.title, btn.dataset.poster, btn.dataset.year, btn.dataset.type); const inWl = watchlist.some(w=>w.id==btn.dataset.id); btn.classList.toggle('active', inWl); btn.innerHTML = `<i class="fas ${inWl?'fa-check':'fa-plus'}"></i> ${inWl?'In Watchlist':'Add to Watchlist'}`; }));
-                heroEl.querySelectorAll('.hero-info').forEach(btn => btn.addEventListener('click', e => { e.stopPropagation(); openMovieModal(btn.dataset.id, btn.dataset.type); }));
-                heroIdx=0; startHeroAuto();
+                
+                heroEl.querySelectorAll('.hero-watchlist-btn').forEach(btn => btn.addEventListener('click', e => { 
+                    e.stopPropagation(); 
+                    toggleWl(btn.dataset.id, btn.dataset.title, btn.dataset.poster, btn.dataset.year, btn.dataset.type); 
+                    const inWl = appState.watchlist.some(w => w.id == btn.dataset.id); 
+                    btn.classList.toggle('active', inWl); 
+                    btn.innerHTML = `<i class="fas ${inWl ? 'fa-check' : 'fa-plus'}"></i> ${inWl ? 'In Watchlist' : 'Add to Watchlist'}`; 
+                }));
+                
+                heroEl.querySelectorAll('.hero-info').forEach(btn => btn.addEventListener('click', e => { 
+                    e.stopPropagation(); 
+                    openMovieModal(btn.dataset.id, btn.dataset.type); 
+                }));
+                
+                appState.heroIdx = 0; 
+                startHeroAuto();
             }
-            function goHero(i){ const slides=document.querySelectorAll('#hero .hero-slide'), dots=document.querySelectorAll('#hero .hero-dot'); if(!slides.length) return; slides[heroIdx]?.classList.remove('active'); dots[heroIdx]?.classList.remove('active'); heroIdx=i; slides[heroIdx]?.classList.add('active'); dots[heroIdx]?.classList.add('active'); }
-            function startHeroAuto(){ if(heroTimer) clearInterval(heroTimer); if(heroMovies.length>1) heroTimer=setInterval(()=>{ const slides=document.querySelectorAll('#hero .hero-slide'); if(slides.length) goHero((heroIdx+1)%slides.length); },8000); }
-            function hideHero(){ if(heroTimer) clearInterval(heroTimer); document.getElementById('hero').style.display='none'; }
-            function showHero(){ document.getElementById('hero').style.display='block'; }
+
+            function goHero(i) { 
+                const slides = document.querySelectorAll('#hero .hero-slide'), dots = document.querySelectorAll('#hero .hero-dot'); 
+                if(!slides.length) return; 
+                slides[appState.heroIdx]?.classList.remove('active'); 
+                dots[appState.heroIdx]?.classList.remove('active'); 
+                appState.heroIdx = i; 
+                slides[appState.heroIdx]?.classList.add('active'); 
+                dots[appState.heroIdx]?.classList.add('active'); 
+            }
+
+            function startHeroAuto() { 
+                if(appState.heroTimer) clearInterval(appState.heroTimer); 
+                if(appState.heroMovies.length > 1) {
+                    appState.heroTimer = setInterval(() => { 
+                        const slides = document.querySelectorAll('#hero .hero-slide'); 
+                        if(slides.length) goHero((appState.heroIdx + 1) % slides.length); 
+                    }, 8000); 
+                }
+            }
+
+            function hideHero() { 
+                if(appState.heroTimer) clearInterval(appState.heroTimer); 
+                document.getElementById('hero').style.display = 'none'; 
+            }
+
+            function showHero() { 
+                document.getElementById('hero').style.display = 'block'; 
+            }
 
             // ═══ PAGE HEADER ═══
             function createPageHeader(title, icon, subtitle) {
@@ -639,36 +910,51 @@
                         <h1 class="page-title"><i class="fas ${icon}"></i> ${title}</h1>
                         <p class="page-subtitle">${subtitle}</p>
                     </div>`;
-                header.querySelector('[data-route="home"]').addEventListener('click', (e) => { e.preventDefault(); navigateTo('home'); });
+                header.querySelector('[data-route="home"]').addEventListener('click', (e) => { 
+                    e.preventDefault(); 
+                    navigateTo('home'); 
+                });
                 return header;
             }
 
             // ═══ HOME ═══
-            function createRowSection(cfg){
-                const sec=document.createElement('div'); sec.className='section';
-                sec.innerHTML=`<h2 class="section-title">${cfg.title}</h2><div class="row-scroll-area"><button class="scroll-btn left"><i class="fas fa-chevron-left"></i></button><div class="row-track" id="grid-${cfg.key}"></div><button class="scroll-btn right"><i class="fas fa-chevron-right"></i></button></div>`;
+            function createRowSection(cfg) {
+                const sec = document.createElement('div'); 
+                sec.className = 'section';
+                sec.innerHTML = `<h2 class="section-title">${cfg.title}</h2><div class="row-scroll-area"><button class="scroll-btn left"><i class="fas fa-chevron-left"></i></button><div class="row-track" id="grid-${cfg.key}"></div><button class="scroll-btn right"><i class="fas fa-chevron-right"></i></button></div>`;
+                
                 const track = sec.querySelector('.row-track');
                 sec.querySelector('.scroll-btn.left').addEventListener('click', () => track.scrollBy({ left: -track.clientWidth * 0.85, behavior: 'smooth' }));
                 sec.querySelector('.scroll-btn.right').addEventListener('click', () => track.scrollBy({ left: track.clientWidth * 0.85, behavior: 'smooth' }));
+                
                 return sec;
             }
-            async function renderHome(){
-                teardownWall(); showHero(); currentRoute = 'home';
-                const container=document.getElementById('sectionsContainer'); container.innerHTML='';
+
+            async function renderHome() {
+                teardownWall(); 
+                showHero(); 
+                appState.currentRoute = 'home';
+                
+                const container = document.getElementById('sectionsContainer'); 
+                container.innerHTML = '';
                 document.getElementById('mainContent').classList.remove('no-hero');
-                HOME_ROWS.forEach(c=>container.appendChild(createRowSection(c)));
+                
+                HOME_ROWS.forEach(c => container.appendChild(createRowSection(c)));
                 renderContinueWatching();
                 
-                // Load rows in batches for better performance
+                // Load rows in batches
                 const batchSize = 4;
                 for(let i = 0; i < HOME_ROWS.length; i += batchSize) {
                     const batch = HOME_ROWS.slice(i, i + batchSize);
                     const proms = batch.map(async c => {
                         try {
                             const d = await tmdbFetch(c.ep + '1');
-                            return {cfg:c, data:(d.results||[]).filter(m=>m.poster_path||m.backdrop_path)};
-                        } catch(e) { return {cfg:c, data:[]}; }
+                            return {cfg: c, data: (d.results || []).filter(m => m.poster_path || m.backdrop_path)};
+                        } catch(e) { 
+                            return {cfg: c, data: []}; 
+                        }
                     });
+                    
                     const results = await Promise.all(proms);
                     results.forEach(r => {
                         const grid = document.getElementById('grid-' + r.cfg.key);
@@ -681,8 +967,9 @@
                     
                     // Build hero from first batch
                     if(i === 0) {
-                        const heroRow = results.find(r=>r.cfg.hero);
-                        if(heroRow && heroRow.data.length) buildHero(heroRow.data); else hideHero();
+                        const heroRow = results.find(r => r.cfg.hero);
+                        if(heroRow && heroRow.data.length) buildHero(heroRow.data); 
+                        else hideHero();
                     }
                 }
                 
@@ -690,72 +977,143 @@
                 updateNavActive('home');
             }
 
-            function teardownWall(){ if(wallState && wallState.observer) wallState.observer.disconnect(); wallState = null; }
+            function teardownWall() { 
+                if(appState.wallState && appState.wallState.observer) {
+                    appState.wallState.observer.disconnect();
+                    appState.wallState.observer = null;
+                }
+                appState.wallState = null; 
+            }
 
             // ═══ WALL PAGES ═══
-            async function renderWall(catKey){
-                teardownWall(); hideHero();
+            async function renderWall(catKey) {
+                teardownWall(); 
+                hideHero();
+                
                 const routeMap = { movies: 'movies', tv: 'series', new: 'new' };
-                currentRoute = routeMap[catKey] || catKey;
+                appState.currentRoute = routeMap[catKey] || catKey;
                 renderContinueWatching();
+                
                 const cfg = WALLS[catKey];
-                const container=document.getElementById('sectionsContainer');
+                const container = document.getElementById('sectionsContainer');
                 document.getElementById('mainContent').classList.add('no-hero');
                 container.innerHTML = '';
                 container.appendChild(createPageHeader(cfg.title, cfg.icon, cfg.subtitle));
+                
                 const wallSection = document.createElement('div');
                 wallSection.className = 'section';
                 wallSection.innerHTML = `<div class="grid-wall" id="wallGrid"></div><div class="grid-loader" id="wallLoader"><i class="fas fa-circle-notch fa-spin"></i> Loading…</div><div class="grid-sentinel" id="wallSentinel"></div>`;
                 container.appendChild(wallSection);
-                wallState = { page:0, ep:cfg.ep, type:cfg.type, loading:false, ended:false, observer:null };
+                
+                appState.wallState = { page: 0, ep: cfg.ep, type: cfg.type, loading: false, ended: false, observer: null };
                 await loadWallPage();
-                if(wallState){ const sentinel = document.getElementById('wallSentinel'); wallState.observer = new IntersectionObserver(entries=>{ if(entries[0].isIntersecting) loadWallPage(); },{ rootMargin:'600px' }); wallState.observer.observe(sentinel); }
-                showHideFooter(); updateNavActive(currentRoute);
+                
+                if(appState.wallState) { 
+                    const sentinel = document.getElementById('wallSentinel'); 
+                    if (sentinel) {
+                        appState.wallState.observer = new IntersectionObserver(entries => { 
+                            if(entries[0].isIntersecting) loadWallPage(); 
+                        }, { rootMargin: '600px' }); 
+                        appState.wallState.observer.observe(sentinel); 
+                    }
+                }
+                
+                showHideFooter(); 
+                updateNavActive(appState.currentRoute);
             }
-            async function loadWallPage(){
-                if(!wallState || wallState.loading || wallState.ended) return;
-                wallState.loading = true;
-                const grid=document.getElementById('wallGrid'); const loader=document.getElementById('wallLoader');
-                const page = wallState.page + 1;
-                try{
-                    const data = await tmdbFetch(wallState.ep + page);
-                    const results = (data.results||[]).filter(m=>m.poster_path);
-                    if(!grid) return;
-                    if(results.length){
-                        results.forEach(m=>{ const t = wallState.type === 'mixed' ? getMediaType(m, null) : wallState.type; const card = createCard(m, t); if(card) grid.appendChild(card); });
-                        wallState.page = page;
-                        if(page >= (data.total_pages||500) || page >= 500){ wallState.ended=true; if(loader) loader.style.display='none'; }
-                    } else { wallState.ended = true; if(loader) loader.style.display='none'; }
-                }catch(e){ if(loader) loader.style.display='none'; }
-                finally { if(wallState) wallState.loading = false; }
+
+            async function loadWallPage() {
+                if(!appState.wallState || appState.wallState.loading || appState.wallState.ended) return;
+                appState.wallState.loading = true;
+                
+                const grid = document.getElementById('wallGrid'); 
+                const loader = document.getElementById('wallLoader');
+                const page = appState.wallState.page + 1;
+                
+                try {
+                    const data = await tmdbFetch(appState.wallState.ep + page);
+                    const results = (data.results || []).filter(m => m.poster_path);
+                    
+                    if(!grid || !document.body.contains(grid)) {
+                        appState.wallState = null;
+                        return;
+                    }
+                    
+                    if(results.length) {
+                        results.forEach(m => { 
+                            const t = appState.wallState.type === 'mixed' ? getMediaType(m, null) : appState.wallState.type; 
+                            const card = createCard(m, t); 
+                            if(card) grid.appendChild(card); 
+                        });
+                        appState.wallState.page = page;
+                        
+                        if(page >= (data.total_pages || 500) || page >= 500) { 
+                            appState.wallState.ended = true; 
+                            if(loader) loader.style.display = 'none'; 
+                        }
+                    } else { 
+                        appState.wallState.ended = true; 
+                        if(loader) loader.style.display = 'none'; 
+                    }
+                } catch(e) { 
+                    console.error('Wall load error:', e);
+                    if(loader) loader.style.display = 'none'; 
+                } finally { 
+                    if(appState.wallState) appState.wallState.loading = false; 
+                }
             }
 
             // ═══ MY LIST ═══
-            function renderMyList(){
-                teardownWall(); hideHero(); currentRoute = 'my-list';
+            function renderMyList() {
+                teardownWall(); 
+                hideHero(); 
+                appState.currentRoute = 'my-list';
                 renderContinueWatching();
+                
                 const container = document.getElementById('sectionsContainer');
                 document.getElementById('mainContent').classList.add('no-hero');
                 container.innerHTML = '';
                 container.appendChild(createPageHeader('My List', 'fa-bookmark', 'Your saved movies and TV shows'));
-                if (watchlist.length === 0) { 
+                
+                if (appState.watchlist.length === 0) { 
                     container.innerHTML += `<div class="empty-state"><i class="fas fa-heart"></i><h2>Your list is empty</h2><p>Add movies and shows to your list to watch them later.</p></div>`; 
-                    showHideFooter(); updateNavActive('my-list'); return; 
+                    showHideFooter(); 
+                    updateNavActive('my-list'); 
+                    return; 
                 }
-                const sec = document.createElement('div'); sec.className = 'section'; sec.innerHTML = `<div class="grid-wall" id="grid-mylist"></div>`; container.appendChild(sec);
+                
+                const sec = document.createElement('div'); 
+                sec.className = 'section'; 
+                sec.innerHTML = `<div class="grid-wall" id="grid-mylist"></div>`; 
+                container.appendChild(sec);
+                
                 const grid = document.getElementById('grid-mylist');
-                watchlist.forEach(item => { const card=createCard({ id:item.id, title:item.title, poster_path:null, backdrop_path:null, release_date:(item.year||'')+'-01-01', vote_average:0 }, item.type); if(!card) return; const img=card.querySelector('img'); if(item.poster) img.src=item.poster; card.querySelector('.card-rating').innerHTML='<i class="fas fa-heart" style="color:var(--red)"></i>'; grid.appendChild(card); });
-                showHideFooter(); updateNavActive('my-list');
+                appState.watchlist.forEach(item => { 
+                    const card = createCard({ id: item.id, title: item.title, poster_path: null, backdrop_path: null, release_date: (item.year || '') + '-01-01', vote_average: 0 }, item.type); 
+                    if(!card) return; 
+                    
+                    const img = card.querySelector('img'); 
+                    if(item.poster) img.src = item.poster; 
+                    card.querySelector('.card-rating').innerHTML = '<i class="fas fa-heart" style="color:var(--red)"></i>'; 
+                    grid.appendChild(card); 
+                });
+                
+                showHideFooter(); 
+                updateNavActive('my-list');
             }
 
             // ═══ SEARCH PAGE ═══
-            function renderSearchPage(){
-                teardownWall(); hideHero(); currentRoute = 'search';
+            function renderSearchPage() {
+                teardownWall(); 
+                hideHero(); 
+                appState.currentRoute = 'search';
                 renderContinueWatching();
+                
                 const container = document.getElementById('sectionsContainer');
                 document.getElementById('mainContent').classList.add('no-hero');
                 container.innerHTML = '';
                 container.appendChild(createPageHeader('Search', 'fa-search', 'Find movies and TV shows with advanced filters'));
+                
                 const searchSection = document.createElement('div');
                 searchSection.className = 'search-page-container';
                 searchSection.innerHTML = `
@@ -813,6 +1171,7 @@
                     <div class="load-more-container" id="pageLoadMoreContainer" style="display:none;">
                         <button class="load-more-btn" id="pageLoadMoreBtn"><i class="fas fa-plus"></i> <span>Load More</span></button>
                     </div>`;
+                
                 container.appendChild(searchSection);
                 
                 // Populate filters
@@ -820,32 +1179,39 @@
                 if (genreSelect && allGenres.length) {
                     allGenres.forEach(g => {
                         const opt = document.createElement('option');
-                        opt.value = g.id; opt.textContent = g.name;
+                        opt.value = g.id; 
+                        opt.textContent = g.name;
                         genreSelect.appendChild(opt);
                     });
                 }
+                
                 const yearSelect = document.getElementById('searchYearFilter');
                 if (yearSelect) {
                     const currentYear = new Date().getFullYear();
                     for (let y = currentYear; y >= 1950; y--) {
                         const opt = document.createElement('option');
-                        opt.value = y; opt.textContent = y;
+                        opt.value = y; 
+                        opt.textContent = y;
                         yearSelect.appendChild(opt);
                     }
                 }
+                
                 const langSelect = document.getElementById('searchLanguageFilter');
                 if (langSelect && allLanguages.length) {
                     allLanguages.forEach(l => {
                         const opt = document.createElement('option');
-                        opt.value = l.iso_639_1; opt.textContent = l.english_name || l.name;
+                        opt.value = l.iso_639_1; 
+                        opt.textContent = l.english_name || l.name;
                         langSelect.appendChild(opt);
                     });
                 }
+                
                 const countrySelect = document.getElementById('searchCountryFilter');
                 if (countrySelect && allCountries.length) {
                     allCountries.forEach(c => {
                         const opt = document.createElement('option');
-                        opt.value = c.iso_3166_1; opt.textContent = c.english_name || c.native_name;
+                        opt.value = c.iso_3166_1; 
+                        opt.textContent = c.english_name || c.native_name;
                         countrySelect.appendChild(opt);
                     });
                 }
@@ -864,7 +1230,7 @@
                 const searchCountryFilter = document.getElementById('searchCountryFilter');
                 const searchSortFilter = document.getElementById('searchSortFilter');
                 
-                let searchTimeout, currentPage = 1, totalPages = 1, isLoading = false;
+                let currentPage = 1, totalPages = 1, isLoading = false;
                 
                 function buildSearchEndpoint(page = 1) {
                     const query = pageSearchInput.value.trim();
@@ -875,6 +1241,7 @@
                     const country = searchCountryFilter.value;
                     const sort = searchSortFilter.value;
                     const hasFilters = genre !== 'all' || year !== 'all' || language !== 'all' || country !== 'all';
+                    
                     if (query.length >= 2) return `/search/multi?query=${encodeURIComponent(query)}&page=${page}`;
                     else if (hasFilters) {
                         let base = type === 'tv' ? '/discover/tv' : '/discover/movie';
@@ -883,7 +1250,9 @@
                         if (year !== 'all') params.set('primary_release_year', year);
                         if (language !== 'all') params.set('with_original_language', language);
                         if (country !== 'all') params.set('with_origin_country', country);
-                        params.set('sort_by', sort); params.set('page', page); params.set('vote_count.gte', '10');
+                        params.set('sort_by', sort); 
+                        params.set('page', page); 
+                        params.set('vote_count.gte', '10');
                         return `${base}?${params.toString()}`;
                     }
                     return null;
@@ -891,29 +1260,37 @@
                 
                 function performSearch(page = 1, append = false) {
                     if (isLoading) return;
+                    
                     const endpoint = buildSearchEndpoint(page);
                     if (!endpoint) {
                         pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Type to search or use filters to browse</div>';
                         pageLoadMoreContainer.style.display = 'none';
                         return;
                     }
+                    
                     isLoading = true;
                     if (!append) {
                         pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Searching...</div>';
-                        currentPage = 1; pageLoadMoreContainer.style.display = 'none';
+                        currentPage = 1; 
+                        pageLoadMoreContainer.style.display = 'none';
                     } else {
                         pageLoadMoreBtn.classList.add('loading');
                         pageLoadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
                     }
+                    
                     tmdbFetch(endpoint).then(data => {
                         const items = (data.results || []).filter(m => m.poster_path);
-                        totalPages = data.total_pages || 1; currentPage = page;
+                        totalPages = data.total_pages || 1; 
+                        currentPage = page;
+                        
                         if (items.length === 0 && !append) {
                             pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">No results found</div>';
                             pageLoadMoreContainer.style.display = 'none';
                             return;
                         }
+                        
                         if (!append) pageSearchResults.innerHTML = '';
+                        
                         const resultsHtml = items.map(item => {
                             const poster = item.poster_path ? TMDB_IMG + item.poster_path : '';
                             const title = getTitle(item);
@@ -921,6 +1298,7 @@
                             const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '?';
                             const type = getMediaType(item, searchTypeFilter.value !== 'multi' ? searchTypeFilter.value : null);
                             const typeLabel = type === 'movie' ? 'Movie' : 'TV';
+                            
                             return `<a class="search-result-card" href="javascript:void(0)" data-id="${item.id}" data-type="${type}" data-title="${esc(title)}" data-poster="${poster}" data-year="${year}">
                                 <img src="${poster}" alt="${esc(title)}" onerror="this.style.background='#222';this.style.opacity='0.5';">
                                 <div class="search-result-info">
@@ -929,6 +1307,7 @@
                                 </div>
                             </a>`;
                         }).join('');
+                        
                         pageSearchResults.innerHTML += resultsHtml;
                         pageSearchResults.querySelectorAll('.search-result-card').forEach(card => {
                             card.addEventListener('click', (e) => {
@@ -937,6 +1316,7 @@
                                 window.location.href = `/player.html?id=${card.dataset.id}&type=${card.dataset.type}`;
                             });
                         });
+                        
                         if (currentPage < totalPages) {
                             pageLoadMoreContainer.style.display = 'block';
                             pageLoadMoreBtn.classList.remove('loading');
@@ -945,7 +1325,8 @@
                         } else {
                             pageLoadMoreContainer.style.display = 'none';
                         }
-                    }).catch(() => {
+                    }).catch(err => {
+                        console.error('Search error:', err);
                         if (!append) pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Search error</div>';
                         pageLoadMoreContainer.style.display = 'none';
                     }).finally(() => {
@@ -956,14 +1337,19 @@
                 }
                 
                 pageSearchInput.addEventListener('input', function() {
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(() => performSearch(1, false), 400);
+                    clearTimeout(appState.searchTimeout);
+                    appState.searchTimeout = setTimeout(() => performSearch(1, false), 400);
                 });
+                
                 pageSearchBtn.addEventListener('click', () => performSearch(1, false));
-                pageSearchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(1, false); });
+                pageSearchInput.addEventListener('keypress', (e) => { 
+                    if (e.key === 'Enter') performSearch(1, false); 
+                });
+                
                 [searchTypeFilter, searchGenreFilter, searchYearFilter, searchLanguageFilter, searchCountryFilter, searchSortFilter].forEach(filter => {
                     filter.addEventListener('change', () => performSearch(1, false));
                 });
+                
                 clearFiltersBtn.addEventListener('click', () => {
                     pageSearchInput.value = '';
                     searchTypeFilter.value = 'multi';
@@ -976,13 +1362,17 @@
                     pageLoadMoreContainer.style.display = 'none';
                 });
                 
-                showHideFooter(); updateNavActive('search');
+                showHideFooter(); 
+                updateNavActive('search');
             }
 
             // ═══ 404 ═══
             function render404(path) {
-                teardownWall(); hideHero(); currentRoute = '404';
+                teardownWall(); 
+                hideHero(); 
+                appState.currentRoute = '404';
                 renderContinueWatching();
+                
                 const container = document.getElementById('sectionsContainer');
                 document.getElementById('mainContent').classList.add('no-hero');
                 container.innerHTML = `
@@ -992,7 +1382,8 @@
                         <p class="not-found-message">The page "${path}" doesn't exist.</p>
                         <a href="/" class="not-found-btn" onclick="event.preventDefault(); navigateTo('home');"><i class="fas fa-home"></i> Back to Home</a>
                     </div>`;
-                showHideFooter(); updateNavActive('');
+                showHideFooter(); 
+                updateNavActive('');
             }
 
             // ═══ NAV & ROUTER ═══
@@ -1002,6 +1393,7 @@
                 const link = document.querySelector(`[data-route="${route}"]`);
                 if (link) link.classList.add('active');
             }
+
             function showHideFooter() {
                 const footerWrapper = document.getElementById('footerWrapper');
                 const container = document.getElementById('sectionsContainer');
@@ -1010,7 +1402,12 @@
                 if (hasContent) footerWrapper.classList.remove('hidden');
                 else footerWrapper.classList.add('hidden');
             }
+
             function handleRoute(route) {
+                // Clear all active timers and requests before changing routes
+                clearTimeout(appState.searchTimeout);
+                if(appState.heroTimer) clearInterval(appState.heroTimer);
+                
                 if (route === 'home') renderHome();
                 else if (route === 'movies') renderWall('movies');
                 else if (route === 'series') renderWall('tv');
@@ -1018,27 +1415,51 @@
                 else if (route === 'my-list') renderMyList();
                 else if (route === 'search') renderSearchPage();
                 else render404(window.location.pathname);
+                
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
+
             function navigateTo(route) {
                 const routeMap = { 'home': '/', 'movies': '/movies', 'series': '/series', 'new': '/new', 'my-list': '/my-list', 'search': '/search' };
                 window.history.pushState({ route }, '', routeMap[route] || '/');
                 handleRoute(route);
             }
+
             document.querySelectorAll('.nav-links a, .bottom-nav-item').forEach(link => {
-                link.addEventListener('click', (e) => { e.preventDefault(); navigateTo(link.dataset.route); });
+                link.addEventListener('click', (e) => { 
+                    e.preventDefault(); 
+                    navigateTo(link.dataset.route); 
+                });
             });
-            document.querySelector('.nav-logo').addEventListener('click', (e) => { e.preventDefault(); navigateTo('home'); });
+
+            document.querySelector('.nav-logo').addEventListener('click', (e) => { 
+                e.preventDefault(); 
+                navigateTo('home'); 
+            });
             
             const backBtn = document.getElementById('backToTop');
-            window.addEventListener('scroll', () => { backBtn.classList.toggle('visible', window.scrollY > 600); });
+            window.addEventListener('scroll', () => { 
+                backBtn.classList.toggle('visible', window.scrollY > 600); 
+            });
+
             backBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-            document.getElementById('watchlistBtnNav').addEventListener('click', () => { navigateTo('my-list'); });
-            document.getElementById('clearRecentBtn')?.addEventListener('click', () => { recent = []; saveRec(); renderContinueWatching(); toast('Watch history cleared'); });
+            
+            document.getElementById('watchlistBtnNav').addEventListener('click', () => { 
+                navigateTo('my-list'); 
+            });
+
+            document.getElementById('clearRecentBtn')?.addEventListener('click', () => { 
+                appState.recent = []; 
+                saveRec(); 
+                renderContinueWatching(); 
+                toast('Watch history cleared'); 
+            });
+
             window.addEventListener('popstate', (e) => {
                 const route = e.state?.route || getRouteFromPath(window.location.pathname);
                 handleRoute(route);
             });
+
             function getRouteFromPath(path) {
                 if (path === '/movies') return 'movies';
                 if (path === '/series') return 'series';
@@ -1049,23 +1470,56 @@
                 return '404';
             }
 
+            // ═══ CLEANUP ON PAGE UNLOAD ═══
+            window.addEventListener('beforeunload', () => {
+                // Abort all pending requests
+                appState.activeControllers.forEach(controller => controller.abort());
+                
+                // Clear all timers
+                if(appState.heroTimer) clearInterval(appState.heroTimer);
+                clearTimeout(appState.searchTimeout);
+                clearTimeout(appState.inactivityTimeout);
+                
+                // Disconnect all observers
+                if(appState.wallState && appState.wallState.observer) {
+                    appState.wallState.observer.disconnect();
+                }
+                
+                // Stop animation
+                appState.starAnimationRunning = false;
+                if(appState.rafId) cancelAnimationFrame(appState.rafId);
+            });
+
             // ═══ INIT ═══
             async function init() {
                 loadStorage();
                 updateWatchlistBadge();
-                if (watchlist.length > 0) document.getElementById('watchlistBtnNav').querySelector('i').className = 'fas fa-heart';
+                
+                if (appState.watchlist.length > 0) {
+                    document.getElementById('watchlistBtnNav').querySelector('i').className = 'fas fa-heart';
+                }
+                
                 await loadConfiguration();
                 renderContinueWatching();
+                
                 const path = window.location.pathname;
                 const initialRoute = getRouteFromPath(path);
-                currentRoute = initialRoute;
+                appState.currentRoute = initialRoute;
+                
                 await handleRoute(initialRoute);
+                
                 setTimeout(() => { 
                     document.getElementById('loadingScreen').classList.add('hidden'); 
-                    setTimeout(() => { const ls = document.getElementById('loadingScreen'); if (ls) ls.remove(); }, 600); 
+                    setTimeout(() => { 
+                        const ls = document.getElementById('loadingScreen'); 
+                        if (ls) ls.remove(); 
+                    }, 600); 
                 }, 2600);
+                
                 refreshHearts();
             }
+
+            // Start the app
             init();
         })();
     </script>
