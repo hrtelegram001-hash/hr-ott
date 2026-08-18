@@ -208,6 +208,7 @@
         .bottom-nav-item i { font-size: 1.3rem; }
         .bottom-nav-item.active { color: var(--red); }
         .bottom-nav-item:hover { color: var(--text); }
+        .provider-badge { display: inline-block; background: rgba(229,9,20,0.2); border: 1px solid var(--red); color: var(--red); padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; margin-right: 6px; }
         @media (max-width: 900px) {
             .nav-links { display: none; }
             .hero { height: calc(78vh - var(--nav-height)); }
@@ -296,6 +297,7 @@
                 <div>
                     <div class="modal-meta" id="modalMeta"></div>
                     <p id="modalDesc"></p>
+                    <p><span class="label">Available On:</span> <span class="value" id="modalProviders"></span></p>
                 </div>
                 <div>
                     <p><span class="label">Cast:</span> <span class="value" id="modalCast"></span></p>
@@ -334,7 +336,7 @@
                 starAnimationRunning: true,
                 searchTimeout: null,
                 inactivityTimeout: null,
-                activeControllers: [] // Track all AbortControllers
+                activeControllers: []
             };
 
             const TMDB_KEY = '3a87b1db63bc74b8e3fe9266ddc75b30';
@@ -349,20 +351,43 @@
                 { key:'toprated', title:'Top Rated Movies', ep:'/movie/top_rated?page=', type:'movie' },
                 { key:'popular', title:'Popular Movies', ep:'/movie/popular?page=', type:'movie' },
                 { key:'action', title:'Action & Adventure', ep:'/discover/movie?with_genres=28&sort_by=popularity.desc&page=', type:'movie' },
+                
+                // INDIAN CONTENT SECTION
+                { key:'bollywood', title:'🇮🇳 Bollywood', ep:'/discover/movie?with_original_language=hi&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'hindi', title:'🇮🇳 Hindi Dubbed', ep:'/discover/movie?with_original_language=hi&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'tamil', title:'🇮🇳 Tamil Cinema', ep:'/discover/movie?with_original_language=ta&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'telugu', title:'🇮🇳 Telugu Cinema', ep:'/discover/movie?with_original_language=te&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'malayalam', title:'🇮🇳 Malayalam Cinema', ep:'/discover/movie?with_original_language=ml&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'kannada', title:'🇮🇳 Kannada Cinema', ep:'/discover/movie?with_original_language=kn&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'punjabi', title:'🇮🇳 Punjabi Cinema', ep:'/discover/movie?with_original_language=pa&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'bengali', title:'🇮🇳 Bengali Cinema', ep:'/discover/movie?with_original_language=bn&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'marathi', title:'🇮🇳 Marathi Cinema', ep:'/discover/movie?with_original_language=mr&sort_by=popularity.desc&page=', type:'movie' },
+                
                 { key:'tvshows', title:'Trending TV Shows', ep:'/trending/tv/week?page=', type:'tv' },
                 { key:'comedy', title:'Comedy Movies', ep:'/discover/movie?with_genres=35&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'scifi', title:'Sci-Fi & Fantasy', ep:'/discover/movie?with_genres=878,14&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'horror', title:'Horror & Thriller', ep:'/discover/movie?with_genres=27,53&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'romance', title:'Romance & Drama', ep:'/discover/movie?with_genres=10749,18&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'documentary', title:'Documentaries', ep:'/discover/movie?with_genres=99&sort_by=popularity.desc&page=', type:'movie' },
+                
+                // MOVIES BY CATEGORY
+                { key:'nowplaying', title:'Now Playing', ep:'/movie/now_playing?region=IN&page=', type:'movie' },
+                { key:'upcoming', title:'Upcoming Releases', ep:'/movie/upcoming?region=IN&page=', type:'movie' },
+                
+                // TV SERIES SECTIONS
                 { key:'topratedtv', title:'Top Rated TV Shows', ep:'/tv/top_rated?page=', type:'tv' },
                 { key:'populartv', title:'Popular TV Shows', ep:'/tv/popular?page=', type:'tv' },
+                { key:'ontheair', title:'On The Air', ep:'/tv/on_the_air?page=', type:'tv' },
+                { key:'airingtoday', title:'Airing Today', ep:'/tv/airing_today?page=', type:'tv' },
+                
                 { key:'crime', title:'Crime & Mystery', ep:'/discover/tv?with_genres=80,9648&sort_by=popularity.desc&page=', type:'tv' },
                 { key:'kids', title:'Family & Kids', ep:'/discover/movie?with_genres=10751,16&sort_by=popularity.desc&page=', type:'movie' },
-                { key:'upcoming', title:'Upcoming Releases', ep:'/movie/upcoming?page=', type:'movie' },
                 { key:'awardwinning', title:'Award Winners', ep:'/discover/movie?with_genres=18&vote_average.gte=8&vote_count.gte=100&sort_by=vote_average.desc&page=', type:'movie' },
                 { key:'animation', title:'Animation', ep:'/discover/movie?with_genres=16&sort_by=popularity.desc&page=', type:'movie' },
-                { key:'realitytv', title:'Reality & Talk Shows', ep:'/discover/tv?with_genres=10764,10767&sort_by=popularity.desc&page=', type:'tv' },
+                
+                // STREAMING PROVIDERS
+                { key:'netflix', title:'📺 On Netflix', ep:'/discover/movie?with_watch_providers=8&watch_region=IN&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'prime', title:'🎬 On Prime Video', ep:'/discover/movie?with_watch_providers=119&watch_region=IN&sort_by=popularity.desc&page=', type:'movie' },
             ];
             
             const WALLS = {
@@ -406,7 +431,6 @@
 
             function drawStars() { 
                 if (!appState.starAnimationRunning) {
-                    // Still request frame but don't draw
                     appState.rafId = requestAnimationFrame(drawStars);
                     return;
                 }
@@ -436,7 +460,7 @@
                 appState.starAnimationRunning = true;
                 appState.inactivityTimeout = setTimeout(() => { 
                     appState.starAnimationRunning = false; 
-                }, 45000); // Stop after 45 seconds of inactivity
+                }, 45000);
             }
             
             document.addEventListener('mousemove', resetInactivityTimer);
@@ -487,7 +511,6 @@
 
             // ═══ HELPERS ═══
             async function tmdbFetch(endpoint) {
-                // Queue if too many requests
                 while (appState.pendingRequests >= MAX_CONCURRENT_REQUESTS) {
                     await new Promise(resolve => appState.requestQueue.push(resolve));
                 }
@@ -565,6 +588,45 @@
                     allGenres = []; 
                     allLanguages = []; 
                     allCountries = []; 
+                }
+            }
+
+            // ═══ GET WATCH PROVIDERS ═══
+            async function getWatchProviders(id, type) {
+                try {
+                    const endpoint = type === 'movie' ? `/movie/${id}/watch/providers` : `/tv/${id}/watch/providers`;
+                    const data = await tmdbFetch(endpoint);
+                    
+                    const providers = [];
+                    const regionData = data.results && data.results['IN'];
+                    
+                    if (regionData) {
+                        if (regionData.flatrate) {
+                            regionData.flatrate.forEach(p => {
+                                if (p.provider_name) {
+                                    providers.push({name: p.provider_name, logo: p.logo_path});
+                                }
+                            });
+                        }
+                        if (regionData.rent) {
+                            regionData.rent.forEach(p => {
+                                if (p.provider_name && !providers.find(pv => pv.name === p.provider_name)) {
+                                    providers.push({name: p.provider_name, logo: p.logo_path});
+                                }
+                            });
+                        }
+                        if (regionData.buy) {
+                            regionData.buy.forEach(p => {
+                                if (p.provider_name && !providers.find(pv => pv.name === p.provider_name)) {
+                                    providers.push({name: p.provider_name, logo: p.logo_path});
+                                }
+                            });
+                        }
+                    }
+                    
+                    return providers;
+                } catch(e) {
+                    return [];
                 }
             }
 
@@ -718,6 +780,7 @@
                 document.getElementById('modalMeta').innerHTML = '';
                 document.getElementById('modalCast').textContent = '-';
                 document.getElementById('modalGenres').textContent = '-';
+                document.getElementById('modalProviders').textContent = 'Loading...';
                 document.getElementById('modalType').textContent = type === 'movie' ? 'Movie' : 'TV Show';
                 
                 updateModalWatchlistBtn();
@@ -742,12 +805,17 @@
                     const cast = data.credits && data.credits.cast ? data.credits.cast.slice(0, 5).map(c => c.name).join(', ') : 'N/A';
                     const genres = data.genres ? data.genres.map(g => g.name).join(', ') : 'N/A';
                     
+                    // Get watch providers
+                    const providers = await getWatchProviders(id, type);
+                    const providersText = providers.length > 0 ? providers.map(p => `<span class="provider-badge">${p.name}</span>`).join('') : 'Not available in your region';
+                    
                     document.getElementById('modalBackdrop').src = backdrop;
                     document.getElementById('modalTitle').textContent = currentModalTitle;
                     document.getElementById('modalDesc').textContent = data.overview || 'No description available.';
                     document.getElementById('modalMeta').innerHTML = `<span class="match" style="color: var(--green); font-weight: 700;">${match}% Match</span><span>${currentModalYear}</span><span class="maturity-badge">${rating}</span><span>${runtime} min</span>`;
                     document.getElementById('modalCast').textContent = cast;
                     document.getElementById('modalGenres').textContent = genres;
+                    document.getElementById('modalProviders').innerHTML = providersText;
                     
                     modalPlayBtn.href = `/player.html?id=${id}&type=${type}`;
                     updateModalWatchlistBtn();
@@ -1404,7 +1472,6 @@
             }
 
             function handleRoute(route) {
-                // Clear all active timers and requests before changing routes
                 clearTimeout(appState.searchTimeout);
                 if(appState.heroTimer) clearInterval(appState.heroTimer);
                 
@@ -1472,20 +1539,16 @@
 
             // ═══ CLEANUP ON PAGE UNLOAD ═══
             window.addEventListener('beforeunload', () => {
-                // Abort all pending requests
                 appState.activeControllers.forEach(controller => controller.abort());
                 
-                // Clear all timers
                 if(appState.heroTimer) clearInterval(appState.heroTimer);
                 clearTimeout(appState.searchTimeout);
                 clearTimeout(appState.inactivityTimeout);
                 
-                // Disconnect all observers
                 if(appState.wallState && appState.wallState.observer) {
                     appState.wallState.observer.disconnect();
                 }
                 
-                // Stop animation
                 appState.starAnimationRunning = false;
                 if(appState.rafId) cancelAnimationFrame(appState.rafId);
             });
