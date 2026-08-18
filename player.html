@@ -230,17 +230,15 @@
         .similar-card-type { font-size: clamp(0.5rem, 0.8vw, 0.6rem); color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
         .similar-empty { grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.9rem; }
         
-        /* EPISODE GUIDE - IMPROVED VISIBILITY */
+        /* EPISODE GUIDE - VISIBLE ONLY FOR TV SHOWS */
         .episode-guide { 
             margin: 30px 0 20px 0; 
             padding-top: 20px; 
             border-top: 1px solid rgba(255,255,255,0.1); 
-            display: block !important;
+            display: block;
             width: 100%;
         }
-        .episode-guide[style*="display:none"] { 
-            display: block !important; 
-        }
+        .episode-guide[hidden] { display: none !important; }
         .episode-guide .controls-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; align-items: center; }
         .episode-guide .controls-row .search-box { flex: 1; min-width: 150px; background: var(--bg-card); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: clamp(8px, 1.2vw, 10px) 12px; color: var(--text); font-size: clamp(0.75rem, 1.2vw, 0.85rem); outline: none; font-family: 'Inter', sans-serif; min-height: var(--touch-target); }
         .episode-guide .controls-row .search-box:focus { border-color: var(--red); }
@@ -254,9 +252,9 @@
         .season-label { padding: 8px; font-size: clamp(0.65rem, 1vw, 0.75rem); font-weight: 700; text-align: center; }
         .seasons-select { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.15); color: var(--text); padding: clamp(8px, 1.2vw, 10px) 12px; border-radius: 6px; font-size: clamp(0.8rem, 1.2vw, 0.9rem); cursor: pointer; transition: all 0.3s ease; font-family: 'Inter', sans-serif; margin-bottom: 14px; width: 100%; max-width: 250px; font-weight: 600; min-height: var(--touch-target); }
         
-        /* EPISODES GRID - ALWAYS VISIBLE */
+        /* EPISODES GRID */
         .episodes-grid { 
-            display: grid !important; 
+            display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(clamp(130px, 20vw, 180px), 1fr)); 
             gap: clamp(8px, 1.5vw, 12px); 
             max-height: 600px; 
@@ -265,7 +263,7 @@
             min-height: 100px;
         }
         .episodes-grid:empty {
-            display: flex !important;
+            display: flex;
             align-items: center;
             justify-content: center;
             min-height: 150px;
@@ -282,7 +280,7 @@
             cursor: pointer; 
             transition: all 0.3s ease; 
             overflow: hidden; 
-            display: flex !important; 
+            display: flex; 
             flex-direction: column; 
             position: relative; 
             touch-action: manipulation; 
@@ -469,8 +467,8 @@
                 <p id="descText"></p>
             </div>
 
-            <!-- EPISODE GUIDE - ALWAYS VISIBLE FOR TV SHOWS -->
-            <div class="episode-guide" id="episodeGuide">
+            <!-- EPISODE GUIDE - HIDDEN BY DEFAULT, SHOWN ONLY FOR TV SHOWS -->
+            <div class="episode-guide" id="episodeGuide" hidden>
                 <h3>
                     <span><i class="fas fa-list"></i> Episodes</span>
                     <span style="font-size:0.8rem;font-weight:600;color:var(--text-muted);" id="episodeStats"></span>
@@ -969,14 +967,26 @@
                 });
             }
 
-            // ═══════ EPISODE GUIDE - FIXED FOR ALL DEVICES ═══════
+            // ═══════ EPISODE GUIDE - SHOW ONLY FOR TV ═══════
+            function toggleEpisodeGuide(show) {
+                const guide = document.getElementById('episodeGuide');
+                if (guide) {
+                    if (show) {
+                        guide.removeAttribute('hidden');
+                        guide.style.display = 'block';
+                    } else {
+                        guide.setAttribute('hidden', '');
+                        guide.style.display = 'none';
+                    }
+                }
+            }
+
             function renderEpisodes() {
                 const grid = document.getElementById('episodesGrid');
                 const search = document.getElementById('episodeSearch')?.value?.toLowerCase() || '';
                 const sort = document.getElementById('episodeSort')?.value || 'number';
                 
-                // Make sure grid is visible
-                grid.style.display = 'grid';
+                if (!grid) return;
                 
                 let eps = getCurrentSeasonEpisodes();
                 
@@ -1020,7 +1030,6 @@
                 
                 grid.innerHTML = '';
                 
-                // Use document fragment for better performance
                 const fragment = document.createDocumentFragment();
                 
                 eps.forEach(ep => {
@@ -1031,7 +1040,6 @@
                     
                     const item = document.createElement('div');
                     item.className = `episode-item ${isActive ? 'active' : ''} ${isWatched ? 'watched' : ''}`;
-                    item.style.display = 'flex';
                     
                     const still = ep.still_path ? `${TMDB_IMG}${ep.still_path}` : '';
                     const thumbHtml = still ? 
@@ -1060,7 +1068,6 @@
                         </div>
                     `;
                     
-                    // Click on episode card - FIXED to properly load episode
                     item.addEventListener('click', function(e) {
                         if (e.target.closest('button')) return;
                         
@@ -1076,7 +1083,6 @@
                         hideNextEpisodeOverlay();
                     });
                     
-                    // Watch toggle button
                     const watchBtn = item.querySelector('.watched-btn');
                     watchBtn?.addEventListener('click', function(e) {
                         e.stopPropagation(); 
@@ -1090,7 +1096,6 @@
                         updateEpisodeStats();
                     });
                     
-                    // Resume link
                     const resumeLink = item.querySelector('.resume-link');
                     resumeLink?.addEventListener('click', function(e) {
                         e.stopPropagation();
@@ -1109,9 +1114,6 @@
                 
                 grid.appendChild(fragment);
                 updateEpisodeStats();
-                
-                // Ensure grid is visible
-                grid.style.display = 'grid';
             }
 
             function updateEpisodeStats() {
@@ -1123,8 +1125,6 @@
                     statsEl.textContent = total > 0 ? `${watched}/${total} watched` : 'No episodes';
                 }
             }
-
-            function updateEpisodeGrid() { renderEpisodes(); }
 
             document.getElementById('episodeSearch')?.addEventListener('input', renderEpisodes);
             document.getElementById('episodeSort')?.addEventListener('change', renderEpisodes);
@@ -1200,24 +1200,22 @@
                 });
             }
 
-            // ═══════ EPISODE GUIDE LOADING - FIXED ═══════
+            // ═══════ EPISODE GUIDE LOADING ═══════
             async function loadEpisodeGuide() {
-                const guide = document.getElementById('episodeGuide');
                 const grid = document.getElementById('episodesGrid');
                 
-                // Show episode guide for TV shows
+                // Only proceed for TV shows with TMDB ID
                 if (currentType !== 'tv' || !currentId || currentIdType !== 'tmdb') {
-                    guide.style.display = 'none';
+                    toggleEpisodeGuide(false);
                     return;
                 }
                 
-                // Always show for TV shows
-                guide.style.display = 'block';
-                grid.style.display = 'grid';
+                // Show episode guide for TV shows
+                toggleEpisodeGuide(true);
+                
                 grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:30px;"><i class="fas fa-spinner fa-spin"></i> Loading episodes...</div>';
                 
                 try {
-                    // Get TV series details
                     const seriesRes = await fetch(`${TMDB_BASE}/tv/${currentId}?api_key=${TMDB_KEY}`);
                     if (!seriesRes.ok) { 
                         grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:30px;">Failed to load episodes</div>';
@@ -1234,7 +1232,6 @@
                     
                     allSeasons = [];
                     
-                    // Load each season's episodes
                     const seasonsToLoad = seasons.slice(0, 20);
                     
                     for (let i = 0; i < seasonsToLoad.length; i++) {
@@ -1260,15 +1257,11 @@
                         return; 
                     }
                     
-                    // Ensure current season exists
                     if (!allSeasons.find(s => s.season_number === currentSeason)) {
                         currentSeason = allSeasons[0].season_number;
                     }
                     
-                    // Build season UI
                     buildSeasonUI();
-                    
-                    // Render episodes
                     renderEpisodes();
                     
                 } catch (e) { 
@@ -1287,14 +1280,12 @@
                 cards.innerHTML = '';
                 
                 allSeasons.forEach(s => {
-                    // Add to select dropdown
                     const opt = document.createElement('option');
                     opt.value = s.season_number;
                     opt.textContent = s.name + ` (${s.episodes?.length || 0} eps)`;
                     if (s.season_number === currentSeason) opt.selected = true;
                     select.appendChild(opt);
                     
-                    // Add season card
                     const card = document.createElement('button');
                     card.type = 'button';
                     card.className = 'season-card' + (s.season_number === currentSeason ? ' active' : '');
@@ -1328,7 +1319,6 @@
                     cards.appendChild(card);
                 });
                 
-                // Select change handler
                 select.onchange = (e) => {
                     const seasonNum = parseInt(e.target.value);
                     const seasonData = allSeasons.find(s => s.season_number === seasonNum);
@@ -1459,12 +1449,14 @@
                     mediaData = data;
                     populateMediaUI(data, type);
                     
-                    // Load episode guide for TV shows
+                    // Load episode guide ONLY for TV shows with TMDB ID
                     if (type === 'tv' && currentIdType === 'tmdb') {
                         await loadEpisodeGuide();
+                    } else {
+                        // Hide episode guide for movies
+                        toggleEpisodeGuide(false);
                     }
                     
-                    // Load similar content
                     await loadSimilarContent();
                     
                     return true;
@@ -1515,9 +1507,9 @@
             function ensureDisclaimerVisible() {
                 const adDisclaimer = document.getElementById('adDisclaimer');
                 if (adDisclaimer) {
-                    adDisclaimer.style.display = 'flex !important';
-                    adDisclaimer.style.visibility = 'visible !important';
-                    adDisclaimer.style.opacity = '1 !important';
+                    adDisclaimer.style.display = 'flex';
+                    adDisclaimer.style.visibility = 'visible';
+                    adDisclaimer.style.opacity = '1';
                     adDisclaimer.style.position = 'relative';
                     adDisclaimer.style.zIndex = '5';
                 }
@@ -1525,10 +1517,8 @@
 
             // ═══════ MAIN INIT ═══════
             async function init() {
-                // Ensure disclaimer is visible on all devices
                 ensureDisclaimerVisible();
                 
-                // Force re-check after DOM is fully loaded
                 setTimeout(ensureDisclaimerVisible, 100);
                 setTimeout(ensureDisclaimerVisible, 500);
                 
@@ -1568,18 +1558,20 @@
                 currentEpisode = episode; 
                 currentSource = source;
                 
+                // Hide episode guide initially for movies
+                if (type !== 'tv') {
+                    toggleEpisodeGuide(false);
+                }
+                
                 refreshPlayerSources();
                 initServerButtons();
                 
                 console.log(`🎬 Loading: ${type} (ID: ${id}, Source: ${idType})`);
                 
-                // Load media details
                 await fetchTMDBMediaDetails(id, type);
                 
-                // Load player
                 setTimeout(() => { loadPlayerEmbed(currentSource); }, 200);
                 
-                // Update ad block stats
                 const stats = adBlocker.getStats();
                 console.log(`🛡️ [AdBlocker] Active - ${stats.totalBlocked} items blocked`);
             }
@@ -1618,14 +1610,12 @@
                 showToast('Reloading player...', 'success');
             });
 
-            // Update adblock count periodically
             setInterval(() => {
                 const stats = adBlocker.getStats();
                 const countEl = document.getElementById('adblockCount');
                 if (countEl) countEl.textContent = `(${stats.totalBlocked} blocked)`;
             }, 30000);
 
-            // Clean up on page unload
             window.addEventListener('beforeunload', () => {
                 if (nextEpisodeTimer) clearInterval(nextEpisodeTimer);
                 document.querySelectorAll('iframe').forEach(iframe => { 
@@ -1633,7 +1623,6 @@
                 });
             });
 
-            // Init on DOM ready
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', init);
             } else {
