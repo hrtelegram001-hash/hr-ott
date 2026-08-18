@@ -84,6 +84,20 @@
         .breadcrumb a:hover { color: var(--red); }
         .breadcrumb .separator { color: var(--text-dim); }
         .breadcrumb .current { color: var(--text); font-weight: 600; }
+
+        /* WALL PAGE SECTIONS */
+        .wall-section-group { margin-bottom: 30px; }
+        .wall-section-title { font-size: 1.3rem; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 12px; letter-spacing: -0.3px; padding: 0 var(--pad); margin-bottom: 15px; }
+        .wall-section-title::before { content:''; width:4px; height:22px; border-radius:2px; background: var(--red); box-shadow: 0 0 12px var(--red-glow); }
+        .wall-scroll-area { position: relative; margin-bottom: 20px; }
+        .wall-track { display: flex; gap: var(--gap); padding: 8px var(--pad) 14px; overflow-x: auto; overflow-y: hidden; scroll-behavior: smooth; scrollbar-width: none; -ms-overflow-style: none; }
+        .wall-track::-webkit-scrollbar { display: none; }
+        .wall-scroll-btn { position: absolute; top: 0; bottom: 0; width: 56px; background: linear-gradient(90deg, rgba(11,11,15,0.95), transparent); border: none; color: white; font-size: 2.4rem; cursor: pointer; z-index: 30; opacity: 0; transition: opacity 0.3s, color 0.2s; display: flex; align-items: center; justify-content: center; }
+        .wall-scroll-btn.right { right: 0; background: linear-gradient(-90deg, rgba(11,11,15,0.95), transparent); }
+        .wall-scroll-btn.left { left: 0; }
+        .wall-scroll-area:hover .wall-scroll-btn { opacity: 1; }
+        .wall-scroll-btn:hover { color: var(--red); }
+
         .search-page-container { max-width: 1400px; margin: 0 auto; padding: 20px var(--pad); }
         .search-hero { text-align: center; padding: 20px 0 30px; }
         .search-hero-icon { font-size: 3rem; color: var(--red); margin-bottom: 15px; }
@@ -217,6 +231,7 @@
             .hero-watch, .hero-info, .hero-watchlist-btn { padding: 10px 18px; font-size: 14px; }
             .hero-dots { bottom: 22%; }
             .section-title { font-size: 1.1rem; }
+            .wall-section-title { font-size: 1.1rem; }
             .modal-body { grid-template-columns: 1fr; padding: 20px; }
             .modal-title { font-size: 1.7rem; }
             .bottom-nav { display: flex; }
@@ -352,48 +367,55 @@
                 { key:'popular', title:'Popular Movies', ep:'/movie/popular?page=', type:'movie' },
                 { key:'action', title:'Action & Adventure', ep:'/discover/movie?with_genres=28&sort_by=popularity.desc&page=', type:'movie' },
                 
-                // INDIAN CONTENT SECTION
+                // INDIAN CONTENT
                 { key:'bollywood', title:'🇮🇳 Bollywood', ep:'/discover/movie?with_original_language=hi&sort_by=popularity.desc&page=', type:'movie' },
-                { key:'hindi', title:'🇮🇳 Hindi Dubbed', ep:'/discover/movie?with_original_language=hi&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'tamil', title:'🇮🇳 Tamil Cinema', ep:'/discover/movie?with_original_language=ta&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'telugu', title:'🇮🇳 Telugu Cinema', ep:'/discover/movie?with_original_language=te&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'malayalam', title:'🇮🇳 Malayalam Cinema', ep:'/discover/movie?with_original_language=ml&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'kannada', title:'🇮🇳 Kannada Cinema', ep:'/discover/movie?with_original_language=kn&sort_by=popularity.desc&page=', type:'movie' },
-                { key:'punjabi', title:'🇮🇳 Punjabi Cinema', ep:'/discover/movie?with_original_language=pa&sort_by=popularity.desc&page=', type:'movie' },
-                { key:'bengali', title:'🇮🇳 Bengali Cinema', ep:'/discover/movie?with_original_language=bn&sort_by=popularity.desc&page=', type:'movie' },
-                { key:'marathi', title:'🇮🇳 Marathi Cinema', ep:'/discover/movie?with_original_language=mr&sort_by=popularity.desc&page=', type:'movie' },
                 
                 { key:'tvshows', title:'Trending TV Shows', ep:'/trending/tv/week?page=', type:'tv' },
                 { key:'comedy', title:'Comedy Movies', ep:'/discover/movie?with_genres=35&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'scifi', title:'Sci-Fi & Fantasy', ep:'/discover/movie?with_genres=878,14&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'horror', title:'Horror & Thriller', ep:'/discover/movie?with_genres=27,53&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'romance', title:'Romance & Drama', ep:'/discover/movie?with_genres=10749,18&sort_by=popularity.desc&page=', type:'movie' },
-                { key:'documentary', title:'Documentaries', ep:'/discover/movie?with_genres=99&sort_by=popularity.desc&page=', type:'movie' },
-                
-                // MOVIES BY CATEGORY
-                { key:'nowplaying', title:'Now Playing', ep:'/movie/now_playing?region=IN&page=', type:'movie' },
-                { key:'upcoming', title:'Upcoming Releases', ep:'/movie/upcoming?region=IN&page=', type:'movie' },
-                
-                // TV SERIES SECTIONS
-                { key:'topratedtv', title:'Top Rated TV Shows', ep:'/tv/top_rated?page=', type:'tv' },
-                { key:'populartv', title:'Popular TV Shows', ep:'/tv/popular?page=', type:'tv' },
-                { key:'ontheair', title:'On The Air', ep:'/tv/on_the_air?page=', type:'tv' },
-                { key:'airingtoday', title:'Airing Today', ep:'/tv/airing_today?page=', type:'tv' },
-                
-                { key:'crime', title:'Crime & Mystery', ep:'/discover/tv?with_genres=80,9648&sort_by=popularity.desc&page=', type:'tv' },
-                { key:'kids', title:'Family & Kids', ep:'/discover/movie?with_genres=10751,16&sort_by=popularity.desc&page=', type:'movie' },
-                { key:'awardwinning', title:'Award Winners', ep:'/discover/movie?with_genres=18&vote_average.gte=8&vote_count.gte=100&sort_by=vote_average.desc&page=', type:'movie' },
-                { key:'animation', title:'Animation', ep:'/discover/movie?with_genres=16&sort_by=popularity.desc&page=', type:'movie' },
                 
                 // STREAMING PROVIDERS
                 { key:'netflix', title:'📺 On Netflix', ep:'/discover/movie?with_watch_providers=8&watch_region=IN&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'prime', title:'🎬 On Prime Video', ep:'/discover/movie?with_watch_providers=119&watch_region=IN&sort_by=popularity.desc&page=', type:'movie' },
             ];
+
+            // MOVIES/SERIES PAGE SECTIONS
+            const MOVIE_SECTIONS = [
+                { title:'Popular', ep:'/movie/popular?page=', type:'movie' },
+                { title:'Top Rated', ep:'/movie/top_rated?page=', type:'movie' },
+                { title:'Now Playing', ep:'/movie/now_playing?region=IN&page=', type:'movie' },
+                { title:'Upcoming', ep:'/movie/upcoming?region=IN&page=', type:'movie' },
+                { title:'Action', ep:'/discover/movie?with_genres=28&sort_by=popularity.desc&page=', type:'movie' },
+                { title:'Comedy', ep:'/discover/movie?with_genres=35&sort_by=popularity.desc&page=', type:'movie' },
+                { title:'Drama', ep:'/discover/movie?with_genres=18&sort_by=popularity.desc&page=', type:'movie' },
+                { title:'Horror', ep:'/discover/movie?with_genres=27&sort_by=popularity.desc&page=', type:'movie' },
+                { title:'Bollywood', ep:'/discover/movie?with_original_language=hi&sort_by=popularity.desc&page=', type:'movie' },
+                { title:'Tamil', ep:'/discover/movie?with_original_language=ta&sort_by=popularity.desc&page=', type:'movie' },
+                { title:'Telugu', ep:'/discover/movie?with_original_language=te&sort_by=popularity.desc&page=', type:'movie' },
+            ];
+
+            const TV_SECTIONS = [
+                { title:'Popular TV Shows', ep:'/tv/popular?page=', type:'tv' },
+                { title:'Top Rated', ep:'/tv/top_rated?page=', type:'tv' },
+                { title:'On The Air', ep:'/tv/on_the_air?page=', type:'tv' },
+                { title:'Airing Today', ep:'/tv/airing_today?page=', type:'tv' },
+                { title:'Action & Adventure', ep:'/discover/tv?with_genres=10759&sort_by=popularity.desc&page=', type:'tv' },
+                { title:'Drama', ep:'/discover/tv?with_genres=18&sort_by=popularity.desc&page=', type:'tv' },
+                { title:'Comedy', ep:'/discover/tv?with_genres=35&sort_by=popularity.desc&page=', type:'tv' },
+                { title:'Crime & Mystery', ep:'/discover/tv?with_genres=80,9648&sort_by=popularity.desc&page=', type:'tv' },
+                { title:'Reality', ep:'/discover/tv?with_genres=10764&sort_by=popularity.desc&page=', type:'tv' },
+            ];
             
             const WALLS = {
-                movies: { title:'Movies', ep:'/discover/movie?sort_by=popularity.desc&vote_count.gte=50&page=', type:'movie', icon:'fa-film', subtitle:'Browse all movies in our collection' },
-                tv: { title:'TV Shows', ep:'/discover/tv?sort_by=popularity.desc&vote_count.gte=50&page=', type:'tv', icon:'fa-tv', subtitle:'Discover amazing TV series' },
-                new: { title:'New & Popular', ep:'/trending/all/week?page=', type:'mixed', icon:'fa-star', subtitle:'What\'s trending this week' },
+                movies: { title:'Movies', type:'movie', icon:'fa-film', subtitle:'Browse all movies in our collection', sections: MOVIE_SECTIONS },
+                tv: { title:'TV Shows', type:'tv', icon:'fa-tv', subtitle:'Discover amazing TV series', sections: TV_SECTIONS },
+                new: { title:'New & Popular', type:'mixed', icon:'fa-star', subtitle:'What\'s trending this week', sections: [{ title:'Trending All', ep:'/trending/all/week?page=', type:'mixed' }] },
             };
 
             let allGenres = [];
@@ -805,7 +827,6 @@
                     const cast = data.credits && data.credits.cast ? data.credits.cast.slice(0, 5).map(c => c.name).join(', ') : 'N/A';
                     const genres = data.genres ? data.genres.map(g => g.name).join(', ') : 'N/A';
                     
-                    // Get watch providers
                     const providers = await getWatchProviders(id, type);
                     const providersText = providers.length > 0 ? providers.map(p => `<span class="provider-badge">${p.name}</span>`).join('') : 'Not available in your region';
                     
@@ -1010,7 +1031,6 @@
                 HOME_ROWS.forEach(c => container.appendChild(createRowSection(c)));
                 renderContinueWatching();
                 
-                // Load rows in batches
                 const batchSize = 4;
                 for(let i = 0; i < HOME_ROWS.length; i += batchSize) {
                     const batch = HOME_ROWS.slice(i, i + batchSize);
@@ -1033,7 +1053,6 @@
                         });
                     });
                     
-                    // Build hero from first batch
                     if(i === 0) {
                         const heroRow = results.find(r => r.cfg.hero);
                         if(heroRow && heroRow.data.length) buildHero(heroRow.data); 
@@ -1053,7 +1072,7 @@
                 appState.wallState = null; 
             }
 
-            // ═══ WALL PAGES ═══
+            // ═══ WALL PAGES WITH MULTIPLE SECTIONS ═══
             async function renderWall(catKey) {
                 teardownWall(); 
                 hideHero();
@@ -1068,67 +1087,47 @@
                 container.innerHTML = '';
                 container.appendChild(createPageHeader(cfg.title, cfg.icon, cfg.subtitle));
                 
-                const wallSection = document.createElement('div');
-                wallSection.className = 'section';
-                wallSection.innerHTML = `<div class="grid-wall" id="wallGrid"></div><div class="grid-loader" id="wallLoader"><i class="fas fa-circle-notch fa-spin"></i> Loading…</div><div class="grid-sentinel" id="wallSentinel"></div>`;
-                container.appendChild(wallSection);
+                // Create section containers
+                cfg.sections.forEach((sec, idx) => {
+                    const group = document.createElement('div');
+                    group.className = 'wall-section-group';
+                    group.id = `wall-group-${idx}`;
+                    group.innerHTML = `
+                        <h2 class="wall-section-title">${sec.title}</h2>
+                        <div class="wall-scroll-area">
+                            <button class="wall-scroll-btn left"><i class="fas fa-chevron-left"></i></button>
+                            <div class="wall-track" id="wall-track-${idx}"></div>
+                            <button class="wall-scroll-btn right"><i class="fas fa-chevron-right"></i></button>
+                        </div>`;
+                    container.appendChild(group);
+                });
                 
-                appState.wallState = { page: 0, ep: cfg.ep, type: cfg.type, loading: false, ended: false, observer: null };
-                await loadWallPage();
-                
-                if(appState.wallState) { 
-                    const sentinel = document.getElementById('wallSentinel'); 
-                    if (sentinel) {
-                        appState.wallState.observer = new IntersectionObserver(entries => { 
-                            if(entries[0].isIntersecting) loadWallPage(); 
-                        }, { rootMargin: '600px' }); 
-                        appState.wallState.observer.observe(sentinel); 
+                // Load sections
+                await Promise.all(cfg.sections.map(async (sec, idx) => {
+                    try {
+                        const data = await tmdbFetch(sec.ep + '1');
+                        const results = (data.results || []).filter(m => m.poster_path);
+                        const track = document.getElementById(`wall-track-${idx}`);
+                        
+                        if (!track) return;
+                        
+                        results.slice(0, 20).forEach(m => {
+                            const card = createCard(m, sec.type);
+                            if (card) track.appendChild(card);
+                        });
+                        
+                        // Add scroll listeners
+                        const leftBtn = document.querySelector(`#wall-group-${idx} .wall-scroll-btn.left`);
+                        const rightBtn = document.querySelector(`#wall-group-${idx} .wall-scroll-btn.right`);
+                        if (leftBtn) leftBtn.addEventListener('click', () => track.scrollBy({ left: -track.clientWidth * 0.85, behavior: 'smooth' }));
+                        if (rightBtn) rightBtn.addEventListener('click', () => track.scrollBy({ left: track.clientWidth * 0.85, behavior: 'smooth' }));
+                    } catch(e) {
+                        console.error('Section load error:', e);
                     }
-                }
+                }));
                 
                 showHideFooter(); 
                 updateNavActive(appState.currentRoute);
-            }
-
-            async function loadWallPage() {
-                if(!appState.wallState || appState.wallState.loading || appState.wallState.ended) return;
-                appState.wallState.loading = true;
-                
-                const grid = document.getElementById('wallGrid'); 
-                const loader = document.getElementById('wallLoader');
-                const page = appState.wallState.page + 1;
-                
-                try {
-                    const data = await tmdbFetch(appState.wallState.ep + page);
-                    const results = (data.results || []).filter(m => m.poster_path);
-                    
-                    if(!grid || !document.body.contains(grid)) {
-                        appState.wallState = null;
-                        return;
-                    }
-                    
-                    if(results.length) {
-                        results.forEach(m => { 
-                            const t = appState.wallState.type === 'mixed' ? getMediaType(m, null) : appState.wallState.type; 
-                            const card = createCard(m, t); 
-                            if(card) grid.appendChild(card); 
-                        });
-                        appState.wallState.page = page;
-                        
-                        if(page >= (data.total_pages || 500) || page >= 500) { 
-                            appState.wallState.ended = true; 
-                            if(loader) loader.style.display = 'none'; 
-                        }
-                    } else { 
-                        appState.wallState.ended = true; 
-                        if(loader) loader.style.display = 'none'; 
-                    }
-                } catch(e) { 
-                    console.error('Wall load error:', e);
-                    if(loader) loader.style.display = 'none'; 
-                } finally { 
-                    if(appState.wallState) appState.wallState.loading = false; 
-                }
             }
 
             // ═══ MY LIST ═══
@@ -1219,10 +1218,6 @@
                                 <select class="filter-select" id="searchLanguageFilter"><option value="all">All Languages</option></select>
                             </div>
                             <div class="filter-group">
-                                <label class="filter-label">Country</label>
-                                <select class="filter-select" id="searchCountryFilter"><option value="all">All Countries</option></select>
-                            </div>
-                            <div class="filter-group">
                                 <label class="filter-label">Sort By</label>
                                 <select class="filter-select" id="searchSortFilter">
                                     <option value="popularity.desc">Popularity</option>
@@ -1242,7 +1237,6 @@
                 
                 container.appendChild(searchSection);
                 
-                // Populate filters
                 const genreSelect = document.getElementById('searchGenreFilter');
                 if (genreSelect && allGenres.length) {
                     allGenres.forEach(g => {
@@ -1274,17 +1268,6 @@
                     });
                 }
                 
-                const countrySelect = document.getElementById('searchCountryFilter');
-                if (countrySelect && allCountries.length) {
-                    allCountries.forEach(c => {
-                        const opt = document.createElement('option');
-                        opt.value = c.iso_3166_1; 
-                        opt.textContent = c.english_name || c.native_name;
-                        countrySelect.appendChild(opt);
-                    });
-                }
-                
-                // Setup search
                 const pageSearchInput = document.getElementById('pageSearchInput');
                 const pageSearchBtn = document.getElementById('pageSearchBtn');
                 const pageSearchResults = document.getElementById('pageSearchResults');
@@ -1295,7 +1278,6 @@
                 const searchGenreFilter = document.getElementById('searchGenreFilter');
                 const searchYearFilter = document.getElementById('searchYearFilter');
                 const searchLanguageFilter = document.getElementById('searchLanguageFilter');
-                const searchCountryFilter = document.getElementById('searchCountryFilter');
                 const searchSortFilter = document.getElementById('searchSortFilter');
                 
                 let currentPage = 1, totalPages = 1, isLoading = false;
@@ -1306,9 +1288,8 @@
                     const genre = searchGenreFilter.value;
                     const year = searchYearFilter.value;
                     const language = searchLanguageFilter.value;
-                    const country = searchCountryFilter.value;
                     const sort = searchSortFilter.value;
-                    const hasFilters = genre !== 'all' || year !== 'all' || language !== 'all' || country !== 'all';
+                    const hasFilters = genre !== 'all' || year !== 'all' || language !== 'all';
                     
                     if (query.length >= 2) return `/search/multi?query=${encodeURIComponent(query)}&page=${page}`;
                     else if (hasFilters) {
@@ -1317,7 +1298,6 @@
                         if (genre !== 'all') params.set('with_genres', genre);
                         if (year !== 'all') params.set('primary_release_year', year);
                         if (language !== 'all') params.set('with_original_language', language);
-                        if (country !== 'all') params.set('with_origin_country', country);
                         params.set('sort_by', sort); 
                         params.set('page', page); 
                         params.set('vote_count.gte', '10');
@@ -1414,7 +1394,7 @@
                     if (e.key === 'Enter') performSearch(1, false); 
                 });
                 
-                [searchTypeFilter, searchGenreFilter, searchYearFilter, searchLanguageFilter, searchCountryFilter, searchSortFilter].forEach(filter => {
+                [searchTypeFilter, searchGenreFilter, searchYearFilter, searchLanguageFilter, searchSortFilter].forEach(filter => {
                     filter.addEventListener('change', () => performSearch(1, false));
                 });
                 
@@ -1424,7 +1404,6 @@
                     searchGenreFilter.value = 'all';
                     searchYearFilter.value = 'all';
                     searchLanguageFilter.value = 'all';
-                    searchCountryFilter.value = 'all';
                     searchSortFilter.value = 'popularity.desc';
                     pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Type to search or use filters to browse</div>';
                     pageLoadMoreContainer.style.display = 'none';
@@ -1537,7 +1516,7 @@
                 return '404';
             }
 
-            // ═══ CLEANUP ON PAGE UNLOAD ═══
+            // ═══ CLEANUP ═══
             window.addEventListener('beforeunload', () => {
                 appState.activeControllers.forEach(controller => controller.abort());
                 
@@ -1582,7 +1561,6 @@
                 refreshHearts();
             }
 
-            // Start the app
             init();
         })();
     </script>
