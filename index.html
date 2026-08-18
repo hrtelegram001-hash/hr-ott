@@ -163,13 +163,37 @@
         .filter-select:focus { border-color: var(--red); box-shadow: 0 0 10px rgba(229,9,20,0.2); }
         .filter-select option { background: #1a1a1f; }
         
-        /* RESPONSIVE SEARCH RESULTS GRID */
-        .search-results { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 12px; 
-            margin-top: 20px; 
-        }
+        /* Update the search results grid CSS */
+.search-results { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); /* 3 columns on desktop */
+    gap: 12px; 
+    margin-top: 20px; 
+}
+
+/* For tablets */
+@media (max-width: 1024px) {
+    .search-results { 
+        grid-template-columns: repeat(3, 1fr); /* Keep 3 columns on tablets */
+        gap: 10px;
+    }
+}
+
+/* For mobile */
+@media (max-width: 768px) {
+    .search-results { 
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on mobile */
+        gap: 8px;
+    }
+}
+
+/* For small mobile */
+@media (max-width: 480px) {
+    .search-results { 
+        grid-template-columns: repeat(2, 1fr); /* Keep 2 columns on small mobile */
+        gap: 6px;
+    }
+}
         
         .load-more-container { text-align: center; padding: 25px 0; margin-top: 15px; position: relative; z-index: 10; }
         .load-more-btn { background: var(--red); color: #fff; border: none; padding: 12px 35px; border-radius: 8px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 8px 24px rgba(229,9,20,0.4); position: relative; z-index: 100; }
@@ -1238,280 +1262,281 @@
                 updateNavActive('my-list');
             }
 
-            // ═══ SEARCH PAGE - TMDB ONLY ═══
-            function renderSearchPage() {
-                teardownWall(); 
-                hideHero(); 
-                appState.currentRoute = 'search';
-                renderContinueWatching();
-                
-                const container = document.getElementById('sectionsContainer');
-                document.getElementById('mainContent').classList.add('no-hero');
-                container.innerHTML = '';
-                container.appendChild(createPageHeader('Search', 'fa-search', 'Find movies and TV shows'));
-                
-                const searchSection = document.createElement('div');
-                searchSection.className = 'search-page-container';
-                searchSection.innerHTML = `
-                    <div class="search-hero">
-                        <div class="search-hero-icon"><i class="fas fa-search"></i></div>
-                        <div class="search-input-wrapper">
-                            <input type="text" class="search-input" id="pageSearchInput" placeholder="Search movies, TV shows..." autocomplete="off">
-                            <button class="search-submit-btn" id="pageSearchBtn"><i class="fas fa-arrow-right"></i></button>
-                        </div>
-                    </div>
-                    
-                    <div class="type-filter-buttons">
-                        <button class="type-filter-btn active" data-type="all"><i class="fas fa-th"></i> All</button>
-                        <button class="type-filter-btn" data-type="movie"><i class="fas fa-film"></i> Movies</button>
-                        <button class="type-filter-btn" data-type="tv"><i class="fas fa-tv"></i> TV Shows</button>
-                    </div>
-                    
-                    <div class="filters-section">
-                        <div class="filters-header">
-                            <div class="filters-title"><i class="fas fa-filter"></i> Filters</div>
-                            <button class="clear-filters-btn" id="clearFiltersBtn"><i class="fas fa-times"></i> Clear All</button>
-                        </div>
-                        <div class="filters-grid">
-                            <div class="filter-group">
-                                <label class="filter-label">Genre</label>
-                                <select class="filter-select" id="searchGenreFilter"><option value="all">All Genres</option></select>
-                            </div>
-                            <div class="filter-group">
-                                <label class="filter-label">Year</label>
-                                <select class="filter-select" id="searchYearFilter"><option value="all">All Years</option></select>
-                            </div>
-                            <div class="filter-group">
-                                <label class="filter-label">Language</label>
-                                <select class="filter-select" id="searchLanguageFilter"><option value="all">All Languages</option></select>
-                            </div>
-                            <div class="filter-group">
-                                <label class="filter-label">Sort By</label>
-                                <select class="filter-select" id="searchSortFilter">
-                                    <option value="popularity.desc">Popularity</option>
-                                    <option value="vote_average.desc">Rating</option>
-                                    <option value="primary_release_date.desc">Release Date</option>
-                                    <option value="original_title.asc">Title A-Z</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="search-results" id="pageSearchResults">
-                        <div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Search for movies and TV shows or browse by type</div>
-                    </div>
-                    <div class="load-more-container" id="pageLoadMoreContainer" style="display:none;">
-                        <button class="load-more-btn" id="pageLoadMoreBtn"><i class="fas fa-plus"></i> <span>Load More</span></button>
-                    </div>`;
-                
-                container.appendChild(searchSection);
-                
-                const genreSelect = document.getElementById('searchGenreFilter');
-                if (genreSelect && allGenres.length) {
-                    allGenres.forEach(g => {
-                        const opt = document.createElement('option');
-                        opt.value = g.id; 
-                        opt.textContent = g.name;
-                        genreSelect.appendChild(opt);
-                    });
+            // ═══ SEARCH PAGE - TMDB ONLY WITH 3 COLUMNS ═══
+function renderSearchPage() {
+    teardownWall(); 
+    hideHero(); 
+    appState.currentRoute = 'search';
+    renderContinueWatching();
+    
+    const container = document.getElementById('sectionsContainer');
+    document.getElementById('mainContent').classList.add('no-hero');
+    container.innerHTML = '';
+    container.appendChild(createPageHeader('Search', 'fa-search', 'Find movies and TV shows'));
+    
+    const searchSection = document.createElement('div');
+    searchSection.className = 'search-page-container';
+    searchSection.innerHTML = `
+        <div class="search-hero">
+            <div class="search-hero-icon"><i class="fas fa-search"></i></div>
+            <div class="search-input-wrapper">
+                <input type="text" class="search-input" id="pageSearchInput" placeholder="Search movies, TV shows..." autocomplete="off">
+                <button class="search-submit-btn" id="pageSearchBtn"><i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        
+        <div class="type-filter-buttons">
+            <button class="type-filter-btn active" data-type="all"><i class="fas fa-th"></i> All</button>
+            <button class="type-filter-btn" data-type="movie"><i class="fas fa-film"></i> Movies</button>
+            <button class="type-filter-btn" data-type="tv"><i class="fas fa-tv"></i> TV Shows</button>
+        </div>
+        
+        <div class="filters-section">
+            <div class="filters-header">
+                <div class="filters-title"><i class="fas fa-filter"></i> Filters</div>
+                <button class="clear-filters-btn" id="clearFiltersBtn"><i class="fas fa-times"></i> Clear All</button>
+            </div>
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Genre</label>
+                    <select class="filter-select" id="searchGenreFilter"><option value="all">All Genres</option></select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Year</label>
+                    <select class="filter-select" id="searchYearFilter"><option value="all">All Years</option></select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Language</label>
+                    <select class="filter-select" id="searchLanguageFilter"><option value="all">All Languages</option></select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Sort By</label>
+                    <select class="filter-select" id="searchSortFilter">
+                        <option value="popularity.desc">Popularity</option>
+                        <option value="vote_average.desc">Rating</option>
+                        <option value="primary_release_date.desc">Release Date</option>
+                        <option value="original_title.asc">Title A-Z</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="search-results" id="pageSearchResults">
+            <div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;">
+                <i class="fas fa-search" style="margin-right:10px;"></i>Search for movies and TV shows or browse by type
+            </div>
+        </div>
+        <div class="load-more-container" id="pageLoadMoreContainer" style="display:none;">
+            <button class="load-more-btn" id="pageLoadMoreBtn"><i class="fas fa-plus"></i> <span>Load More</span></button>
+        </div>`;
+    
+    container.appendChild(searchSection);
+    
+    const genreSelect = document.getElementById('searchGenreFilter');
+    if (genreSelect && allGenres.length) {
+        allGenres.forEach(g => {
+            const opt = document.createElement('option');
+            opt.value = g.id; 
+            opt.textContent = g.name;
+            genreSelect.appendChild(opt);
+        });
+    }
+    
+    const yearSelect = document.getElementById('searchYearFilter');
+    if (yearSelect) {
+        const currentYear = new Date().getFullYear();
+        for (let y = currentYear; y >= 1950; y--) {
+            const opt = document.createElement('option');
+            opt.value = y; 
+            opt.textContent = y;
+            yearSelect.appendChild(opt);
+        }
+    }
+    
+    const langSelect = document.getElementById('searchLanguageFilter');
+    if (langSelect && allLanguages.length) {
+        allLanguages.forEach(l => {
+            const opt = document.createElement('option');
+            opt.value = l.iso_639_1; 
+            opt.textContent = l.english_name || l.name;
+            langSelect.appendChild(opt);
+        });
+    }
+    
+    const pageSearchInput = document.getElementById('pageSearchInput');
+    const pageSearchBtn = document.getElementById('pageSearchBtn');
+    const pageSearchResults = document.getElementById('pageSearchResults');
+    const pageLoadMoreContainer = document.getElementById('pageLoadMoreContainer');
+    const pageLoadMoreBtn = document.getElementById('pageLoadMoreBtn');
+    const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+    const searchGenreFilter = document.getElementById('searchGenreFilter');
+    const searchYearFilter = document.getElementById('searchYearFilter');
+    const searchLanguageFilter = document.getElementById('searchLanguageFilter');
+    const searchSortFilter = document.getElementById('searchSortFilter');
+    const typeFilterBtns = document.querySelectorAll('.type-filter-btn');
+    
+    let currentPage = 1, totalPages = 1, isLoading = false;
+    let selectedType = 'all';
+    
+    // TYPE FILTER BUTTONS - FIXED
+    typeFilterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            typeFilterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedType = btn.dataset.type;
+            // Reset to page 1 and perform search
+            currentPage = 1;
+            performSearch(1, false);
+        });
+    });
+    
+    function buildSearchEndpoint(page = 1) {
+        const query = pageSearchInput.value.trim();
+        const genre = searchGenreFilter.value;
+        const year = searchYearFilter.value;
+        const language = searchLanguageFilter.value;
+        const sort = searchSortFilter.value;
+        const hasFilters = genre !== 'all' || year !== 'all' || language !== 'all';
+        
+        // If user typed a search query
+        if (query.length >= 2) {
+            let base = selectedType === 'tv' ? '/search/tv' : selectedType === 'movie' ? '/search/movie' : '/search/multi';
+            return `${base}?query=${encodeURIComponent(query)}&page=${page}`;
+        } 
+        // If filters are applied but no search query
+        else if (hasFilters || selectedType !== 'all') {
+            // If only type filter is selected (no other filters)
+            if (!hasFilters && selectedType !== 'all') {
+                if (selectedType === 'movie') {
+                    return `/movie/popular?page=${page}`;
+                } else if (selectedType === 'tv') {
+                    return `/tv/popular?page=${page}`;
                 }
-                
-                const yearSelect = document.getElementById('searchYearFilter');
-                if (yearSelect) {
-                    const currentYear = new Date().getFullYear();
-                    for (let y = currentYear; y >= 1950; y--) {
-                        const opt = document.createElement('option');
-                        opt.value = y; 
-                        opt.textContent = y;
-                        yearSelect.appendChild(opt);
-                    }
-                }
-                
-                const langSelect = document.getElementById('searchLanguageFilter');
-                if (langSelect && allLanguages.length) {
-                    allLanguages.forEach(l => {
-                        const opt = document.createElement('option');
-                        opt.value = l.iso_639_1; 
-                        opt.textContent = l.english_name || l.name;
-                        langSelect.appendChild(opt);
-                    });
-                }
-                
-                const pageSearchInput = document.getElementById('pageSearchInput');
-                const pageSearchBtn = document.getElementById('pageSearchBtn');
-                const pageSearchResults = document.getElementById('pageSearchResults');
-                const pageLoadMoreContainer = document.getElementById('pageLoadMoreContainer');
-                const pageLoadMoreBtn = document.getElementById('pageLoadMoreBtn');
-                const clearFiltersBtn = document.getElementById('clearFiltersBtn');
-                const searchGenreFilter = document.getElementById('searchGenreFilter');
-                const searchYearFilter = document.getElementById('searchYearFilter');
-                const searchLanguageFilter = document.getElementById('searchLanguageFilter');
-                const searchSortFilter = document.getElementById('searchSortFilter');
-                const typeFilterBtns = document.querySelectorAll('.type-filter-btn');
-                
-                let currentPage = 1, totalPages = 1, isLoading = false;
-                let selectedType = 'all';
-                
-                // TYPE FILTER BUTTONS - FIXED
-                typeFilterBtns.forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        typeFilterBtns.forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        selectedType = btn.dataset.type;
-                        // Reset to page 1 and perform search
-                        currentPage = 1;
-                        performSearch(1, false);
-                    });
-                });
-                
-                function buildSearchEndpoint(page = 1) {
-                    const query = pageSearchInput.value.trim();
-                    const genre = searchGenreFilter.value;
-                    const year = searchYearFilter.value;
-                    const language = searchLanguageFilter.value;
-                    const sort = searchSortFilter.value;
-                    const hasFilters = genre !== 'all' || year !== 'all' || language !== 'all';
-                    
-                    // If user typed a search query
-                    if (query.length >= 2) {
-                        let base = selectedType === 'tv' ? '/search/tv' : selectedType === 'movie' ? '/search/movie' : '/search/multi';
-                        return `${base}?query=${encodeURIComponent(query)}&page=${page}`;
-                    } 
-                    // If filters are applied but no search query
-                    else if (hasFilters || selectedType !== 'all') {
-                        // If only type filter is selected (no other filters)
-                        if (!hasFilters && selectedType !== 'all') {
-                            if (selectedType === 'movie') {
-                                return `/movie/popular?page=${page}`;
-                            } else if (selectedType === 'tv') {
-                                return `/tv/popular?page=${page}`;
-                            }
-                        }
-                        
-                        // If other filters are applied
-                        let base = selectedType === 'tv' ? '/discover/tv' : '/discover/movie';
-                        const params = new URLSearchParams();
-                        if (genre !== 'all') params.set('with_genres', genre);
-                        if (year !== 'all') params.set('primary_release_year', year);
-                        if (language !== 'all') params.set('with_original_language', language);
-                        params.set('sort_by', sort); 
-                        params.set('page', page); 
-                        params.set('vote_count.gte', '10');
-                        return `${base}?${params.toString()}`;
-                    }
-                    
-                    // Default: show trending
-                    return `/trending/all/week?page=${page}`;
-                }
-                
-                function performSearch(page = 1, append = false) {
-                    if (isLoading) return;
-                    
-                    const endpoint = buildSearchEndpoint(page);
-                    if (!endpoint) {
-                        pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Type to search or use filters</div>';
-                        pageLoadMoreContainer.style.display = 'none';
-                        return;
-                    }
-                    
-                    isLoading = true;
-                    if (!append) {
-                        pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-spinner fa-spin" style="margin-right:10px;"></i> Searching...</div>';
-                        currentPage = 1; 
-                        pageLoadMoreContainer.style.display = 'none';
-                    } else {
-                        pageLoadMoreBtn.classList.add('loading');
-                        pageLoadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
-                    }
-                    
-                    tmdbFetch(endpoint).then(data => {
-                        totalPages = data.total_pages || 1;
-                        let items = (data.results || []).filter(m => m.poster_path || m.backdrop_path);
-                        
-                        currentPage = page;
-                        
-                        if (items.length === 0 && !append) {
-                            pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-frown-open" style="margin-right:10px;"></i>No results found</div>';
-                            pageLoadMoreContainer.style.display = 'none';
-                            isLoading = false;
-                            return;
-                        }
-                        
-                        if (!append) pageSearchResults.innerHTML = '';
-                        
-                        items.forEach(item => {
-                            let forcedType = selectedType !== 'all' ? selectedType : (item.media_type || 'movie');
-                            const card = createCard(item, forcedType, null);
-                            if (card) pageSearchResults.appendChild(card);
-                        });
-                        
-                        if (currentPage < totalPages && items.length > 0) {
-                            pageLoadMoreContainer.style.display = 'block';
-                            pageLoadMoreBtn.classList.remove('loading');
-                            pageLoadMoreBtn.innerHTML = '<i class="fas fa-plus"></i> <span>Load More</span>';
-                            pageLoadMoreBtn.onclick = () => performSearch(currentPage + 1, true);
-                        } else {
-                            pageLoadMoreContainer.style.display = 'none';
-                        }
-                        
-                        isLoading = false;
-                    }).catch(err => {
-                        console.error('Search error:', err);
-                        if (!append) pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;">Search error - please try again</div>';
-                        pageLoadMoreContainer.style.display = 'none';
-                        isLoading = false;
-                    });
-                }
-                
-                pageSearchInput.addEventListener('input', function() {
-                    clearTimeout(appState.searchTimeout);
-                    appState.searchTimeout = setTimeout(() => {
-                        if (pageSearchInput.value.trim().length >= 2) {
-                            performSearch(1, false);
-                        } else if (pageSearchInput.value.trim().length === 0) {
-                            // If search is cleared, perform default search based on filters
-                            performSearch(1, false);
-                        } else {
-                            pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Type at least 2 characters to search</div>';
-                            pageLoadMoreContainer.style.display = 'none';
-                        }
-                    }, 500);
-                });
-                
-                pageSearchBtn.addEventListener('click', () => {
-                    performSearch(1, false);
-                });
-                
-                pageSearchInput.addEventListener('keypress', (e) => { 
-                    if (e.key === 'Enter') {
-                        performSearch(1, false);
-                    }
-                });
-                
-                [searchGenreFilter, searchYearFilter, searchLanguageFilter, searchSortFilter].forEach(filter => {
-                    filter.addEventListener('change', () => performSearch(1, false));
-                });
-                
-                clearFiltersBtn.addEventListener('click', () => {
-                    pageSearchInput.value = '';
-                    searchGenreFilter.value = 'all';
-                    searchYearFilter.value = 'all';
-                    searchLanguageFilter.value = 'all';
-                    searchSortFilter.value = 'popularity.desc';
-                    typeFilterBtns.forEach(b => b.classList.remove('active'));
-                    typeFilterBtns[0].classList.add('active');
-                    selectedType = 'all';
-                    currentPage = 1;
-                    // Perform default search (trending)
-                    performSearch(1, false);
-                });
-                
-                // Initial load - show trending
-                performSearch(1, false);
-                
-                showHideFooter(); 
-                updateNavActive('search');
             }
-
+            
+            // If other filters are applied
+            let base = selectedType === 'tv' ? '/discover/tv' : '/discover/movie';
+            const params = new URLSearchParams();
+            if (genre !== 'all') params.set('with_genres', genre);
+            if (year !== 'all') params.set('primary_release_year', year);
+            if (language !== 'all') params.set('with_original_language', language);
+            params.set('sort_by', sort); 
+            params.set('page', page); 
+            params.set('vote_count.gte', '10');
+            return `${base}?${params.toString()}`;
+        }
+        
+        // Default: show trending
+        return `/trending/all/week?page=${page}`;
+    }
+    
+    function performSearch(page = 1, append = false) {
+        if (isLoading) return;
+        
+        const endpoint = buildSearchEndpoint(page);
+        if (!endpoint) {
+            pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Type to search or use filters</div>';
+            pageLoadMoreContainer.style.display = 'none';
+            return;
+        }
+        
+        isLoading = true;
+        if (!append) {
+            pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-spinner fa-spin" style="margin-right:10px;"></i> Searching...</div>';
+            currentPage = 1; 
+            pageLoadMoreContainer.style.display = 'none';
+        } else {
+            pageLoadMoreBtn.classList.add('loading');
+            pageLoadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+        }
+        
+        tmdbFetch(endpoint).then(data => {
+            totalPages = data.total_pages || 1;
+            let items = (data.results || []).filter(m => m.poster_path || m.backdrop_path);
+            
+            currentPage = page;
+            
+            if (items.length === 0 && !append) {
+                pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-frown-open" style="margin-right:10px;"></i>No results found</div>';
+                pageLoadMoreContainer.style.display = 'none';
+                isLoading = false;
+                return;
+            }
+            
+            if (!append) pageSearchResults.innerHTML = '';
+            
+            items.forEach(item => {
+                let forcedType = selectedType !== 'all' ? selectedType : (item.media_type || 'movie');
+                const card = createCard(item, forcedType, null);
+                if (card) pageSearchResults.appendChild(card);
+            });
+            
+            if (currentPage < totalPages && items.length > 0) {
+                pageLoadMoreContainer.style.display = 'block';
+                pageLoadMoreBtn.classList.remove('loading');
+                pageLoadMoreBtn.innerHTML = '<i class="fas fa-plus"></i> <span>Load More</span>';
+                pageLoadMoreBtn.onclick = () => performSearch(currentPage + 1, true);
+            } else {
+                pageLoadMoreContainer.style.display = 'none';
+            }
+            
+            isLoading = false;
+        }).catch(err => {
+            console.error('Search error:', err);
+            if (!append) pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;">Search error - please try again</div>';
+            pageLoadMoreContainer.style.display = 'none';
+            isLoading = false;
+        });
+    }
+    
+    pageSearchInput.addEventListener('input', function() {
+        clearTimeout(appState.searchTimeout);
+        appState.searchTimeout = setTimeout(() => {
+            if (pageSearchInput.value.trim().length >= 2) {
+                performSearch(1, false);
+            } else if (pageSearchInput.value.trim().length === 0) {
+                // If search is cleared, perform default search based on filters
+                performSearch(1, false);
+            } else {
+                pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Type at least 2 characters to search</div>';
+                pageLoadMoreContainer.style.display = 'none';
+            }
+        }, 500);
+    });
+    
+    pageSearchBtn.addEventListener('click', () => {
+        performSearch(1, false);
+    });
+    
+    pageSearchInput.addEventListener('keypress', (e) => { 
+        if (e.key === 'Enter') {
+            performSearch(1, false);
+        }
+    });
+    
+    [searchGenreFilter, searchYearFilter, searchLanguageFilter, searchSortFilter].forEach(filter => {
+        filter.addEventListener('change', () => performSearch(1, false));
+    });
+    
+    clearFiltersBtn.addEventListener('click', () => {
+        pageSearchInput.value = '';
+        searchGenreFilter.value = 'all';
+        searchYearFilter.value = 'all';
+        searchLanguageFilter.value = 'all';
+        searchSortFilter.value = 'popularity.desc';
+        typeFilterBtns.forEach(b => b.classList.remove('active'));
+        typeFilterBtns[0].classList.add('active');
+        selectedType = 'all';
+        currentPage = 1;
+        // Perform default search (trending)
+        performSearch(1, false);
+    });
+    
+    // Initial load - show trending
+    performSearch(1, false);
+    
+    showHideFooter(); 
+    updateNavActive('search');
+}
             // ═══ 404 ═══
             function render404(path) {
                 teardownWall(); 
