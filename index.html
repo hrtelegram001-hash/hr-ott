@@ -80,7 +80,7 @@
         .page-title i { color: var(--red); font-size: 0.8em; }
         .page-subtitle { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; }
         .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 8px; }
-        .breadcrumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+        .breadcrumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; cursor: pointer; }
         .breadcrumb a:hover { color: var(--red); }
         .breadcrumb .separator { color: var(--text-dim); }
         .breadcrumb .current { color: var(--text); font-weight: 600; }
@@ -105,6 +105,40 @@
         .search-input:focus { border-color: var(--red); box-shadow: 0 0 30px rgba(229,9,20,0.2); }
         .search-submit-btn { position: absolute; right: 5px; top: 50%; transform: translateY(-50%); width: 45px; height: 45px; border-radius: 50%; background: var(--red); border: none; color: white; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; }
         .search-submit-btn:hover { background: var(--red-dark); transform: translateY(-50%) scale(1.1); }
+        
+        /* TYPE FILTER BUTTONS - NEW */
+        .type-filter-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0 30px;
+            flex-wrap: wrap;
+        }
+        
+        .type-filter-btn {
+            padding: 10px 25px;
+            border: 2px solid rgba(255,255,255,0.3);
+            background: transparent;
+            color: var(--text-muted);
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .type-filter-btn:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+        
+        .type-filter-btn.active {
+            background: var(--red);
+            border-color: var(--red);
+            color: white;
+        }
+        
         .filters-section { position: sticky; top: calc(var(--nav-height) + 80px); z-index: 90; margin: 20px 0; padding: 15px 20px; background: rgba(22,22,28,0.95); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
         .filters-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
         .filters-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
@@ -119,7 +153,7 @@
         .filter-select:focus { border-color: var(--red); box-shadow: 0 0 10px rgba(229,9,20,0.2); }
         .filter-select option { background: #1a1a1f; }
         
-        /* FIXED: Responsive search results grid */
+        /* RESPONSIVE SEARCH RESULTS GRID */
         .search-results { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -238,18 +272,15 @@
         .provider-badge { display: inline-block; background: rgba(229,9,20,0.2); border: 1px solid var(--red); color: var(--red); padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; margin-right: 6px; }
         
         @media (max-width: 1024px) {
-            /* 3 columns on tablets */
             .search-results { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
         }
         
         @media (max-width: 768px) {
-            /* 2 columns on mobile landscape/small tablets */
             .search-results { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
             .filters-grid { grid-template-columns: repeat(2, 1fr); }
         }
         
         @media (max-width: 600px) {
-            /* 1 column on mobile portrait - FIXED */
             .search-results { grid-template-columns: 1fr; }
             .filters-grid { grid-template-columns: 1fr; }
         }
@@ -396,21 +427,16 @@
                 { key:'toprated', title:'Top Rated Movies', ep:'/movie/top_rated?page=', type:'movie' },
                 { key:'popular', title:'Popular Movies', ep:'/movie/popular?page=', type:'movie' },
                 { key:'action', title:'Action & Adventure', ep:'/discover/movie?with_genres=28&sort_by=popularity.desc&page=', type:'movie' },
-                
-                // INDIAN CONTENT
                 { key:'bollywood', title:'🇮🇳 Bollywood', ep:'/discover/movie?with_original_language=hi&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'tamil', title:'🇮🇳 Tamil Cinema', ep:'/discover/movie?with_original_language=ta&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'telugu', title:'🇮🇳 Telugu Cinema', ep:'/discover/movie?with_original_language=te&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'malayalam', title:'🇮🇳 Malayalam Cinema', ep:'/discover/movie?with_original_language=ml&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'kannada', title:'🇮🇳 Kannada Cinema', ep:'/discover/movie?with_original_language=kn&sort_by=popularity.desc&page=', type:'movie' },
-                
                 { key:'tvshows', title:'Trending TV Shows', ep:'/trending/tv/week?page=', type:'tv' },
                 { key:'comedy', title:'Comedy Movies', ep:'/discover/movie?with_genres=35&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'scifi', title:'Sci-Fi & Fantasy', ep:'/discover/movie?with_genres=878,14&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'horror', title:'Horror & Thriller', ep:'/discover/movie?with_genres=27,53&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'romance', title:'Romance & Drama', ep:'/discover/movie?with_genres=10749,18&sort_by=popularity.desc&page=', type:'movie' },
-                
-                // STREAMING PROVIDERS
                 { key:'netflix', title:'📺 On Netflix', ep:'/discover/movie?with_watch_providers=8&watch_region=IN&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'prime', title:'🎬 On Prime Video', ep:'/discover/movie?with_watch_providers=119&watch_region=IN&sort_by=popularity.desc&page=', type:'movie' },
             ];
@@ -621,28 +647,46 @@
                 }
             }
 
-            // ═══ IMDB API FETCH ═══
-            async function imdbFetch(dubbing = 'English', page = 0) {
+            // ═══ IMDB API FETCH - FIXED ═══
+            async function imdbFetch(params = {}) {
                 while (appState.pendingRequests >= MAX_CONCURRENT_REQUESTS) {
                     await new Promise(resolve => appState.requestQueue.push(resolve));
                 }
                 
                 appState.pendingRequests++;
-                const url = `${IMDB_API}?page=${page}&sort_by=date&dubbing=${encodeURIComponent(dubbing)}`;
+                
+                // Build query params
+                const queryParams = new URLSearchParams();
+                queryParams.set('page', params.page || 0);
+                queryParams.set('sort_by', params.sort_by || 'date');
+                queryParams.set('dubbing', params.dubbing || 'English');
+                
+                if (params.type && params.type !== 'all') {
+                    queryParams.set('type', params.type);
+                }
+                
+                const url = `${IMDB_API}?${queryParams.toString()}`;
                 
                 const controller = new AbortController();
                 appState.activeControllers.push(controller);
                 const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
                 
                 try {
-                    const res = await fetch(url, { signal: controller.signal });
+                    const res = await fetch(url, { 
+                        signal: controller.signal,
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
                     clearTimeout(timeoutId);
                     
                     if (!res.ok) {
                         console.warn(`IMDb API Error: ${res.status}`);
                         return { results: [], pager: { total_pages: 0 } };
                     }
+                    
                     const data = await res.json();
+                    console.log('IMDb API Response:', data);
                     return data || { results: [], pager: { total_pages: 0 } };
                 } catch (e) {
                     clearTimeout(timeoutId);
@@ -747,7 +791,7 @@
 
             // ═══ CREATE CARD FROM TMDB/IMDb ═══
             function createCard(item, forcedType, progress, isImdb = false) {
-                const type = getMediaType(item, forcedType);
+                const type = isImdb ? item.media_type : getMediaType(item, forcedType);
                 if(type !== 'movie' && type !== 'tv' && type !== 'mixed') return null;
                 
                 let posterPath, title, year, rating, match, id;
@@ -1292,7 +1336,7 @@
                 updateNavActive('my-list');
             }
 
-            // ═══ SEARCH PAGE - FIXED ═══
+            // ═══ SEARCH PAGE - FIXED WITH TYPE FILTER ═══
             function renderSearchPage() {
                 teardownWall(); 
                 hideHero(); 
@@ -1302,7 +1346,7 @@
                 const container = document.getElementById('sectionsContainer');
                 document.getElementById('mainContent').classList.add('no-hero');
                 container.innerHTML = '';
-                container.appendChild(createPageHeader('Search', 'fa-search', 'Find movies and TV shows with advanced filters'));
+                container.appendChild(createPageHeader('Search', 'fa-search', 'Find movies and TV shows'));
                 
                 const searchSection = document.createElement('div');
                 searchSection.className = 'search-page-container';
@@ -1314,6 +1358,14 @@
                             <button class="search-submit-btn" id="pageSearchBtn"><i class="fas fa-arrow-right"></i></button>
                         </div>
                     </div>
+                    
+                    <!-- TYPE FILTER BUTTONS -->
+                    <div class="type-filter-buttons">
+                        <button class="type-filter-btn active" data-type="all"><i class="fas fa-th"></i> All</button>
+                        <button class="type-filter-btn" data-type="movie"><i class="fas fa-film"></i> Movies</button>
+                        <button class="type-filter-btn" data-type="tv"><i class="fas fa-tv"></i> TV Shows</button>
+                    </div>
+                    
                     <div class="filters-section">
                         <div class="filters-header">
                             <div class="filters-title"><i class="fas fa-filter"></i> Filters</div>
@@ -1332,14 +1384,6 @@
                                 <select class="filter-select" id="searchDubbingFilter" disabled>
                                     <option value="all">All Dubs</option>
                                     ${DUBBING_OPTIONS.map(d => `<option value="${d.value}">${d.label}</option>`).join('')}
-                                </select>
-                            </div>
-                            <div class="filter-group">
-                                <label class="filter-label">Type</label>
-                                <select class="filter-select" id="searchTypeFilter">
-                                    <option value="multi">All Types</option>
-                                    <option value="movie">Movies</option>
-                                    <option value="tv">TV Shows</option>
                                 </select>
                             </div>
                             <div class="filter-group">
@@ -1366,7 +1410,7 @@
                         </div>
                     </div>
                     <div class="search-results" id="pageSearchResults">
-                        <div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Search for movies and TV shows or use filters to browse</div>
+                        <div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Search for movies and TV shows or browse by type</div>
                     </div>
                     <div class="load-more-container" id="pageLoadMoreContainer" style="display:none;">
                         <button class="load-more-btn" id="pageLoadMoreBtn"><i class="fas fa-plus"></i> <span>Load More</span></button>
@@ -1413,13 +1457,24 @@
                 const clearFiltersBtn = document.getElementById('clearFiltersBtn');
                 const searchSourceFilter = document.getElementById('searchSourceFilter');
                 const searchDubbingFilter = document.getElementById('searchDubbingFilter');
-                const searchTypeFilter = document.getElementById('searchTypeFilter');
                 const searchGenreFilter = document.getElementById('searchGenreFilter');
                 const searchYearFilter = document.getElementById('searchYearFilter');
                 const searchLanguageFilter = document.getElementById('searchLanguageFilter');
                 const searchSortFilter = document.getElementById('searchSortFilter');
+                const typeFilterBtns = document.querySelectorAll('.type-filter-btn');
                 
                 let currentPage = 1, totalPages = 1, isLoading = false;
+                let selectedType = 'all';
+                
+                // TYPE FILTER BUTTONS - NEW FUNCTIONALITY
+                typeFilterBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        typeFilterBtns.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        selectedType = btn.dataset.type;
+                        performSearch(1, false);
+                    });
+                });
                 
                 // Toggle dubbing filter based on source
                 searchSourceFilter.addEventListener('change', () => {
@@ -1433,24 +1488,31 @@
                     const query = pageSearchInput.value.trim();
                     const source = searchSourceFilter.value;
                     const dubbing = searchDubbingFilter.value;
-                    const type = searchTypeFilter.value;
                     const genre = searchGenreFilter.value;
                     const year = searchYearFilter.value;
                     const language = searchLanguageFilter.value;
                     const sort = searchSortFilter.value;
                     const hasFilters = genre !== 'all' || year !== 'all' || language !== 'all';
                     
-                    // IMDb API endpoint
+                    // IMDb API endpoint - FIXED
                     if (source === 'imdb') {
                         const dubbingParam = dubbing !== 'all' ? dubbing : 'English';
-                        return { type: 'imdb', endpoint: { dubbing: dubbingParam, page: page - 1 } };
+                        return { 
+                            type: 'imdb', 
+                            endpoint: { 
+                                dubbing: dubbingParam, 
+                                page: page - 1,
+                                type: selectedType === 'all' ? '' : selectedType
+                            } 
+                        };
                     }
                     
                     // TMDB endpoints
                     if (query.length >= 2) {
-                        return { type: 'tmdb', endpoint: `/search/multi?query=${encodeURIComponent(query)}&page=${page}` };
+                        let base = selectedType === 'all' ? '/search/multi' : `/search/${selectedType}`;
+                        return { type: 'tmdb', endpoint: `${base}?query=${encodeURIComponent(query)}&page=${page}` };
                     } else if (hasFilters) {
-                        let base = type === 'tv' ? '/discover/tv' : type === 'movie' ? '/discover/movie' : '/discover/movie';
+                        let base = selectedType === 'tv' ? '/discover/tv' : '/discover/movie';
                         const params = new URLSearchParams();
                         if (genre !== 'all') params.set('with_genres', genre);
                         if (year !== 'all') params.set('primary_release_year', year);
@@ -1468,7 +1530,7 @@
                     
                     const searchConfig = buildSearchEndpoint(page);
                     if (!searchConfig) {
-                        pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Type to search or use filters to browse</div>';
+                        pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Type to search or use filters</div>';
                         pageLoadMoreContainer.style.display = 'none';
                         return;
                     }
@@ -1487,8 +1549,9 @@
                         try {
                             let data;
                             if (searchConfig.type === 'imdb') {
-                                data = await imdbFetch(searchConfig.endpoint.dubbing, searchConfig.endpoint.page);
+                                data = await imdbFetch(searchConfig.endpoint);
                                 totalPages = data.pager ? data.pager.total_pages : 1;
+                                console.log('IMDb data:', data);
                                 return { results: data.results || [], totalPages, isImdb: true };
                             } else {
                                 data = await tmdbFetch(searchConfig.endpoint);
@@ -1503,19 +1566,41 @@
                     
                     performQuery().then(({ results, totalPages: tp, isImdb }) => {
                         totalPages = tp;
-                        const items = results.filter(m => m.poster_path || m.backdrop_path);
+                        let items = results.filter(m => {
+                            if (isImdb) {
+                                return m.backdrop_path;
+                            } else {
+                                return m.poster_path || m.backdrop_path;
+                            }
+                        });
+                        
+                        // Filter by selected type if not imdb (imdb already filters by type param)
+                        if (!isImdb && selectedType !== 'all') {
+                            items = items.filter(m => {
+                                const mType = m.media_type || 'movie';
+                                return mType === selectedType;
+                            });
+                        }
+                        
                         currentPage = page;
                         
                         if (items.length === 0 && !append) {
                             pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-frown-open" style="margin-right:10px;"></i>No results found</div>';
                             pageLoadMoreContainer.style.display = 'none';
+                            isLoading = false;
                             return;
                         }
                         
                         if (!append) pageSearchResults.innerHTML = '';
                         
                         items.forEach(item => {
-                            const card = createCard(item, searchTypeFilter.value !== 'multi' ? searchTypeFilter.value : null, null, isImdb);
+                            let forcedType = null;
+                            if (isImdb) {
+                                forcedType = item.media_type;
+                            } else if (selectedType !== 'all') {
+                                forcedType = selectedType;
+                            }
+                            const card = createCard(item, forcedType, null, isImdb);
                             if (card) pageSearchResults.appendChild(card);
                         });
                         
@@ -1527,14 +1612,13 @@
                         } else {
                             pageLoadMoreContainer.style.display = 'none';
                         }
+                        
+                        isLoading = false;
                     }).catch(err => {
                         console.error('Search error:', err);
                         if (!append) pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;">Search error - please try again</div>';
                         pageLoadMoreContainer.style.display = 'none';
-                    }).finally(() => {
                         isLoading = false;
-                        pageLoadMoreBtn.classList.remove('loading');
-                        pageLoadMoreBtn.innerHTML = '<i class="fas fa-plus"></i> <span>Load More</span>';
                     });
                 }
                 
@@ -1543,6 +1627,9 @@
                     appState.searchTimeout = setTimeout(() => {
                         if (pageSearchInput.value.trim().length >= 2) {
                             performSearch(1, false);
+                        } else {
+                            pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Type to search or browse by type</div>';
+                            pageLoadMoreContainer.style.display = 'none';
                         }
                     }, 500);
                 });
@@ -1559,7 +1646,7 @@
                     }
                 });
                 
-                [searchTypeFilter, searchGenreFilter, searchYearFilter, searchLanguageFilter, searchSortFilter].forEach(filter => {
+                [searchGenreFilter, searchYearFilter, searchLanguageFilter, searchSortFilter].forEach(filter => {
                     filter.addEventListener('change', () => performSearch(1, false));
                 });
                 
@@ -1568,12 +1655,14 @@
                     searchSourceFilter.value = 'tmdb';
                     searchDubbingFilter.value = 'all';
                     searchDubbingFilter.disabled = true;
-                    searchTypeFilter.value = 'multi';
                     searchGenreFilter.value = 'all';
                     searchYearFilter.value = 'all';
                     searchLanguageFilter.value = 'all';
                     searchSortFilter.value = 'popularity.desc';
-                    pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Type to search or use filters to browse</div>';
+                    typeFilterBtns.forEach(b => b.classList.remove('active'));
+                    typeFilterBtns[0].classList.add('active');
+                    selectedType = 'all';
+                    pageSearchResults.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;"><i class="fas fa-search" style="margin-right:10px;"></i>Type to search or browse by type</div>';
                     pageLoadMoreContainer.style.display = 'none';
                 });
                 
@@ -1595,7 +1684,7 @@
                         <div class="not-found-code">404</div>
                         <h1 class="not-found-title">Page Not Found</h1>
                         <p class="not-found-message">The page "${path}" doesn't exist.</p>
-                        <a href="/" class="not-found-btn" onclick="event.preventDefault(); navigateTo('home');"><i class="fas fa-home"></i> Back to Home</a>
+                        <a href="/" class="not-found-btn"><i class="fas fa-home"></i> Back to Home</a>
                     </div>`;
                 showHideFooter(); 
                 updateNavActive('');
