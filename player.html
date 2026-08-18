@@ -70,14 +70,72 @@
         .player-title-bar .controls .player-btn i { font-size: 0.7rem; }
         .player-title-bar .controls .player-btn.pip-btn:hover { background: #2196F3; border-color: #2196F3; }
         
-        .player-container { width: 100%; max-width: 100%; background: #000; position: relative; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; min-height: 250px; overflow: hidden; }
-        .player-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; border: none; background: #000; }
-        .player-loading { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: linear-gradient(135deg, #1a1a1f 0%, #2a2a32 100%); z-index: 10; transition: opacity 0.3s ease; }
-        .player-loading.hidden { opacity: 0; pointer-events: none; }
-        .spinner { width: 40px; height: 40px; border: 3px solid rgba(229, 9, 20, 0.15); border-top-color: var(--red); border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .loading-text { font-size: 0.9rem; font-weight: 700; }
-        .loading-subtext { font-size: 0.75rem; color: var(--text-muted); }
+        /* ═══════════════════════════════════════════════
+           16:9 ASPECT RATIO PLAYER CONTAINER
+           ═══════════════════════════════════════════════ */
+        .player-container { 
+            position: relative; 
+            width: 100%; 
+            padding-bottom: 56.25%; 
+            height: 0; 
+            background: #000; 
+            border-radius: 0; 
+            overflow: hidden; 
+            min-height: 250px; 
+        }
+        
+        .player-container iframe { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            display: block; 
+            border: none; 
+            background: #000; 
+            border-radius: 0;
+        }
+        
+        .player-loading { 
+            position: absolute; 
+            inset: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 12px; 
+            background: linear-gradient(135deg, #1a1a1f 0%, #2a2a32 100%); 
+            z-index: 10; 
+            transition: opacity 0.3s ease; 
+        }
+        
+        .player-loading.hidden { 
+            opacity: 0; 
+            pointer-events: none; 
+        }
+        
+        .spinner { 
+            width: 40px; 
+            height: 40px; 
+            border: 3px solid rgba(229, 9, 20, 0.15); 
+            border-top-color: var(--red); 
+            border-radius: 50%; 
+            animation: spin 0.8s linear infinite; 
+        }
+        
+        @keyframes spin { 
+            to { transform: rotate(360deg); } 
+        }
+        
+        .loading-text { 
+            font-size: 0.9rem; 
+            font-weight: 700; 
+        }
+        
+        .loading-subtext { 
+            font-size: 0.75rem; 
+            color: var(--text-muted); 
+        }
         
         .next-episode-overlay {
             position: absolute; bottom: 30px; right: 30px; background: rgba(0,0,0,0.85);
@@ -221,7 +279,6 @@
             .hero-description { -webkit-line-clamp: 2; font-size: 0.8rem; }
             .player-section { padding: 16px 12px; }
             .server-btn { padding: 3px 8px; font-size: 0.65rem; }
-            .player-container { min-height: 160px; }
             .player-title-bar { padding: 6px 10px; flex-direction: column; align-items: stretch; gap: 4px; min-height: 36px; }
             .player-title-bar .title { font-size: 0.8rem; }
             .player-title-bar .controls { justify-content: flex-end; flex-wrap: wrap; }
@@ -285,6 +342,7 @@
                     </div>
                 </div>
                 
+                <!-- 16:9 ASPECT RATIO PLAYER CONTAINER -->
                 <div class="player-container" id="playerContainer">
                     <div class="player-loading" id="playerLoading">
                         <div class="spinner"></div>
@@ -1077,9 +1135,7 @@
             function ensureDisclaimerVisible() {
                 const adDisclaimer = document.getElementById('adDisclaimer');
                 if (adDisclaimer) {
-                    // Remove any conflicting inline styles
                     adDisclaimer.removeAttribute('style');
-                    // Apply mandatory display styles
                     adDisclaimer.style.cssText = `
                         display: flex !important;
                         visibility: visible !important;
@@ -1205,7 +1261,6 @@
                 document.querySelectorAll('iframe').forEach(iframe => { try { iframe.src = 'about:blank'; } catch(e) {} });
             });
 
-            // Ensure disclaimer is visible on page load
             document.addEventListener('DOMContentLoaded', ensureDisclaimerVisible);
             
             init();
