@@ -348,6 +348,19 @@
                 { key:'popular', title:'Popular Movies', ep:'/movie/popular?page=', type:'movie' },
                 { key:'action', title:'Action & Adventure', ep:'/discover/movie?with_genres=28&sort_by=popularity.desc&page=', type:'movie' },
                 { key:'tvshows', title:'Trending TV Shows', ep:'/trending/tv/week?page=', type:'tv' },
+                { key:'comedy', title:'Comedy Movies', ep:'/discover/movie?with_genres=35&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'scifi', title:'Sci-Fi & Fantasy', ep:'/discover/movie?with_genres=878,14&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'horror', title:'Horror & Thriller', ep:'/discover/movie?with_genres=27,53&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'romance', title:'Romance & Drama', ep:'/discover/movie?with_genres=10749,18&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'documentary', title:'Documentaries', ep:'/discover/movie?with_genres=99&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'topratedtv', title:'Top Rated TV Shows', ep:'/tv/top_rated?page=', type:'tv' },
+                { key:'populartv', title:'Popular TV Shows', ep:'/tv/popular?page=', type:'tv' },
+                { key:'crime', title:'Crime & Mystery', ep:'/discover/tv?with_genres=80,9648&sort_by=popularity.desc&page=', type:'tv' },
+                { key:'kids', title:'Family & Kids', ep:'/discover/movie?with_genres=10751,16&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'upcoming', title:'Upcoming Releases', ep:'/movie/upcoming?page=', type:'movie' },
+                { key:'awardwinning', title:'Award Winners', ep:'/discover/movie?with_genres=18&vote_average.gte=8&vote_count.gte=100&sort_by=vote_average.desc&page=', type:'movie' },
+                { key:'animation', title:'Animation', ep:'/discover/movie?with_genres=16&sort_by=popularity.desc&page=', type:'movie' },
+                { key:'realitytv', title:'Reality & Talk Shows', ep:'/discover/tv?with_genres=10764,10767&sort_by=popularity.desc&page=', type:'tv' },
             ];
             const WALLS = {
                 movies: { title:'Movies', ep:'/discover/movie?sort_by=popularity.desc&vote_count.gte=50&page=', type:'movie', icon:'fa-film', subtitle:'Browse all movies in our collection' },
@@ -645,12 +658,36 @@
                 document.getElementById('mainContent').classList.remove('no-hero');
                 HOME_ROWS.forEach(c=>container.appendChild(createRowSection(c)));
                 renderContinueWatching();
-                const proms=HOME_ROWS.map(async c=>{ try{ const d=await tmdbFetch(c.ep+'1'); return {cfg:c, data:(d.results||[]).filter(m=>m.poster_path||m.backdrop_path)}; } catch(e){ return {cfg:c, data:[]}; } });
-                const results=await Promise.all(proms);
-                results.forEach(r=>{ const grid=document.getElementById('grid-'+r.cfg.key); if(!grid) return; r.data.slice(0,18).forEach(m=>{ const card=createCard(m, r.cfg.type); if(card) grid.appendChild(card); }); });
-                const heroRow = results.find(r=>r.cfg.hero);
-                if(heroRow && heroRow.data.length) buildHero(heroRow.data); else hideHero();
-                showHideFooter(); updateNavActive('home');
+                
+                // Load rows in batches for better performance
+                const batchSize = 4;
+                for(let i = 0; i < HOME_ROWS.length; i += batchSize) {
+                    const batch = HOME_ROWS.slice(i, i + batchSize);
+                    const proms = batch.map(async c => {
+                        try {
+                            const d = await tmdbFetch(c.ep + '1');
+                            return {cfg:c, data:(d.results||[]).filter(m=>m.poster_path||m.backdrop_path)};
+                        } catch(e) { return {cfg:c, data:[]}; }
+                    });
+                    const results = await Promise.all(proms);
+                    results.forEach(r => {
+                        const grid = document.getElementById('grid-' + r.cfg.key);
+                        if(!grid) return;
+                        r.data.slice(0, 12).forEach(m => {
+                            const card = createCard(m, r.cfg.type);
+                            if(card) grid.appendChild(card);
+                        });
+                    });
+                    
+                    // Build hero from first batch
+                    if(i === 0) {
+                        const heroRow = results.find(r=>r.cfg.hero);
+                        if(heroRow && heroRow.data.length) buildHero(heroRow.data); else hideHero();
+                    }
+                }
+                
+                showHideFooter();
+                updateNavActive('home');
             }
 
             function teardownWall(){ if(wallState && wallState.observer) wallState.observer.disconnect(); wallState = null; }
